@@ -1,0 +1,29 @@
+import './App.css';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import ListBoardComponent from './components/ListBoardComponent';
+import HeaderComponent from './components/HeaderComponent';
+import FooterComponent from './components/FooterComponent';
+import CreateBoardComponent from "./components/CreateBoardComponent";
+import ReadBoardComponent from "./components/ReadBoardComponent";
+import Main from "./components/Main";
+
+function App() {
+  return (
+      <div>
+          <Router>
+          <HeaderComponent/>
+          <div className="container">
+              <Routes>
+                  <Route path = "/" element = {<Main />} />
+                  <Route path = "/board" element = {<ListBoardComponent />} />
+                  <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
+                  <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
+              </Routes>
+          </div>
+          <FooterComponent/>
+        </Router>
+      </div>
+  );
+}
+
+export default App;
