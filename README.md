@@ -4,7 +4,7 @@
 # Meta Camping - Camping Site Community
 
 -
-추후 수정 예정 (추가 하세요)
+추후 수정
 
 ## Team 👩‍👦‍👦
 |김건희|신하늘|오민서|옥승호|최재유
