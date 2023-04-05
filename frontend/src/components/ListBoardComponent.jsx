@@ -41,8 +41,8 @@ function ListBoardComponent() {
                             <tr key = {board.postId}>
                                 <td>{board.postId}</td>
                                 <td><a onClick = {() => handleReadBoard(board.postId)}>{board.title}</a></td>
-                                <td>{board.createdTime}</td>
-                                <td>{board.updatedTime}</td>
+                                <td>{board.createdTimeString}</td>
+                                <td>{board.updatedTimeString}</td>
                                 <td>{board.hits}</td>
                             </tr>
                     )}

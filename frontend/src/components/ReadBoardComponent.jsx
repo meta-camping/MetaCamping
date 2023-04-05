@@ -25,7 +25,6 @@ function ReadBoardComponent() {
     let deleteView = () => {
         if(window.confirm("정말로 글을 삭제하시겠습니까?\n삭제된 글은 복구 할 수 없습니다.")) {
             BoardService.deleteBoard(postId).then(res => {
-                console.log("delete result => "+ JSON.stringify(res));
                 if (res.status === 200) {
                     navigate('/board/');
                 } else {
@@ -50,15 +49,11 @@ function ReadBoardComponent() {
                     </div>
                     <div className="mb-3">
                         <label className="form-label">내용</label>
-                        <textarea className="form-control" rows="3" name="content" value={board.contents} readOnly></textarea>
+                        <textarea className="form-control" rows="3" name="content" value={board.content} readOnly></textarea>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">생성일</label>
-                        <input type="text" className="form-control" name="title" value={board.createdTime} readOnly/>
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">수정일</label>
-                        <input type="text" className="form-control" name="title" value={board.updatedTime} readOnly/>
+                        <input type="text" className="form-control" name="title" value={board.createdTimeString} readOnly/>
                     </div>
                     <div style={{textAlign: "right", marginTop: "20px"}}>
                         <button className="btn btn-primary" onClick={goToList} style={{ marginLeft: '10px'}}>

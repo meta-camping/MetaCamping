@@ -2,17 +2,19 @@ package com.example.firstproject.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
@@ -20,17 +22,22 @@ import org.hibernate.annotations.DynamicUpdate;
 @ToString
 @Getter
 @Setter
-public class Board extends BaseTimeEntity {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Integer postId;
-
     @Column(name = "title")
     private String title;
-
     @Column(name = "content")
-    private String contents;
+    private String content;
     @Column(name = "hits")
+    @ColumnDefault("1")
     private Integer hits;
+    @CreatedDate
+    @Column(name = "created_time")
+    private LocalDateTime createdTime;
+    @LastModifiedDate
+    @Column(name = "updated_time")
+    private LocalDateTime updatedTime;
 }
