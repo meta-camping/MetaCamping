@@ -6,7 +6,7 @@ function CreateBoardComponent() {
     const { postId } = useParams();
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
-    const [contents, setContents] = useState('');
+    const [content, setContents] = useState('');
     const changeTitleHandler = (event) => {
         setTitle(event.target.value);
     }
@@ -18,10 +18,8 @@ function CreateBoardComponent() {
         event.preventDefault();
         let board = {
             title: title,
-            contents: contents
+            content: content
         };
-
-        console.log("board => "+ JSON.stringify(board));
 
         if (postId === '_create') {
             BoardService.createBoard(board).then(res => {
@@ -50,10 +48,9 @@ function CreateBoardComponent() {
         } else {
             BoardService.getOneBoard(postId).then( (res) => {
                 let board = res.data;
-                console.log("board => "+ JSON.stringify(board));
 
                 setTitle(board.title);
-                setContents(board.contents);
+                setContents(board.content);
             });
         }
     }, [postId]);
@@ -77,7 +74,7 @@ function CreateBoardComponent() {
                                 <div className = "form-group">
                                     <div className="mb-3">
                                         <label className="form-label">내용</label>
-                                        <textarea className="form-control" placeholder="contents" name="content" value={contents} onChange={changeContentsHandler}></textarea>
+                                        <textarea className="form-control" placeholder="content" name="content" value={content} onChange={changeContentsHandler}></textarea>
                                     </div>
                                 </div>
                                 <div style={{marginTop:"20px"}}>
