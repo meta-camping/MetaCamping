@@ -33,5 +33,4 @@ logging:
     org.hibernate.type.descriptor.sql: trace
 
 env:
-  serviceKey:
-    8YTAm5lTksn9PCq63yrvj0l7A%2BC5EwJKwmAYiY8eB1M73uL6T3lpEZ5ryMKdWIo0ryYHDMZlftf4eVmhpJGg3Q%3D%3D
+  serviceKey: 8YTAm5lTksn9PCq63yrvj0l7A%2BC5EwJKwmAYiY8eB1M73uL6T3lpEZ5ryMKdWIo0ryYHDMZlftf4eVmhpJGg3Q%3D%3D
