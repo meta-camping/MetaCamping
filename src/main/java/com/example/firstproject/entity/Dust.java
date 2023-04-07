@@ -12,7 +12,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Getter // 롬복으로 게터 추가
-public class Dust extends BaseTimeEntity {
+public class Dust {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
