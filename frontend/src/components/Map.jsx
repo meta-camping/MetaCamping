@@ -76,12 +76,6 @@ function Map() {
         geocoder.coord2RegionCode(latlng.getLng(), latlng.getLat(), (result, status) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 if (result.length > 0) {
-                    const roadAddress = result[0].address_name; //법정동 주소
-                    console.log(`법정동 주소: ${roadAddress}`);
-
-                    const address = result[1].address_name; //행정동 주소
-                    console.log(`행정동 주소: ${address}`);
-
                     setAddressName(result[1].address_name)
 
                     if(result[0].region_3depth_name==="송도동"){

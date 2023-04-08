@@ -4,6 +4,10 @@ server:
   servlet:
     encoding:
       force-response: true
+      charset: UTF-8
+      enabled: true
+      force: true
+    context-path: /
 
 #데이터베이스 접속 정보
 spring:
@@ -27,6 +31,17 @@ spring:
       hibernate:
         format-sql: true
         show_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 580524444939-miu11bn1u95k341r751piodkc0je5606.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
 
 logging:
   level:

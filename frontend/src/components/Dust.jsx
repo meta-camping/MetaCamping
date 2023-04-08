@@ -69,8 +69,6 @@ function Dust(props) {
     useEffect(() => {
         ApiService.searchByTm(tmx,tmy)
             .then((response) => {
-                console.log("tmx: " + tmx +"/tmy: " + tmy)
-                console.log("측정소 기준: " + response.data.result.response.body.items[0].stationName);
                 setMeasuringStation(response.data.result.response.body.items[0].stationName)
             }).catch(error => console.log("근처 측정소 목록 조회 api 오류. " + error))
     },[tmx,tmy])
@@ -79,16 +77,11 @@ function Dust(props) {
     useEffect(() => {
         ApiService.converToTm(props.stationName)
             .then((response) => {
-                console.log(response.data.result.response.body.items);
-                console.log("도시이름: " + props.sidoName + "(좌표 후보와 일치하는 데이터 선택)");
-                console.log("시구이름: " + props.sggName + "(좌표 후보와 일치하는 데이터 선택)");
-                console.log("지역이름: " + props.umdName + "(좌표 후보와 일치하는 데이터 선택)");
                 //결과에서 현재 내 위치에 맞는 tmX, tmY 좌표를 선택(왜냐하면 같은 읍면동 이름을 같는 도시가 존재)
                 if(response.data.result.response.body.items===[]){
                     alert("데이터가 없습니다.")
                 } else {
                     for(let i=0; i<response.data.result.response.body.items.length; i++){
-                        console.log("tmX,tmY 좌표 후보: " + response.data.result.response.body.items[i].sidoName)
                         if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].sggName === props.sggName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
                             setTmx(response.data.result.response.body.items[i].tmX);
                             setTmy(response.data.result.response.body.items[i].tmY);
