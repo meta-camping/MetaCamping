@@ -1,8 +1,7 @@
 package com.example.firstproject.controller;
 
 
-import com.example.firstproject.DTO.BoardDTO;
-import com.example.firstproject.entity.Board;
+import com.example.firstproject.dto.BoardDTO;
 import com.example.firstproject.service.BoardReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -1,7 +1,7 @@
 package com.example.firstproject.service;
 
 
-import com.example.firstproject.DTO.BoardDTO;
+import com.example.firstproject.dto.BoardDTO;
 import com.example.firstproject.entity.Board;
 import com.example.firstproject.repository.BoardRepository;
 
