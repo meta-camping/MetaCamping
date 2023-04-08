@@ -2,26 +2,26 @@ import React, {useState} from 'react';
 import axios from 'axios';
 
 function SearchData() {
-    const [dust, setDust] = useState([]);
-    const [city, setCity] = useState("서울");
+    const [camping, setCamping] = useState([]);
+    const [city, setCity] = useState("강원도");
 
     const handleSelectCity = (e) => {
         setCity(e.target.value);
     };
     const showAllList = () => {
-        axios.get('api/dust/showAllList')
+        axios.get('api/camping/showAllList')
             .then((response) => {
-                setDust(response.data)
+                setCamping(response.data)
             }).catch(error => console.log(error))
     }
     const SelectCity = () => {
-        axios.get('/api/dust/showList', {
+        axios.get('/api/camping/showList', {
             params: {
-                sido_name: city
+                city_name: city
             }
         })
             .then((response) => {
-                setDust(response.data)
+                setCamping(response.data)
             }).catch(error => console.log(error))
     }
 
@@ -29,30 +29,30 @@ function SearchData() {
         <div style={{flexDirection: "row", marginLeft: "100px"}}>
             <form className="container" >
                 <div className="mb-3" style={{display: "flex", marginTop: "30px"}}>
-                    <label className="form-label" style={{lineHeight: "40px"}}>전체데이터 조회</label><br/>
+                    <label className="form-label" style={{lineHeight: "40px"}}>전체 캠핑장 조회</label><br/>
                     <button type="button" className="btn btn-primary" onClick={showAllList} style={{width: "80px", height: "40px", marginLeft: "20px"}}>Submit</button><br/>
-                    <label className="form-label" style={{marginLeft: "30px", lineHeight: "40px", marginRight: "10px"}}>도시(데이터검색)</label>
+                    <label className="form-label" style={{marginLeft: "30px", lineHeight: "40px", marginRight: "10px"}}>시별로 검색</label>
                     <table>
                         <tbody>
                         <td>
                             <select id="div_apv_sq" className="form-control" onChange={handleSelectCity}>
-                                <option value="서울">서울</option>
-                                <option value="부산">부산</option>
-                                <option value="대구">대구</option>
-                                <option value="인천">인천</option>
-                                <option value="광주">광주</option>
-                                <option value="대전">대전</option>
-                                <option value="울산">울산</option>
-                                <option value="경기">경기</option>
-                                <option value="강원">강원</option>
-                                <option value="충북">충북</option>
-                                <option value="충남">충남</option>
-                                <option value="전북">전북</option>
-                                <option value="전남">전남</option>
-                                <option value="경북">경북</option>
-                                <option value="경남">경남</option>
-                                <option value="제주">제주</option>
-                                <option value="세종">세종</option>
+                                <option value="강원도">강원도</option>
+                                <option value="경기도">경기도</option>
+                                <option value="경상북도">경상북도</option>
+                                <option value="경상남도">경상남도</option>
+                                <option value="광주광역시">광주광역시</option>
+                                <option value="대구광역시">대구광역시</option>
+                                <option value="대전광역시">대전광역시</option>
+                                <option value="부산광역시">부산광역시</option>
+                                <option value="서울특별시">서울특별시</option>
+                                <option value="세종특별자치시">세종특별자치시</option>
+                                <option value="울산광역시">울산광역시</option>
+                                <option value="인천광역시">인천광역시</option>
+                                <option value="전라북도">전라북도</option>
+                                <option value="전라남도">전라남도</option>
+                                <option value="제주특별자치도">제주특별자치도</option>
+                                <option value="충청북도">충청북도</option>
+                                <option value="충청남도">충청남도</option>
                             </select>
                         </td>
                         <button type="button" className="btn btn-primary" onClick={SelectCity} style={{width: "80px", height: "40px", marginLeft: "20px"}}>Submit</button>
@@ -64,26 +64,22 @@ function SearchData() {
             <table className="table">
                 <thead>
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">도시</th>
-                    <th scope="col">지역</th>
-                    <th scope="col">미세먼지 농도</th>
-                    <th scope="col">미세먼지 등급</th>
-                    <th scope="col">초미세먼지 농도</th>
-                    <th scope="col">초미세먼지 등급</th>
+                    <th scope="col">번호</th>
+                    <th scope="col">주소</th>
+                    <th scope="col">이름</th>
+                    <th scope="col">위도</th>
+                    <th scope="col">경도</th>
                 </tr>
                 </thead>
-                {dust.map(prop => {
+                {camping.map(prop => {
                     return (
                         <tbody key={prop.id}>
                         <tr>
-                            <td>{prop.id}</td>
-                            <td>{prop.sido_name}</td>
-                            <td>{prop.station_name}</td>
-                            <td>{prop.pm10Value}</td>
-                            <td>{prop.pm10Grade}</td>
-                            <td>{prop.pm25Value}</td>
-                            <td>{prop.pm25Grade}</td>
+                            <td>{prop.num}</td>
+                            <td>{prop.address}</td>
+                            <td>{prop.name}</td>
+                            <td>{prop.wgs84_x}</td>
+                            <td>{prop.wgs84_y}</td>
                         </tr>
                         </tbody>
                     )

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BoardService from '../services/BoardService';
 import { useParams, useNavigate } from 'react-router-dom';
-
 function ReadBoardComponent() {
     const { postId } = useParams();
     const [board, setBoard] = useState({});
@@ -19,7 +18,7 @@ function ReadBoardComponent() {
 
     let goToUpdate = (event) => {
         event.preventDefault();
-       navigate(`/create-board/${postId}`);
+        navigate(`/create-board/${postId}`);
     }
 
     let deleteView = () => {
@@ -50,10 +49,6 @@ function ReadBoardComponent() {
                     <div className="mb-3">
                         <label className="form-label">내용</label>
                         <textarea className="form-control" rows="3" name="content" value={board.content} readOnly></textarea>
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">생성일</label>
-                        <input type="text" className="form-control" name="title" value={board.createdTimeString} readOnly/>
                     </div>
                     <div style={{textAlign: "right", marginTop: "20px"}}>
                         <button className="btn btn-primary" onClick={goToList} style={{ marginLeft: '10px'}}>

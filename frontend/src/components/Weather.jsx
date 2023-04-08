@@ -26,7 +26,8 @@ function Weather(props) {
     const [tomorrowdata, setTomorrowdata] = useState(null); // 내일 데이터
     const hours = ["0000", "0100", "0200", "0300", "0400", "0500", "0600", "0700", "0800", "0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000", "2100", "2200", "2300"];
     const [istoday, setIstoday] = useState("오늘 날씨");
-    const [imagedata, setImagedata] = useState(null); // 이미지
+    const [todayImagedata, setTodayImagedata] = useState(null); // 오늘 날씨 이미지
+    const [tomorrowImagedata, setTomorrowImagedata] = useState(null); // 내일 날씨 이미지
 
     const [coordinate, setCoordinate] = useState(''); // api 요청에 보낼 경도 위도
 
@@ -82,7 +83,7 @@ function Weather(props) {
             setTodaydata(response.data.Today);
             setTomorrowdata(response.data.Tomorrow);
 
-            const newImages = hours.map((hour) => {
+            const TodayImages = hours.map((hour) => {
                 const hourData = response.data.Today[hour];
                 const { PTY, SKY } = hourData;
 
@@ -106,7 +107,33 @@ function Weather(props) {
                     return null;
                 }
             });
-            setImagedata(newImages);
+            setTodayImagedata(TodayImages);
+
+            const TomorrowImages = hours.map((hour) => {
+                const hourData = response.data.Tomorrow[hour];
+                const { PTY, SKY } = hourData;
+
+                if (PTY === "0") {
+                    if (SKY === "1") {
+                        return sunny;
+                    } else if (SKY === "3") {
+                        return cloud;
+                    } else if (SKY === "4") {
+                        return manycloud;
+                    }
+                } else if (PTY === "1") {
+                    return rain;
+                } else if (PTY === "2") {
+                    return snowrain;
+                } else if (PTY === "3") {
+                    return snow;
+                } else if (PTY === "4") {
+                    return shower;
+                } else {
+                    return null;
+                }
+            });
+            setTomorrowImagedata(TomorrowImages);
         }).catch(error => console.log("날씨 API 요청 실패 " + error))
     }, [coordinate.x,coordinate.y])
 
@@ -151,7 +178,7 @@ function Weather(props) {
                                     {
                                         (istoday === "오늘 날씨" && todaydata !== null) ? hours.map((hour, index)=> (
                                                 <div key={index} className="weather_graph_box"><span style={{fontSize: "25px"}}>{todaydata[hour]["TMP"]}°</span>
-                                                    <div><img src={imagedata[index]} alt="날씨" width="25" height="25"/></div>
+                                                    <div><img src={todayImagedata[index]} alt="날씨" width="25" height="25"/></div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>강수확률</div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>{todaydata[hour]["POP"]}%</div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>{hour.substr(0, 2)}:00</div>
@@ -161,7 +188,7 @@ function Weather(props) {
                                     {
                                         (istoday === "내일 날씨" && tomorrowdata !== null) ? hours.map((hour, index)=> (
                                                 <div key={index} className="weather_graph_box"><span style={{fontSize: "25px"}}>{tomorrowdata[hour]["TMP"]}°</span>
-                                                    <div><img src={imagedata[index]} alt="날씨" width="25" height="25"/></div>
+                                                    <div><img src={tomorrowImagedata[index]} alt="날씨" width="25" height="25"/></div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>강수확률</div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>{tomorrowdata[hour]["POP"]}%</div>
                                                     <div style={{width: "40px", marginTop: "5px"}}>{hour.substr(0, 2)}:00</div>

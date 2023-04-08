@@ -6,6 +6,8 @@ import FooterComponent from './components/FooterComponent';
 import CreateBoardComponent from "./components/CreateBoardComponent";
 import ReadBoardComponent from "./components/ReadBoardComponent";
 import Main from "./components/Main";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
               <Routes>
                   <Route path = "/" element = {<Main />} />
                   <Route path = "/board" element = {<ListBoardComponent />} />
+                  <Route path = "/register" element = {<Register />} />
+                  <Route path = "/login" element = {<Login />} />
                   <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
                   <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
               </Routes>
