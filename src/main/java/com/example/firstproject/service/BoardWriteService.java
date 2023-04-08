@@ -1,6 +1,6 @@
 package com.example.firstproject.service;
 
-import com.example.firstproject.DTO.BoardDTO;
+import com.example.firstproject.dto.BoardDTO;
 import com.example.firstproject.entity.Board;
 import com.example.firstproject.exception.ResourceNotFoundException;
 import com.example.firstproject.repository.BoardRepository;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.Logger;
+
 @RequiredArgsConstructor
 @Service
 @Log4j2

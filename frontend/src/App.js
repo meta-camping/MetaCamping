@@ -5,7 +5,10 @@ import HeaderComponent from './components/HeaderComponent';
 import FooterComponent from './components/FooterComponent';
 import CreateBoardComponent from "./components/CreateBoardComponent";
 import ReadBoardComponent from "./components/ReadBoardComponent";
+import ChatRoomList from './components/ChatRoomList';
+import ChatRoom from "./components/ChatRoom"
 import Main from "./components/Main";
+
 
 function App() {
   return (
@@ -18,6 +21,8 @@ function App() {
                   <Route path = "/board" element = {<ListBoardComponent />} />
                   <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
                   <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
+                   <Route path = "/chat/list" element = {<ChatRoomList />} />
+                  <Route path = "/chat/room/:room_id" element = {<ChatRoom />} />
               </Routes>
           </div>
           <FooterComponent/>
