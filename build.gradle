@@ -17,6 +17,13 @@ repositories {
 	mavenCentral()
 }
 
+processResources.dependsOn('copySecret')
+
+task copySecret(type: Copy) {
+	from './submodule-data/application.yml' // auth 서브모듈에 있는 oauth 설정파일을 복사한다.
+	into 'src/main/resources'
+}
+
 dependencies {
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	implementation 'org.json:json:20220924'
