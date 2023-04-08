@@ -1,6 +1,8 @@
 package com.example.firstproject.controller;
 
+import com.example.firstproject.entity.Camping;
 import com.example.firstproject.entity.Dust;
+import com.example.firstproject.repository.CampingRepository;
 import com.example.firstproject.repository.DustRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,27 @@ public class APIController {
     @Value("${env.serviceKey}")
     private String serviceKey;
     private final DustRepository dustRepository;
+
+    private final CampingRepository campingRepository;
+
+    //캠핑 전체 데이터 찾아서 리턴
+    @GetMapping("/camping/showAllList")
+    public List<Camping> showAllCampingList() {
+        //모든 Article을 가져온다!
+        List<Camping> campingEntityList = campingRepository.findAll();
+
+        return campingEntityList;
+    }
+
+    //시이름으로 데이터 찾아서 리턴
+    @GetMapping("/camping/showList")
+    public List<Camping> showCampingListBySidoName(@RequestParam String city_name) {
+        List<Camping> sidoEntityList = campingRepository.findAllBySidoName(city_name);
+
+        return sidoEntityList;
+    }
+
+
 
     @GetMapping("/weatherforecast")
     public String restApiGetWeatherNow(@RequestParam String coordinate_x,@RequestParam String coordinate_y) throws Exception {
@@ -83,84 +106,89 @@ public class APIController {
 
         HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
 
-        JSONObject jsonObj = new JSONObject(); // 데이터 가공을 위한 객체 생성
-
-        jsonObj.put("result", resultMap);
+        JSONObject resultObject = new JSONObject(resultMap); // 데이터 가공을 위한 객체 생성
 
         JSONObject jsonObj2 = new JSONObject(); // 실제로 값을 리턴할 객체 생성
-
-        jsonObj2.put("todayTime", formatedToday); // 전달한 객체로 TodayTime 추가
-
-        JSONObject todayData = new JSONObject(); // 실제로 값을 리턴할 객체 생성
-        JSONObject tomorrowData = new JSONObject(); // 실제로 값을 리턴할 객체 생성
+        JSONObject todayData = new JSONObject();
+        JSONObject tomorrowData = new JSONObject();
 
         Map<String, String> todayDataSub = new HashMap<>(); //  오늘의 각 시간별 데이터를 저장할 객체
         Map<String, String> tomorrowDataSub = new HashMap<>(); // 내일의 각 시간별 데이터를 저장할 객체
 
-        JSONArray items = jsonObj.getJSONObject("result").getJSONObject("response").getJSONObject("body").getJSONObject("items").getJSONArray("item");
+        JSONArray items = resultObject.getJSONObject("response").getJSONObject("body").getJSONObject("items").getJSONArray("item");
         log.info(items);
 
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = items.getJSONObject(i);
-                String fcstDate = item.getString("fcstDate");
-                String fcstTime = item.getString("fcstTime");
-                String category = item.getString("category");
-                String fcstValue = item.getString("fcstValue");
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject item = items.getJSONObject(i);
+            String fcstDate = item.getString("fcstDate");
+            String fcstTime = item.getString("fcstTime");
+            String category = item.getString("category");
+            String fcstValue = item.getString("fcstValue");
 
-                if (fcstDate.equals(today) && category.equals("TMX")) {
-                    int TMX = (int) Double.parseDouble(fcstValue); // 실수로 제공되는 TMX를 int로 변환
-                    jsonObj2.put("TMX", TMX); // 전달한 객체로 TMX 추가
-                    log.info("일 최고 기온 예보 시간: " + fcstTime);
-                }
+            if (fcstDate.equals(today) && category.equals("TMX")) {
+                int TMX = (int) Double.parseDouble(fcstValue); // 실수로 제공되는 TMX를 int로 변환
+                jsonObj2.put("TMX", TMX); // 전달한 객체로 TMX 추가
+            }
 
-                if (fcstDate.equals(today) && category.equals("TMN")) {
-                    int TMN = (int) Double.parseDouble(fcstValue); // 실수로 제공되는 TMN을 int로 변환
-                    jsonObj2.put("TMN", TMN); // 전달한 객체로 TMN 추가
-                    log.info("일 최저 기온 예보 시간: " + fcstTime);
-                }
+            if (fcstDate.equals(today) && category.equals("TMN")) {
+                int TMN = (int) Double.parseDouble(fcstValue); // 실수로 제공되는 TMN을 int로 변환
+                jsonObj2.put("TMN", TMN); // 전달한 객체로 TMN 추가
+            }
 
-                //현재 시간과 일치하는 데이터 저장
-                if (fcstTime.equals(nowTime) && fcstDate.equals(today)) {
-                    switch (category) {
-                        case "TMP":
-                            String TMP = fcstValue;
-                            jsonObj2.put("TMP", TMP); // 전달한 객체로 TMP 추가
-                            break;
-                        case "REH":
-                            String REH = fcstValue;
-                            jsonObj2.put("REH", REH); // 전달한 객체로 REH 추가
-                            break;
-                        case "POP":
-                            String POP = fcstValue;
-                            jsonObj2.put("POP", POP); // 전달한 객체로 POP 추가
-                            break;
-                        case "SKY":
-                            String SKY = fcstValue;
-                            jsonObj2.put("SKY", SKY); // 전달한 객체로 SKY 추가
-                            break;
-                        case "PTY":
-                            String PTY = fcstValue;
-                            jsonObj2.put("PTY", PTY); // 전달한 객체로 PTY 추가
-                            break;
-                    }
-                }
-
-                if (fcstDate.equals(today)) {
-                    todayDataSub.put(category, fcstValue);
-                    todayData.put(fcstTime, todayDataSub);
-                } else if (fcstDate.equals(tomorrow)) {
-                    tomorrowDataSub.put(category, fcstValue);
-                    tomorrowData.put(fcstTime, tomorrowDataSub);
+            //현재 시간과 일치하는 데이터 저장
+            if (fcstTime.equals(nowTime) && fcstDate.equals(today)) {
+                switch (category) {
+                    case "TMP":
+                        String TMP = fcstValue;
+                        jsonObj2.put("TMP", TMP); // 전달한 객체로 TMP 추가
+                        break;
+                    case "REH":
+                        String REH = fcstValue;
+                        jsonObj2.put("REH", REH); // 전달한 객체로 REH 추가
+                        break;
+                    case "POP":
+                        String POP = fcstValue;
+                        jsonObj2.put("POP", POP); // 전달한 객체로 POP 추가
+                        break;
+                    case "SKY":
+                        String SKY = fcstValue;
+                        jsonObj2.put("SKY", SKY); // 전달한 객체로 SKY 추가
+                        break;
+                    case "PTY":
+                        String PTY = fcstValue;
+                        jsonObj2.put("PTY", PTY); // 전달한 객체로 PTY 추가
+                        break;
                 }
             }
+
+            if (fcstDate.equals(today)) {
+                todayDataSub.put(category, fcstValue);
+                todayData.put(fcstTime, todayDataSub);
+            } else if (fcstDate.equals(tomorrow)) {
+                tomorrowDataSub.put(category, fcstValue);
+                tomorrowData.put(fcstTime, tomorrowDataSub);
+            }
+        }
+        for(int j = 0; j < todayData.length(); j++){
+            String hour = (j < 10) ? "0" + j + "00" : j + "00";
+            int tempTMP = Integer.parseInt(todayData.getJSONObject(hour).getString("TMP"));
+            if (tempTMP > jsonObj2.getInt("TMX")) {
+                jsonObj2.put("TMX", tempTMP);
+            }
+            if (tempTMP < jsonObj2.getInt("TMN")) {
+                jsonObj2.put("TMN", tempTMP);
+            }
+        }
+
+        jsonObj2.put("todayTime", formatedToday); // 전달한 객체로 TodayTime 추가
         jsonObj2.put("Today", todayData); // 전달한 객체로 Today data 추가
         jsonObj2.put("Tomorrow", tomorrowData); // 전달한 객체로 Tomorrow data 추가
-        System.out.println("jsonObj2: " + jsonObj2);
+
         return jsonObj2.toString();
     }
     //미세먼지 전체 데이터 찾아서 리턴
     @GetMapping("/dust/showAllList")
-    public List<Dust> showAllList() throws Exception {
+    public List<Dust> showAllList() {
             //모든 Article을 가져온다!
             List<Dust> dustEntityList = dustRepository.findAll();
 
@@ -255,8 +283,8 @@ public class APIController {
 
         try {
             conn = (HttpURLConnection) apiURL.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(20000);
+            conn.setReadTimeout(20000);
             conn.setDoOutput(true);
 
             if (isPost) {

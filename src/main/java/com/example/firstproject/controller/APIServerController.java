@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
+@Component
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -101,10 +104,28 @@ public class APIServerController {
         return "redirect:/api/dust/list";
     }
 
+//    @Transactional
+//    @PostMapping("/dust/update")
+//    //업데이트하는 메서드
+//    public String update() throws Exception {
+//        log.info("미세먼지 데이터 업데이트 시작");
+//        //DB에 저장된 데이터 전체 삭제
+//        dustRepository.deleteAll();
+//
+//        //DB에 설정된 auto_increment값 1로 초기화
+//        //이 설정을 해야 id가 다시 1부터 시작
+//        dustRepository.initialization();
+//
+//        //위에서 만든 데이터 전체 생성하는 메서드
+//        createAll();
+//
+//        log.info("미세먼지 데이터 업데이트 완료");
+//        return "redirect:/api/dust/list";
+//    }
     @Transactional
     @PostMapping("/dust/update")
-    //업데이트하는 메서드
-    public String update() throws Exception {
+    @Scheduled(cron = "0 20 * * * *") //데이터가 매 시 15분 내외로 업데이트 되므로 매 시 20분에 메서드가 실행되도록 설정
+    public void update() throws Exception {
         log.info("미세먼지 데이터 업데이트 시작");
         //DB에 저장된 데이터 전체 삭제
         dustRepository.deleteAll();
@@ -113,12 +134,12 @@ public class APIServerController {
         //이 설정을 해야 id가 다시 1부터 시작
         dustRepository.initialization();
 
-        //위에서 만든 데이터 전체 생성하는 메서드
+        //데이터 전체 생성하는 메서드
         createAll();
 
         log.info("미세먼지 데이터 업데이트 완료");
-        return "redirect:/api/dust/list";
     }
+
     @GetMapping("/dust/list/search")
     public String showSidoName(String cityName, Model model) {
         //cityName은 도시 데이터 ex) 서울, 인천, 부산 ...
