@@ -1,82 +1,230 @@
-
 import React, { useState, useEffect } from 'react';
-import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { useParams } from 'react-router-dom';
+
+function ChatRoom( {match} ) {
+const [stompClient, setStompClient] = useState(null);
+const [messages, setMessages] = useState([]);
+const [newMessage, setNewMessage] = useState('');
+const [connected, setConnected] = useState(false);
+const {room_id} = useParams();
+const subscribeUrl = `/topic/${room_id}`;
+const publishUrl = `/app/hello/${room_id}`;
+const username = "테스트유저" //멤버 병합 시 수정
+
+
+useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    const stompClient = Stomp.over(socket);
+
+    if (username) { // username이 입력되면 stomp.connect 호출
+      stompClient.connect({}, function (frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe(subscribeUrl, function (greeting) {
+          setMessages((messages) => [...messages, JSON.parse(greeting.body)]);
+        });
+        stompClient.send(publishUrl, {}, JSON.stringify({ 
+          room_id: room_id,
+          type: 'ENTER',
+          sender: username,
+          message: newMessage
+        }));
+        setStompClient(stompClient);
+      });
+    }
+
+
+return () => {
+  if (stompClient !== null) {
+    stompClient.disconnect();
+  }
+  setConnected(false);
+  console.log('Disconnected');
+};
+}, [username, subscribeUrl]);
+
+
+
+const handleSend = () => {
+stompClient.send(publishUrl, {}, JSON.stringify({ 
+  room_id: room_id,
+  type: 'TALK',
+  sender: username,
+  message: newMessage }));
+setNewMessage('');
+};
+
+
+
+return (
+<div>
+<h1>Chat Room {room_id}</h1>
+<div>
+{messages.map((msg, idx) => (
+<div key={idx}>
+<strong>{msg.content}</strong>
+</div>
+))}
+</div>
+<div>
+<input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+<button onClick={handleSend}>Send</button>
+</div>
+</div>
+);
+}
+
+export default ChatRoom;
+
+
+/*import React, { useState } from 'react';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { useParams } from 'react-router-dom';
+
+function ChatRoom({match}) {
+  const [stompClient, setStompClient] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const {room_id} = useParams();
+  
+  const subscribeUrl = `/topic/${room_id}`;
+  const publishUrl = '/app/hello';
+  
+  const setConnected = (connected) => {
+    document.getElementById('connect').disabled = connected;
+    document.getElementById('disconnect').disabled = !connected;
+    if (connected) {
+      document.getElementById('conversation').style.display = 'block';
+    } else {
+      document.getElementById('conversation').style.display = 'none';
+    }
+    document.getElementById('greetings').innerHTML = '';
+  };
+  
+  const connect = () => {
+    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    const stompClient = Stomp.over(socket);
+    
+    stompClient.connect({}, function (frame) {
+      setConnected(true);
+      console.log('Connected: ' + frame);
+      stompClient.subscribe(subscribeUrl, function (greeting) {
+        showGreeting(JSON.parse(greeting.body).content);
+      });
+      setStompClient(stompClient);
+    });
+  };
+
+  const disconnect = () => {
+    if (stompClient !== null) {
+      stompClient.disconnect();
+    }
+    setConnected(false);
+    console.log('Disconnected');
+  };
+
+  const sendName = () => {
+    stompClient.send(publishUrl, {}, JSON.stringify({ 'name': document.getElementById('name').value }));
+  };
+
+  const showGreeting = (message) => {
+    const greetings = document.getElementById('greetings');
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.innerText = message;
+    tr.appendChild(td);
+    greetings.appendChild(tr);
+  };
+
+  return (
+    <div>
+      <form>
+        <div className="form-group">
+          <label htmlFor="connect">WebSocket connection:</label>
+          <button id="connect" className="btn btn-default" type="button" onClick={connect}>Connect</button>
+          <button id="disconnect" className="btn btn-default" type="button" onClick={disconnect} disabled>Disconnect</button>
+        </div>
+      </form>
+      <form>
+        <div className="form-group">
+          <label htmlFor="name">What is your name?</label>
+          <input type="text" id="name" className="form-control" placeholder="Your name here..." />
+        </div>
+        <button id="send" className="btn btn-default" type="button" onClick={sendName}>Send</button>
+      </form>
+      <table id="conversation" className="table table-striped" style={{ display: 'none' }}>
+        <thead>
+          <tr>
+            <th>Greetings</th>
+          </tr>
+        </thead>
+        <tbody id="greetings"></tbody>
+      </table>
+    </div>
+  );
+}
+
+export default ChatRoom;
+*/
+
+/*
+import React, { useState, useEffect } from 'react';
+import SockJS from 'sockjs-client';
+import Stomp from 'stomp-websocket';
 import { useParams } from 'react-router-dom';
 
 function ChatRoom({ match }) {
   const [stompClient, setStompClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const sender = "test_member" // 멤버 기능 추가 되면 가져오기 & 중복검사 하는 함수 추가
   const { room_id } = useParams();
-  const subscribeUrl = `http:localhost:8080/topic`;
-  const publishUrl = `http:localhost:8080/app/chat`;
-  useEffect(() => {
-    // WebSocket 연결 설정
-   
-    const stompClient = new Client({
-        brokerURL: `ws://localhost:8080/ws-stomp`
-      });
+  const subscribeUrl = `http://localhost:8080/topic/${room_id}`;
+  const publishUrl = `http://localhost:8080/app/chat/${room_id}`;
 
-    stompClient.webSocketFactory = function() {
-    
-        return new SockJS(`http://localhost:8080/ws-stomp`)
-};
-     // stompClient.activate();
-    
-    stompClient.onConnect = () => {
-        console.log("stomp-websoket is connect!")
-      // room_id를 pathVariable로 가지고 있는 토픽에 구독
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
       stompClient.subscribe(subscribeUrl, (message) => {
         const msgBody = JSON.parse(message.body);
-        setMessages((prevMessages) => [...prevMessages, msgBody]);
-        console.log("setMessages:",setMessages)
-        console.log("msgBody:",msgBody)
+        setMessages((prevMessages) => [...prevMessages, msgBody])
+        console.log("stompClient.subscribe",messages);
       });
 
-      // 입장 메시지 전송
       const enterMessage = {
         type: 'ENTER',
         sender: 'User',
-        //message: `${sender}님이 입장했습니다.`, =>  back에서 구현
+        message: '',
         room_id: room_id,
       };
 
-      stompClient.publish({ 
-        destination: publishUrl,
-        body: JSON.stringify(enterMessage)
-      });
-      console.log(JSON.stringify(enterMessage))
+      stompClient.send(subscribeUrl, {}, JSON.stringify(enterMessage));
       setStompClient(stompClient);
-    };
-
-    stompClient.activate();
+    });
 
     return () => {
-      stompClient.deactivate();
+      stompClient.disconnect();
     };
   }, [room_id]);
 
   const handleSend = () => {
-    // 메시지 전송
     const chatMessage = {
       type: 'TALK',
       sender: 'User',
       message: newMessage,
-      room_id: room_id,
+      roomId: room_id,
     };
 
     if (chatMessage.message === ''){
       alert("메세지를 입력해주세요.")
     }
     else{
-    stompClient.publish({ 
-        destination: publishUrl,
-        body: JSON.stringify(chatMessage)
-      });
-    console.log(JSON.stringify(chatMessage))
-    setNewMessage('');
+      stompClient.send(publishUrl, {}, JSON.stringify(chatMessage));
+      setNewMessage('');
     }
   };
 
@@ -97,4 +245,6 @@ function ChatRoom({ match }) {
     </div>
   );
 }
+
 export default ChatRoom;
+*/

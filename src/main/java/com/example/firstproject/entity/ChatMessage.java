@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -22,7 +25,7 @@ public class ChatMessage {
     }
     @Id
     @GeneratedValue( strategy= GenerationType.AUTO)
-    private String message_id;
+    private long message_id;
     @Column(name = "room_id")
     private String room_id;
     @Column(name = "type")
@@ -30,19 +33,20 @@ public class ChatMessage {
     //채팅방 ID
     //보내는 사람
     @Column(name = "member_id")
-    private String sender;
+    private String member_id;
     //내용
     @Column(name = "message")
     private String message;
     @CreatedDate
     @Column(name = "created_time")
-    private String created_time;
+    @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime created_time;
 
     public ChatMessage(ChatMessageDTO messageDTO) {
         this.room_id = messageDTO.getRoom_id();
         this.message = messageDTO.getMessage();
         this.type = messageDTO.getType();
-        this.sender = messageDTO.getSender();
-        this.created_time = LocalDate.now().toString();
+        this.member_id = messageDTO.getSender();
+        this.created_time = LocalDateTime.now();
     }
 }
