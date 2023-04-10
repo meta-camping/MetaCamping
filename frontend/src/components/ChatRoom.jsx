@@ -18,7 +18,7 @@ useEffect(() => {
     const socket = new SockJS('http://localhost:8080/ws-stomp');
     const stompClient = Stomp.over(socket);
 
-    if (username) { // username이 입력되면 stomp.connect 호출
+    if (username) { // username이 입력되면 stomp.connect 호출. 회원 정보 추가 시 유저 확인으로 변경
       stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
@@ -56,11 +56,8 @@ stompClient.send(publishUrl, {}, JSON.stringify({
 setNewMessage('');
 };
 
-
-
 return (
 <div>
-
 <h1>Chat Room {room_id}</h1>
 <div>
 {messages.map((msg, idx) => (
