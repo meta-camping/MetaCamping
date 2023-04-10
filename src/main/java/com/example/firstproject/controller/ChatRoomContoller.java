@@ -31,7 +31,6 @@ public class ChatRoomContoller {
 
     // 채팅방 생성
     @PostMapping("/create")
-
     public ChatRoom createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
         return chatRoomService.createRoom(chatRoomRequestDTO);
     }
@@ -48,4 +47,6 @@ public class ChatRoomContoller {
         }
         return ResponseEntity.ok(chatRoomResponseDTO);
     }
+
+
     }
