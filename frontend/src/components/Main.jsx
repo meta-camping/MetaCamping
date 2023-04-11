@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import Map from './Map';
-import SelectMap from './SelectMap';
 import SearchData from "./SearchData";
 function Main() {
     return (

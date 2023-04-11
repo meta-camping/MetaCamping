@@ -1,9 +1,14 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import InfoModal from "./InfoModal";
 
 function SearchData() {
     const [camping, setCamping] = useState([]);
     const [city, setCity] = useState("강원도");
+
+    const [modalHandle,setModalHandle] = useState(false);
+    const [selectedInfo, setSelectedInfo] = useState({location:'', position:''});
+
 
     const handleSelectCity = (e) => {
         setCity(e.target.value);
@@ -24,6 +29,12 @@ function SearchData() {
                 setCamping(response.data)
             }).catch(error => console.log(error))
     }
+
+    const openModal = (campingName, campingAddress, campingCoordinateX, campingCoordinateY) => {
+        setSelectedInfo({campingName: campingName, campingAddress: campingAddress,
+            campingCoordinateX: campingCoordinateX, campingCoordinateY: campingCoordinateY});
+        setModalHandle(true);
+    };
 
     return (
         <div style={{flexDirection: "row", marginLeft: "100px"}}>
@@ -76,8 +87,8 @@ function SearchData() {
                         <tbody key={prop.id}>
                         <tr>
                             <td>{prop.num}</td>
-                            <td>{prop.address}</td>
-                            <td>{prop.name}</td>
+                            <td><a onClick = {() => openModal(prop.name, prop.address, prop.wgs84_x, prop.wgs84_y)}>{prop.address}</a></td>
+                            <td><a onClick = {() => openModal(prop.name, prop.address, prop.wgs84_x, prop.wgs84_y)}>{prop.name}</a></td>
                             <td>{prop.wgs84_x}</td>
                             <td>{prop.wgs84_y}</td>
                         </tr>
@@ -85,7 +96,11 @@ function SearchData() {
                     )
                 })}
             </table>
-        </div>
+            {
+                modalHandle && <InfoModal info={selectedInfo} show={modalHandle} handleClose={() => setModalHandle(false)} />
+
+            }
+            </div>
     )
 }
 export default SearchData;
