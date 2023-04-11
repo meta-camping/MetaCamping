@@ -4,8 +4,7 @@ RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY package.json /usr/src/app/package.json
-RUN npm install  --force
-# force로 설정한 이유 : react 버전 18 로 처리를 해야하는데, 문제가 발생하여 강제처리를 하기 위해서
+RUN npm install
 # 소스를 작업폴더로 복사하고 빌드
 COPY . /usr/src/app
 RUN npm run build
