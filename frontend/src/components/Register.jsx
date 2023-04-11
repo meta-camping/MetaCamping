@@ -210,7 +210,7 @@ function Register() {
                 </div>
 
                 <button
-                    className="w-100 btn btn-lg btn-primary"
+                    className="w-100 btn loginBtn btn-lg btn-primary"
                     type="button"
                     onClick={checkAll}
                 >

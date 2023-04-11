@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BoardService from '../services/BoardService';
+import {Button} from "react-bootstrap";
 
 function ListBoardComponent() {
     const [boards, setBoards] = React.useState([]);
@@ -23,11 +24,11 @@ function ListBoardComponent() {
 
     return (
         <div>
-            <h2 className="text-center">Boards List</h2>
+            <h2 className="text-center" style={{marginBottom: "30px"}}>공지사항</h2>
             <div className ="row">
                 <table className="table table-striped table-bordered">
                     <thead>
-                    <tr>
+                    <tr style={{fontSize: "20px"}}>
                         <th>글 번호</th>
                         <th>제목 </th>
                         <th>작성일 </th>
@@ -49,7 +50,7 @@ function ListBoardComponent() {
                     </tbody>
                 </table>
             </div>
-            <button className = "btn btn-primary" onClick = {handleCreateBoard}>글 쓰기</button>
+            <Button style={{float: "right"}} onClick={handleCreateBoard}>글 쓰기</Button>
         </div>
     );
 }
