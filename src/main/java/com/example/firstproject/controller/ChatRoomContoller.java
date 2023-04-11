@@ -34,9 +34,14 @@ public class ChatRoomContoller {
 
     // 채팅방 생성
     @PostMapping("/create")
+<<<<<<< HEAD
     public ResponseEntity<ChatRoom> createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
         chatRoomService.createRoom(chatRoomRequestDTO);
         return new ResponseEntity<ChatRoom>(HttpStatus.OK);
+=======
+    public ChatRoom createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
+        return chatRoomService.createRoom(chatRoomRequestDTO);
+>>>>>>> 5b38ca2db68537814b28a1547cbdb713040b6742
     }
 
     // 특정 채팅방 조회
@@ -53,6 +58,7 @@ public class ChatRoomContoller {
     }
 
 
+<<<<<<< HEAD
     @PostMapping("/room/user-check")
     public ResponseEntity<String> userInRoomCheck(ChatUserListDTO user) {
         boolean result = chatUserListRepository.existsByRoomIdAndMemberId(user);
@@ -63,5 +69,7 @@ public class ChatRoomContoller {
             // 위에 세가지 건너 뜀
             return ResponseEntity.ok("1");
         }
+=======
+>>>>>>> 5b38ca2db68537814b28a1547cbdb713040b6742
     }
 }
