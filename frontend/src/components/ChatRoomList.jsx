@@ -67,38 +67,32 @@ function ChatRoomList() {
         <>
 
     <div>
-    <div class="chatlist-title">
-        <strong>채팅방</strong>
-    <p> {chatRooms.length}개의 채팅방이 있습니다.</p>
-     <Button onClick={addChatRoom}>채팅방 생성</Button>
-    </div>
-    <div className="row">
-        <table className="table">
-            <thead>
-                <tr>
-                    <th> 캠핑장 </th>
-                    <th> 최근 채팅 시간 </th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    //map 함수를 이용해서 백엔드에서 받아온 posts의 데이터를 출력한다.
-                    chatRooms.map(
-                        chatRooms =>
-                    <tr key = {chatRooms.room_id} onClick={() => handleClick(chatRooms.room_id)}>
-                        <td>{chatRooms.room_name}</td>
-                        <td>{chatRooms.updated_time}</td>
-                        </tr>
-                    )
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class ="bt_wrap">
-           
-            <a href="/"> 홈으로 돌아가기 </a>
+        <h2 className="text-center" style={{marginBottom: "30px"}}>채팅방</h2>
+        <div className="row">
+            <table className="table table-striped table-bordered">
+                <thead>
+                    <tr style={{fontSize: "20px"}}>
+                        <th> 캠핑장 </th>
+                        <th> 최근 채팅 시간 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        //map 함수를 이용해서 백엔드에서 받아온 posts의 데이터를 출력한다.
+                        chatRooms.map(
+                            chatRooms =>
+                        <tr key = {chatRooms.room_id} onClick={() => handleClick(chatRooms.room_id)}>
+                            <td>{chatRooms.room_name}</td>
+                            <td>{chatRooms.updated_time}</td>
+                            </tr>
+                        )
+                    }
+                </tbody>
+            </table>
         </div>
-</div>
+        <span> {chatRooms.length}개의 채팅방이 있습니다.</span>
+        <Button style={{float: "right"}} onClick={addChatRoom}>채팅방 생성</Button>
+    </div>
 
 
 

@@ -14,14 +14,17 @@ class HeaderComponent extends Component {
             <div className="container">
                 <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
 
-                    <div className="main_title"> <img src={camping} alt="logo" /><span style={{fontSize: "40px" ,marginLeft: "20px", lineHeight: "40px"}}>Meta Camping</span></div>
+                    <div className="main_title">
+                        <a href="/" className="nav-link px-2" style={{fontSize: "40px", lineHeight: "40px"}}>
+                            <img src={camping} alt="logo" />
+                            <span style={{marginLeft: "20px"}}>Meta Camping</span>
+                        </a>
+                    </div>
 
                     <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                         <li><a href="/" className="nav-link px-2 link-secondary" style={{fontSize: "20px"}}>Home</a></li>
                         <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Profile</a></li>
-                        <li><a href="http://localhost:3000/chat/list" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
-                        <li><a href="http://localhost:3000/board" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Notice</a></li>
-                        <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
+                        <li><a href="/chat/list" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
                         <li><a href="/board" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Notice</a></li>
                         <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>About</a></li>
                     </ul>
