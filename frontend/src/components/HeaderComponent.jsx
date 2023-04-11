@@ -19,9 +19,7 @@ class HeaderComponent extends Component {
                     <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                         <li><a href="/" className="nav-link px-2 link-secondary" style={{fontSize: "20px"}}>Home</a></li>
                         <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Profile</a></li>
-                        <li><a href="http://localhost:3000/chat/list" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
-                        <li><a href="http://localhost:3000/board" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Notice</a></li>
-                        <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
+                        <li><a href="chat/list" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Chatting</a></li>
                         <li><a href="/board" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>Notice</a></li>
                         <li><a href="#" className="nav-link px-2 link-dark" style={{fontSize: "20px"}}>About</a></li>
                     </ul>

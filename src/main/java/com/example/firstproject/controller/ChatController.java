@@ -9,7 +9,6 @@ import com.example.firstproject.service.ChatRoomService;
 import com.example.firstproject.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -25,6 +24,7 @@ import static com.example.firstproject.dto.ChatMessageDTO.MessageType.TALK;
 @CrossOrigin("*")
 @RequiredArgsConstructor
 public class ChatController {
+
     private final ChatUserListRepository chatUserListRepository;
 
     private final ChatRepository chatRepository;
