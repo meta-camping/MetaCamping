@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
+import axios from 'axios';
 import Stomp from 'stompjs';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function ChatRoom( {match} ) {
 const [stompClient, setStompClient] = useState(null);
@@ -12,13 +13,26 @@ const {room_id} = useParams();
 const subscribeUrl = `/topic/${room_id}`;
 const publishUrl = `/app/hello/${room_id}`;
 const username = "테스트유저" //멤버 병합 시 수정
+const navigate = useNavigate();
 
-
+//회원 중복 참여 확인
+const userCheck = () => {    
+  axios.post("http://localhost:8080/chat/room/user-check",{
+    room_id:room_id,
+    member_id:username
+  })
+  .then(res => {
+    console.log(res.data);
+  })
+  .catch(
+      error => console.error(error)
+      )    
+} 
 useEffect(() => {
     const socket = new SockJS('http://localhost:8080/ws-stomp');
     const stompClient = Stomp.over(socket);
 
-    if (username) { // username이 입력되면 stomp.connect 호출. 회원 정보 추가 시 유저 확인으로 변경
+    if (username.trim() !== '') { // username이 입력되면 stomp.connect 호출. 회원 정보 추가 시 유저 확인으로 변경
       stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
@@ -45,6 +59,13 @@ return () => {
 };
 }, [username, subscribeUrl]);
 
+//채팅방 나가기
+const exit = () => {
+  stompClient.unsubscribe(subscribeUrl);
+  setConnected(false);
+  setStompClient(null);
+  navigate('/chat/list');
+}
 
 
 const handleSend = () => {
@@ -70,6 +91,7 @@ return (
 <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
 <button onClick={handleSend}>Send</button>
 </div>
+<button onClick={exit}>채팅방 나가기</button>
 </div>
 );
 }
