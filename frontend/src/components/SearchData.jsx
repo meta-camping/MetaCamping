@@ -14,13 +14,13 @@ function SearchData() {
         setCity(e.target.value);
     };
     const showAllList = () => {
-        axios.get('api/camping/showAllList')
+        axios.get('http://localhost:8080/api/camping/showAllList')
             .then((response) => {
                 setCamping(response.data)
             }).catch(error => console.log(error))
     }
     const SelectCity = () => {
-        axios.get('/api/camping/showList', {
+        axios.get('http://localhost:8080/api/camping/showList', {
             params: {
                 city_name: city
             }
