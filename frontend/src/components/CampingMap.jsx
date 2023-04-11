@@ -3,7 +3,7 @@ import Weather from "./Weather";
 import Dust from "./Dust";
 const { kakao } = window;
 
-function Map() {
+function CampingMap({lan, lng}) {
     const [map, setMap] = useState('');
     const [location, setLocation] = useState({ latitude: '', longitude: ''}); // 위도, 경도
 
@@ -43,7 +43,7 @@ function Map() {
             level: 5
         };
         const map = new window.kakao.maps.Map(
-            document.getElementById("map"),
+            document.getElementById("map1"),
             mapOption
         );
         const marker = new window.kakao.maps.Marker({
@@ -52,23 +52,10 @@ function Map() {
         marker.setMap(map);
         setMap(map);
 
-        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
-        if (navigator.geolocation) {
-            // GeoLocation을 이용해서 현재 접속 위치를 얻어옵니다
-            navigator.geolocation.getCurrentPosition(function (position) {
-                setLocation({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                });
-            });
-        } else {
-            // geolocation을 사용할 수 없는 경우 초기 위치를 설정합니다.
-            setLocation({
-                latitude: 33.450701,
-                longitude: 126.570667
-            });
-            alert('geolocation을 사용할수 없어요..');
-        }
+        setLocation({
+            latitude: lan,
+            longitude: lng
+        });
     }, []);
 
     useEffect(() => {
@@ -103,15 +90,17 @@ function Map() {
     }, [location]);
 
     return (
-        <div>
-            <div id="map" style=
-                {{width: "350px", height: "200px", border: "1px solid rgb(207, 207, 207)", borderRadius: "30px", marginTop: "20px", marginBottom: "20px",
-                    boxShadow: "rgb(207, 207, 207) 0px 0px 13px", position: "relative", overflow: "hidden", left: "10px"}}>
+        <div style={{display: "flex"}}>
+            <div style={{ marginRight: "30px"}}>
+                <div id="map1" style=
+                    {{width: "350px", height: "250px", border: "1px solid rgb(207, 207, 207)", borderRadius: "30px" , marginBottom: "20px",
+                        boxShadow: "rgb(207, 207, 207) 0px 0px 13px", position: "relative", overflow: "hidden", left: "10px"}}>
+                </div>
+                <Dust sidoName={locationData.sidoName} stationName={locationData.stationName} umdName={locationData.umdName} sggName={locationData.sggName}/>
             </div>
             <Weather addressName={locationData.addressName} location={location}/>
-            <Dust sidoName={locationData.sidoName} stationName={locationData.stationName} umdName={locationData.umdName} sggName={locationData.sggName}/>
         </div>
     )
 }
 
-export default Map;
+export default CampingMap;

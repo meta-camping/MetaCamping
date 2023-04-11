@@ -1,6 +1,5 @@
 package com.example.firstproject.dto;
 
-
 public class ChatMessageResponseDTO {
 
     private String content;

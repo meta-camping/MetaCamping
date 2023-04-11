@@ -10,6 +10,7 @@ function ChatRoomList() {
     const navigate = useNavigate();
 
     const [chatRooms, setChatRooms] = useState([]);
+    const [camping,setCamping] = useState([]);
 
     useEffect(() => {    
         axios.get("http://localhost:8080/chat/list")
@@ -34,8 +35,22 @@ function ChatRoomList() {
      검색 : DB에서 캠핑장 정보확인 
      검색 내용 있으면 => 백단에서 DB로부터 캠핑장 이름, x좌표, y좌표 채팅방DTO에 설정하고 채킹방 생성 and 채팅방 입장
      검색 내용 없으면 => 캠핑장 정보가 없음을 알림
-     
      */
+
+     const SearchCamp = () => {
+
+        useEffect(() => {    
+            axios.get("http://localhost:8080/chat/is-camping")
+            .then(res => {
+              console.log(res.data);
+              setCamping(res.data);
+            })
+            .catch(
+                error => console.error(error)
+                )    
+          }, []);
+
+     }
        
         const addChatRoom = async () => {
             if(token == null){

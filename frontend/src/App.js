@@ -8,6 +8,8 @@ import ReadBoardComponent from "./components/ReadBoardComponent";
 import ChatRoomList from './components/ChatRoomList';
 import ChatRoom from "./components/ChatRoom"
 import Main from "./components/Main";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
               <Routes>
                   <Route path = "/" element = {<Main />} />
                   <Route path = "/board" element = {<ListBoardComponent />} />
+                  <Route path = "/register" element = {<Register />} />
+                  <Route path = "/login" element = {<Login />} />
                   <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
                   <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
                    <Route path = "/chat/list" element = {<ChatRoomList />} />

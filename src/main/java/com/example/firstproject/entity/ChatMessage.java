@@ -1,28 +1,19 @@
 package com.example.firstproject.entity;
 
 import com.example.firstproject.dto.ChatMessageDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
+
+@Data
+@RequiredArgsConstructor
 @Entity
 public class ChatMessage {
 
-    public enum MessageType {
-        ENTER, TALK, LEAVE
-    }
     @Id
     @GeneratedValue( strategy= GenerationType.AUTO)
     private long message_id;
@@ -39,7 +30,7 @@ public class ChatMessage {
     private String message;
     @CreatedDate
     @Column(name = "created_time")
-    @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created_time;
 
     public ChatMessage(ChatMessageDTO messageDTO) {
