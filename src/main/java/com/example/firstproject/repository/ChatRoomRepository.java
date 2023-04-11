@@ -11,7 +11,4 @@ import java.util.List;
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
 
-    @Query("SELECT cr.user_list FROM ChatRoom cr WHERE cr.room_id = :room_id")
-    List<ChatRoom> findUserListByChatRoomId(@Param("room_id") String room_id);
-
 }

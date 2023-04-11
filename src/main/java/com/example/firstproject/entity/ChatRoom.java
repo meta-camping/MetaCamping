@@ -2,7 +2,6 @@ package com.example.firstproject.entity;
 
 import com.example.firstproject.dto.ChatRoomRequestDTO;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,7 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.UUID;
 
 @Data
@@ -28,23 +27,14 @@ public class ChatRoom {
     private double location_x;
     @Column(name = "location_y")
     private double location_y;
-    @Column(name = "user_list")
-    private String user_list;
     @CreatedDate
     @Column(name = "created_time")
-<<<<<<< HEAD
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created_time;
-    @LastModifiedDate
-    @Column(name = "updated_time")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-=======
-    @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created_time;
+
     @LastModifiedDate
     @Column(name = "updated_time")
     @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
->>>>>>> 5b38ca2db68537814b28a1547cbdb713040b6742
     private LocalDateTime updated_time;
 /*
     @Transient //컬럼으로 구성하여 관리할 필요가 없는 데이터에 다는 어노테이션
