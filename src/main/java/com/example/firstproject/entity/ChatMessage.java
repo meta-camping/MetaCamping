@@ -4,10 +4,10 @@ import com.example.firstproject.dto.ChatMessageDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+
 
 @Data
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class ChatMessage {
     //채팅방 ID
     //보내는 사람
     @Column(name = "member_id")
-    private String sender;
+    private String member_id;
     //내용
     @Column(name = "message")
     private String message;
@@ -37,7 +37,7 @@ public class ChatMessage {
         this.room_id = messageDTO.getRoom_id();
         this.message = messageDTO.getMessage();
         this.type = messageDTO.getType();
-        this.sender = messageDTO.getSender();
+        this.member_id = messageDTO.getSender();
         this.created_time = LocalDateTime.now();
     }
 }

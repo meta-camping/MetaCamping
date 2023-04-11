@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class ChatService {
+
     private final ChatRepository chatRepository;
+
 
     public ChatMessage saveChat(ChatMessageDTO messageDTO) {
         ChatMessage chatMessage = new ChatMessage(messageDTO);

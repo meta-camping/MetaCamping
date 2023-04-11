@@ -8,7 +8,6 @@ import org.springframework.messaging.MessageHeaders;
 @Data
 public class ChatMessageDTO {
 
-
     public enum MessageType {
         ENTER, TALK, LEAVE
     }
