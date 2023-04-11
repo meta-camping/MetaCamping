@@ -2,8 +2,10 @@ package com.example.firstproject.controller;
 
 import com.example.firstproject.dto.ChatRoomRequestDTO;
 import com.example.firstproject.dto.ChatRoomResponseDTO;
+import com.example.firstproject.dto.ChatUserListDTO;
 import com.example.firstproject.entity.ChatRoom;
 import com.example.firstproject.repository.ChatRoomRepository;
+import com.example.firstproject.repository.ChatUserListRepository;
 import com.example.firstproject.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 public class ChatRoomContoller {
     private final ChatRoomService chatRoomService;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatUserListRepository chatUserListRepository;
 
     // 채팅 리스트 화면
     @GetMapping("/list")
@@ -31,9 +34,9 @@ public class ChatRoomContoller {
 
     // 채팅방 생성
     @PostMapping("/create")
-
-    public ChatRoom createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
-        return chatRoomService.createRoom(chatRoomRequestDTO);
+    public ResponseEntity<ChatRoom> createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
+        chatRoomService.createRoom(chatRoomRequestDTO);
+        return new ResponseEntity<ChatRoom>(HttpStatus.OK);
     }
 
     // 특정 채팅방 조회
@@ -48,4 +51,17 @@ public class ChatRoomContoller {
         }
         return ResponseEntity.ok(chatRoomResponseDTO);
     }
+
+
+    @PostMapping("/room/user-check")
+    public ResponseEntity<String> userInRoomCheck(ChatUserListDTO user) {
+        boolean result = chatUserListRepository.existsByRoomIdAndMemberId(user);
+        if (result == false) {
+            //채팅방 입장, 입장 푸쉬, 유저 리스트 추가
+            return ResponseEntity.ok("0");
+        } else {
+            // 위에 세가지 건너 뜀
+            return ResponseEntity.ok("1");
+        }
     }
+}

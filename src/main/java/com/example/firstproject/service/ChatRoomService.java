@@ -1,9 +1,12 @@
 package com.example.firstproject.service;
 
+import com.example.firstproject.dto.ChatMessageDTO;
 import com.example.firstproject.dto.ChatRoomRequestDTO;
 import com.example.firstproject.dto.ChatRoomResponseDTO;
 import com.example.firstproject.entity.ChatRoom;
+import com.example.firstproject.entity.ChatUserList;
 import com.example.firstproject.repository.ChatRoomRepository;
+import com.example.firstproject.repository.ChatUserListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
 
+    private final ChatUserListRepository chatUserListRepository;
 
     //채팅방 생성
     public ChatRoom createRoom(ChatRoomRequestDTO requestDto) {
@@ -53,6 +57,12 @@ public class ChatRoomService {
          //채팅방 내부 userList 조회
 
          */
+    }
+
+    //채팅방 유저 리스트에 참가자 추가
+    public ChatUserList insertUserList(ChatMessageDTO chatMessageDTO) {
+        ChatUserList chatUserList = new ChatUserList(chatMessageDTO);
+        return chatUserListRepository.save(chatUserList);
     }
 
 }

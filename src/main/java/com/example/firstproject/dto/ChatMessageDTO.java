@@ -6,7 +6,7 @@ import org.springframework.messaging.MessageHeaders;
 
 
 @Data
-public class ChatMessageDTO<T> implements Message<T> {
+public class ChatMessageDTO {
 
 
     public enum MessageType {
@@ -16,20 +16,6 @@ public class ChatMessageDTO<T> implements Message<T> {
     private MessageType type;
     private String sender;
     private String message;
-    private String created_time;
-    private T payload;
-    private T headers;
-
-
-    @Override
-    public T getPayload() {
-        return payload;
-    }
-
-    @Override
-    public MessageHeaders getHeaders() {
-        return (MessageHeaders) headers;
-    }
 
 }
 

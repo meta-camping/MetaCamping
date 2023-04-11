@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 public class ChatService {
     private final ChatRepository chatRepository;
 
-    public static ChatMessage saveChat(ChatMessageDTO messageDTO) {
+    public ChatMessage saveChat(ChatMessageDTO messageDTO) {
         ChatMessage chatMessage = new ChatMessage(messageDTO);
-        return chatMessage;
+        return chatRepository.save(chatMessage);
     }
 }
 
