@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import Stomp from 'stompjs';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 function ChatRoom( {match} ) {
+  const location = useLocation();
+  const userCheck = location.state?.userCheck;
 const [stompClient, setStompClient] = useState(null);
 const [messages, setMessages] = useState([]);
 const [newMessage, setNewMessage] = useState('');
@@ -14,25 +16,11 @@ const subscribeUrl = `/topic/${room_id}`;
 const publishUrl = `/app/hello/${room_id}`;
 const username = "테스트유저" //멤버 병합 시 수정
 const navigate = useNavigate();
-
-//회원 중복 참여 확인
-const userCheck = () => {    
-  axios.post("http://localhost:8080/chat/room/user-check",{
-    room_id:room_id,
-    member_id:username
-  })
-  .then(res => {
-    console.log(res.data);
-  })
-  .catch(
-      error => console.error(error)
-      )    
-} 
 useEffect(() => {
     const socket = new SockJS('http://localhost:8080/ws-stomp');
     const stompClient = Stomp.over(socket);
 
-    if (username.trim() !== '') { // username이 입력되면 stomp.connect 호출. 회원 정보 추가 시 유저 확인으로 변경
+    if (username.trim() !== '' && userCheck === 1) { // username이 입력되면 stomp.connect 호출. 회원 정보 추가 시 JWT 확인으로 변경
       stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
@@ -43,12 +31,13 @@ useEffect(() => {
           room_id: room_id,
           type: 'ENTER',
           sender: username,
-          message: newMessage
+          message: '입장'
         }));
         setStompClient(stompClient);
       });
+    }else if(username.trim() !== '' && userCheck === 2){
+      setConnected(true);
     }
-
 
 return () => {
   if (stompClient !== null) {
@@ -67,7 +56,6 @@ const exit = () => {
   navigate('/chat/list');
 }
 
-
 const handleSend = () => {
 stompClient.send(publishUrl, {}, JSON.stringify({ 
   room_id: room_id,
@@ -83,7 +71,8 @@ return (
 <div>
 {messages.map((msg, idx) => (
 <div key={idx}>
-<strong>{msg.content}</strong>
+<strong>{msg.send_time} {msg.sender} {msg.content} </strong>
+
 </div>
 ))}
 </div>
