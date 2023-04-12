@@ -1,32 +1,32 @@
+// 사용자가 로그인한 후, 해당 사용자가 가입한 채팅방 리스트를 가져옵니다.
 import React, { useState, useEffect } from 'react';
+import SockJS from 'sockjs-client';
 import axios from 'axios';
+import Stomp from 'stompjs';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import ChatRoom from './ChatRoom';
 
-const ChatRoomDetail = ({ match }) => {
-  const [room, setRoom] = useState(null);
+const stompClient = ChatRoom.stompClient
+const [messages,setMessages] = ChatRoom.messages;
 
-  useEffect(() => {
-    const fetchRoom = async () => {
-      const response = await axios.get(`http://localhost:8080/chat/room/${match.params.room_id}`,{headers: {
-        'Accept': 'application/json'
+axios.get("http://localhost:8080/chat/room/user-list")
+  .then(res => {
+    const userRooms = res.data;
+    
+    // 이전에 해당 사용자가 구독한 채팅방 정보를 불러옵니다.
+    const subscribedRooms = JSON.parse(localStorage.getItem('subscribedRooms')) || [];
+
+    // 이전에 구독한 채팅방을 다시 구독 = 화면이 언마운트 되거나 로그인이 풀려도 구독 유지할 수 있게 됨
+    userRooms.forEach(room => {
+      if (subscribedRooms.includes(room.room_id)) {
+        const subscribeUrl = `/topic/${room.room_id}`;
+        stompClient.subscribe(subscribeUrl, function (greeting) {
+          setMessages((messages) => [...messages, JSON.parse(greeting.body)]);
+        });
       }
     });
-      setRoom(response.data);
-      console.log(response.data);
-    };
 
-    fetchRoom();
-  }, [match.params.room_id]);
-
-  if (!room) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <h2>{room.room_name}</h2>
-      {/* 채팅방 화면 구성을 여기에 추가하십시오 */}
-    </div>
+  })
+  .catch(
+      error => console.error(error)
   );
-};
-
-export default ChatRoomDetail;
