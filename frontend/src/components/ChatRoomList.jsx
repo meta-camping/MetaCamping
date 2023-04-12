@@ -43,7 +43,7 @@ function ChatRoomList() {
           .then(res => {
             console.log(res.data);
             SetUserCheck(res.data);
-            navigate(`/chat/room/${room_id}`, { userCheck: userCheck });
+            navigate(`/chat/room/${room_id}`, { userCheck });
           })
           .catch(error => console.error(error));
       };
