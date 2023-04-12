@@ -75,18 +75,20 @@ return (
 <div>
   <h1>Chat Room {room_id}</h1>
   <div>
-    {messages.map((msg, idx) => (
-      <div key={idx} className={`chat-bubble ${msg.sender === username ? 'self' : ''}`}>
-        <span><strong>{msg.sender}</strong> | {msg.send_time}</span>
-        <p>{msg.content}</p>
-      </div>
-    ))}
-  </div>
-  <div>
-    <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-    <button onClick={handleSend}>Send</button>
-  </div>
-  <button onClick={exit}>채팅방 나가기</button>
+  {messages.map((msg, idx) => (
+    <div key={idx} className={`chat-bubble ${msg.sender === username ? 'self' : 'others'}`}>
+      <span><strong>{msg.sender}</strong> | {msg.send_time}</span>
+        <div className="bubble">
+          <span>{msg.content}</span>
+        </div>
+    </div>
+  ))}
+</div>
+<div className="chat-input">
+  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+  <button onClick={handleSend}>Send</button>
+</div>
+<button className="exit-button" onClick={exit}>채팅방 나가기</button>
 </div>
 );
 }
