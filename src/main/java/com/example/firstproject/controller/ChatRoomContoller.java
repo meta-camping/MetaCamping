@@ -52,16 +52,15 @@ public class ChatRoomContoller {
         return ResponseEntity.ok(chatRoomResponseDTO);
     }
 
-
+    //채팅방 기참여 여부 조회
     @PostMapping("/room/user-check")
-    public ResponseEntity<String> userInRoomCheck(ChatUserListDTO user) {
-        boolean result = chatUserListRepository.existsByRoomIdAndMemberId(user);
-        if (result == false) {
-            //채팅방 입장, 입장 푸쉬, 유저 리스트 추가
-            return ResponseEntity.ok("0");
-        } else {
-            // 위에 세가지 건너 뜀
-            return ResponseEntity.ok("1");
-        }
+    public ResponseEntity<Integer> userInRoomCheck(@RequestBody ChatUserListDTO user) {
+        Boolean result = chatRoomService.isUserInRoom(user);
+                if (result == false){
+                    return ResponseEntity.ok(1);
+                }
+                else {
+                        return ResponseEntity.ok(2);
+                    }
+                }
     }
-}
