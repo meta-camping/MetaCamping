@@ -16,8 +16,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.util.HtmlUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 import static com.example.firstproject.dto.ChatMessageDTO.MessageType.ENTER;
 import static com.example.firstproject.dto.ChatMessageDTO.MessageType.TALK;
+import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 
 @Controller
 @Log4j2
@@ -39,16 +44,16 @@ public class ChatController {
         if (message.getType() == ENTER) {
             chatService.saveChat(message);
             chatRoomService.insertUserList(message);
-            return new ChatMessageResponseDTO(HtmlUtils.htmlEscape(message.getSender()) + "님이 입장했습니다.");
+            return new ChatMessageResponseDTO(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
+                    message.getSender(), "님이 입장했습니다.");
         }
         if (message.getType() == TALK) {
             chatService.saveChat(message);
-            return new ChatMessageResponseDTO(HtmlUtils.htmlEscape(message.getSender()) + ":" + message.getMessage());
+            return new ChatMessageResponseDTO(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
+                    message.getSender(), message.getMessage());
         }
         return null;
     }
-
-
 
 }
 

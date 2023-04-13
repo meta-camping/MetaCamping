@@ -3,14 +3,17 @@ package com.example.firstproject.service;
 import com.example.firstproject.dto.ChatMessageDTO;
 import com.example.firstproject.dto.ChatRoomRequestDTO;
 import com.example.firstproject.dto.ChatRoomResponseDTO;
+import com.example.firstproject.dto.ChatUserListDTO;
 import com.example.firstproject.entity.ChatRoom;
 import com.example.firstproject.entity.ChatUserList;
 import com.example.firstproject.repository.ChatRoomRepository;
 import com.example.firstproject.repository.ChatUserListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,9 +63,17 @@ public class ChatRoomService {
     }
 
     //채팅방 유저 리스트에 참가자 추가
-    public ChatUserList insertUserList(ChatMessageDTO chatMessageDTO) {
-        ChatUserList chatUserList = new ChatUserList(chatMessageDTO);
-        return chatUserListRepository.save(chatUserList);
+    public ChatUserList insertUserList(ChatMessageDTO chatMessage) {
+            ChatUserList chatUserList = new ChatUserList(
+                    chatMessage.getSender(), chatMessage.getRoom_id(), LocalDateTime.now());
+            return chatUserListRepository.save(chatUserList);
     }
 
+    //유저 기참여여부 확인
+    public boolean isUserInRoom(ChatUserListDTO userListCheckDTO) {
+            // false = 채팅방 입장, 입장 푸쉬, 유저 리스트 추가
+            // true =위에 세가지 건너 뜀
+        return chatUserListRepository.isUserInRoom(userListCheckDTO);
+
+    }
 }

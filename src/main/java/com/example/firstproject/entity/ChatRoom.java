@@ -29,12 +29,11 @@ public class ChatRoom {
     private double location_y;
     @CreatedDate
     @Column(name = "created_time")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created_time;
 
     @LastModifiedDate
     @Column(name = "updated_time")
-    @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updated_time;
 /*
     @Transient //컬럼으로 구성하여 관리할 필요가 없는 데이터에 다는 어노테이션

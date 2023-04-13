@@ -6,17 +6,21 @@ import '../styles/ChatRoom.css'
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 function ChatRoom( {match} ) {
-const location = useLocation();
-const userCheck = location.state?.userCheck;
+
 const [stompClient, setStompClient] = useState(null);
 const [messages, setMessages] = useState([]);
 const [newMessage, setNewMessage] = useState('');
 const [connected, setConnected] = useState(false);
-const {room_id} = useParams();
 const subscribeUrl = `/topic/${room_id}`;
 const publishUrl = `/app/hello/${room_id}`;
 const username = "테스트유저" //멤버 병합 시 수정
 const navigate = useNavigate();
+
+//list에서 넘어오는 데이터
+const {room_id} = useParams();
+const location = useLocation();
+const userCheck = location.state?.userCheck;
+
 useEffect(() => {
 
     const socket = new SockJS('http://localhost:8080/ws-stomp');
