@@ -206,15 +206,38 @@ public class APIController {
     //지역이름으로 데이터 찾아서 리턴
     @GetMapping("/dust/searchStation")
     public List<Dust> showByStationName(@RequestParam String station_name) {
+        log.info("@DB에서 찾을 측정소명: " + station_name);
         List<Dust> EntityList = dustRepository.findAllByStationName(station_name);
+
+        log.info("#DB에서 찾은 측정소: " + EntityList);
         return EntityList;
+    }
+
+    //현재 위치에서 가까운 근처 측정소 조회
+    @GetMapping("/dust/search/measuringstation")
+    public String searchMeasuringStation(@RequestParam String tmX, @RequestParam String tmY) throws Exception {
+        log.info("근처 측정소 조회할 tm좌표: " + tmX + "/" + tmY);
+        String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList"
+                + "?serviceKey=" + serviceKey
+                + "&returnType=json"            // JSON, XML
+                + "&tmX=" + tmX             // 페이지 ROWS
+                + "&tmY=" + tmY;             // 페이지 번호
+        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+
+        JSONObject jsonObj = new JSONObject();
+
+        jsonObj.put("result", resultMap);
+
+        log.info("근처 측정소 조회: " + jsonObj.getJSONObject("result"));
+
+        return jsonObj.toString();
     }
 
     //읍면동을 가지고 TM 기준좌표 조회
     @GetMapping("/dust/convert")
     public String convertToTM(@RequestParam String station_name) throws Exception {
         String stationName = URLEncoder.encode(station_name);
-
+        log.info("TM 좌표를 구할 station_name: " + station_name);
         String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getTMStdrCrdnt"
                 + "?serviceKey=" + serviceKey
                 + "&returnType=json"            // JSON, XML
@@ -227,37 +250,8 @@ public class APIController {
         JSONObject jsonObj = new JSONObject();
 
         jsonObj.put("result", resultMap);
-
+        log.info("변환된 tm 좌표: " + jsonObj.getJSONObject("result"));
         return jsonObj.toString();
-    }
-
-    //현재 위치에서 가까운 근처 측정소 조회
-    @GetMapping("/dust/search/measuringstation")
-    public String searchMeasuringStation(@RequestParam String tmX, @RequestParam String tmY) throws Exception {
-
-        String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList"
-                + "?serviceKey=" + serviceKey
-                + "&returnType=json"            // JSON, XML
-                + "&tmX=" + tmX             // 페이지 ROWS
-                + "&tmY=" + tmY;             // 페이지 번호
-        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
-
-        JSONObject jsonObj = new JSONObject();
-
-        jsonObj.put("result", resultMap);
-
-        return jsonObj.toString();
-//        try {
-//            URL addr = new URL(url);
-//
-//            HttpURLConnection con = (HttpURLConnection)addr.openConnection();
-//
-//            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-//
-//            String line = br.readLine();
-//        }catch(Exception e){
-//            System.out.println(e.getLocalizedMessage());
-//        }
     }
 
     public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {

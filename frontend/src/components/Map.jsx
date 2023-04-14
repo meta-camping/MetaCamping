@@ -79,24 +79,10 @@ function Map() {
             if (status === window.kakao.maps.services.Status.OK) {
                 if (result.length > 0) {
                     setLocationData(prevState => ({...prevState, addressName: result[1].address_name}))
-
-                    if(result[0].region_3depth_name==="송도동"){
-                        setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
-                        setLocationData(prevState => ({...prevState, stationName: "송도"})) //송도동으로 검색하면 포항 송도동만 나와서 예외처리
-
-                        if(result[1].region_3depth_name==="송도4동"||result[1].region_3depth_name==="송도5동"){ //송도4동, 송도5동은 근처 측정소 api 파라미터로 줄 수 없음
-                            setLocationData(prevState => ({...prevState, umdName: "송도2동"}))
-                            setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
-                        } else {
-                            setLocationData(prevState => ({...prevState, umdName: result[1].region_3depth_name})) //송도1동, 송도2동, 송도3동
-                            setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
-                        }
-                    }else {
-                        setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
-                        setLocationData(prevState => ({...prevState, stationName: result[0].region_3depth_name}))
-                        setLocationData(prevState => ({...prevState, umdName: result[0].region_3depth_name}))
-                        setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
-                    }
+                    setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
+                    setLocationData(prevState => ({...prevState, stationName: result[0].region_3depth_name}))
+                    setLocationData(prevState => ({...prevState, umdName: result[0].region_3depth_name}))
+                    setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
                 }
             }
         });

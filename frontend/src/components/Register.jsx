@@ -30,24 +30,23 @@ function Register() {
         setInputEmail(e.target.value);
     };
 
+    const axiosBody = {
+        username:inputId,
+        password:inputPw
+    }
 
     // register 버튼 클릭 이벤트
     const RegisterCheck = () => {
         //axios.post('url','body 자리', callback함수)
         //요청 url에서 bodyparser 설정 후 req.body로 읽을 수 있음
         axios
-            .post("/join", null, {
-                params: {
-                    username: inputId,
-                    password: inputPw,
-                    // nickname: inputNn,
-                    email: inputEmail
-                }
-            })
+            .post("/api/v1/join", axiosBody)
             .then((res) => {
-                if(res.data==="Register Successed"){
+                if(res.data==="회원가입 완료"){
                     alert("회원가입 성공");
                     document.location.href = "/";
+                } else if (res.data==="이미 가입된 회원입니다."){
+                    alert("이미 가입된 회원입니다.");
                 }
             })
             .catch();
@@ -59,9 +58,9 @@ function Register() {
         // if (!CheckNickname(inputNn)) {
         //     return false;
         // }
-        if (!CheckEmail(inputEmail)) {
-            return false;
-        }
+        // if (!CheckEmail(inputEmail)) {
+        //     return false;
+        // }
         if (!CheckPassword(inputPw)) {
             return false;
         }
@@ -168,18 +167,18 @@ function Register() {
                 {/*    />*/}
                 {/*    <label for="floatingPassword">Nickname</label>*/}
                 {/*</div>*/}
-                <div className="form-floating">
-                    <input
-                        type="email"
-                        name="input_email"
-                        value={inputEmail}
-                        className="form-control"
-                        placeholder="Email"
-                        onChange={handleInputEmail}
-                        required
-                    />
-                    <label>Email</label>
-                </div>
+                {/*<div className="form-floating">*/}
+                {/*    <input*/}
+                {/*        type="email"*/}
+                {/*        name="input_email"*/}
+                {/*        value={inputEmail}*/}
+                {/*        className="form-control"*/}
+                {/*        placeholder="Email"*/}
+                {/*        onChange={handleInputEmail}*/}
+                {/*        required*/}
+                {/*    />*/}
+                {/*    <label>Email</label>*/}
+                {/*</div>*/}
                 <div className="form-floating">
                     <input
                         type="password"
