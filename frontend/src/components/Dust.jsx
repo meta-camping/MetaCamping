@@ -83,10 +83,18 @@ function Dust(props) {
                     alert("데이터가 없습니다.")
                 } else {
                     for(let i=0; i<response.data.result.response.body.items.length; i++){
-                        if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].sggName === props.sggName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
-                            setTmx(response.data.result.response.body.items[i].tmX);
-                            setTmy(response.data.result.response.body.items[i].tmY);
-                            console.log("tmX,tmY 좌표변환 api 성공")
+                        if(props.sggName==="") {
+                            if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
+                                setTmx(response.data.result.response.body.items[i].tmX);
+                                setTmy(response.data.result.response.body.items[i].tmY);
+                                console.log("tmX,tmY 좌표변환 api 성공")
+                            }
+                        }else {
+                            if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].sggName === props.sggName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
+                                setTmx(response.data.result.response.body.items[i].tmX);
+                                setTmy(response.data.result.response.body.items[i].tmY);
+                                console.log("tmX,tmY 좌표변환 api 성공")
+                            }
                         }
                     }
                 }

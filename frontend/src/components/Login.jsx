@@ -9,12 +9,12 @@ function Login() {
 
     const axiosConfig = {
         headers:{
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Authorization": "cos"
         }
     }
     const axiosBody = {
         username:inputId,
-        userpassword:inputPw
+        password:inputPw
     }
 
     // input data 의 변화가 있을 때마다 value 값을 변경해서 useState 해준다
@@ -31,10 +31,10 @@ function Login() {
         //axios.post('url','body 자리', callback함수)
         //요청 url에서 bodyparser 설정 후 req.body로 읽을 수 있음
         axios
-            .post("/dologin", qs.stringify(axiosBody), axiosConfig)
+            .post("/login", axiosBody, axiosConfig)
             .then((res) => {
-                console.log("login"+res.data);
-
+                alert("로그인 성공");
+                document.location.href = "/";
             })
             .catch();
     };

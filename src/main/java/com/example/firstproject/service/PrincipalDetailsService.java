@@ -1,10 +1,10 @@
-package com.example.firstproject.config.auth;
+package com.example.firstproject.service;
 
-
-import com.example.firstproject.entity.User;
-import com.example.firstproject.repository.UserRepository;
+import com.example.firstproject.config.auth.PrincipalDetails;
+import com.example.firstproject.entity.Member;
+import com.example.firstproject.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,19 +16,19 @@ import org.springframework.stereotype.Service;
 // 그때 넘어온 username 매개변수를 가지고 옴, username을 찾음
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class PrincipalDetailsService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final MemberRepository memberRepository;
 
     //Security Session내부에 Authentication이, Authentication 내부에 UserDetails(PrincipalDetails)가 들어감
     //함수 종료시 @AuthenticationPrincipal이 만들어짐
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("username25L = " + username);
-        User userEntity = userRepository.findByUsername(username);
-        if (userEntity != null) {
-            return new PrincipalDetails(userEntity);
-        }
-        return null;
+        System.out.println("PrincipalDetailsService : 진입");
+        Member member = memberRepository.findByUsername(username);
+
+        // session.setAttribute("loginUser", user);
+        return new PrincipalDetails(member);
     }
 }
