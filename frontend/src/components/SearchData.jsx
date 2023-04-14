@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import InfoModal from "./InfoModal";
 import {Button} from 'react-bootstrap';
-import search from "../images/search.png"
-import locationImage from "../images/location.gif";
 
 function SearchData() {
     const [camping, setCamping] = useState([]);
@@ -45,7 +43,6 @@ function SearchData() {
                 <div className="mb-3 search" style={{display: "flex"}}>
                     <Button type="button" className="mb-3 search" onClick={showAllList} style={{fontSize:"20px",width: "200px",marginBottom: "20px"}}>
                         전체 캠핑장 조회
-                        <img src={search} alt="검색" width="25" height="25" style={{float: "right"}}/>
                     </Button><br/>
                     <div style={{display: "flex", marginLeft: "280px"}}>
                         <table>
@@ -75,7 +72,6 @@ function SearchData() {
                         </table>
                         <Button type="button" onClick={SelectCity} style={{fontSize:"20px",width: "170px",marginLeft: "20px", marginBottom: "20px"}}>
                             시별로 조회
-                            <img src={search} alt="검색"width="25" height="25" style={{float: "right"}}/>
                         </Button>
                     </div>
                 </div>

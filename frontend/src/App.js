@@ -25,7 +25,7 @@ function App() {
                   <Route path = "/login" element = {<Login />} />
                   <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
                   <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
-                   <Route path = "/chat/list" element = {<ChatRoomList />} />
+                  <Route path = "/chat/list" element = {<ChatRoomList />} />
                   <Route path = "/chat/room/:room_id" element = {<ChatRoom />} />
               </Routes>
           </div>

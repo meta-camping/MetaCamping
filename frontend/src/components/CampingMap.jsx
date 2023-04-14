@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Weather from "./Weather";
 import Dust from "./Dust";
+import ApiService from "../services/ApiService";
 const { kakao } = window;
 
 function CampingMap({lan, lng}) {
@@ -65,25 +66,21 @@ function CampingMap({lan, lng}) {
         geocoder.coord2RegionCode(latlng.getLng(), latlng.getLat(), (result, status) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 if (result.length > 0) {
-                    setLocationData(prevState => ({...prevState, addressName: result[1].address_name}))
+                    const addressName = result[1].address_name;
+                    const sidoName = result[0].region_1depth_name;
+                    const stationName = result[0].region_3depth_name;
+                    const umdName = result[0].region_3depth_name
+                    const sggName = result[0].region_2depth_name
 
-                    if(result[0].region_3depth_name==="송도동"){
-                        setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
-                        setLocationData(prevState => ({...prevState, stationName: "송도"})) //송도동으로 검색하면 포항 송도동만 나와서 예외처리
-
-                        if(result[1].region_3depth_name==="송도4동"||result[1].region_3depth_name==="송도5동"){ //송도4동, 송도5동은 근처 측정소 api 파라미터로 줄 수 없음
-                            setLocationData(prevState => ({...prevState, umdName: "송도2동"}))
-                            setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
-                        } else {
-                            setLocationData(prevState => ({...prevState, umdName: result[1].region_3depth_name})) //송도1동, 송도2동, 송도3동
-                            setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
-                        }
-                    }else {
-                        setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
-                        setLocationData(prevState => ({...prevState, stationName: result[0].region_3depth_name}))
-                        setLocationData(prevState => ({...prevState, umdName: result[0].region_3depth_name}))
-                        setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
+                    const locationData = {
+                        addressName: addressName,
+                        sidoName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sidoName,
+                        stationName: ApiService.AdressException(sidoName,stationName,umdName,sggName).stationName,
+                        umdName: ApiService.AdressException(sidoName,stationName,umdName,sggName).umdName,
+                        sggName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sggName
                     }
+
+                    setLocationData(prevState => ({ ...prevState, ...locationData }));
                 }
             }
         });
