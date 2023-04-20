@@ -1,12 +1,14 @@
-import React from 'react';
-import {Modal, Button, Badge} from "react-bootstrap";
+import React, {useState, useEffect} from 'react';
+import {Modal, Button} from "react-bootstrap";
 import CampingMap from './CampingMap';
 
+
 function InfoModal({ info, show, handleClose }) {
+
     return (
         <Modal show={show} onHide={handleClose} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header closeButton>
-                <Modal.Title style={{marginLeft: "Auto"}}>
+            <Modal.Header closeButton style={{backgroundColor: "#0D6EFE",color: "#FFFFFF"}}>
+                <Modal.Title style={{fontWeight: "bold",marginLeft: "Auto"}}>
                         {info.campingName}
                 </Modal.Title>
             </Modal.Header>

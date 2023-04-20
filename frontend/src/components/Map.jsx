@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Weather from "./Weather";
 import Dust from "./Dust";
+import ApiService from "../services/ApiService";
 const { kakao } = window;
 
 function Map() {
@@ -78,11 +79,21 @@ function Map() {
         geocoder.coord2RegionCode(latlng.getLng(), latlng.getLat(), (result, status) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 if (result.length > 0) {
-                    setLocationData(prevState => ({...prevState, addressName: result[1].address_name}))
-                    setLocationData(prevState => ({...prevState, sidoName: result[0].region_1depth_name}))
-                    setLocationData(prevState => ({...prevState, stationName: result[0].region_3depth_name}))
-                    setLocationData(prevState => ({...prevState, umdName: result[0].region_3depth_name}))
-                    setLocationData(prevState => ({...prevState, sggName: result[0].region_2depth_name}))
+                    const addressName = result[1].address_name;
+                    const sidoName = result[0].region_1depth_name;
+                    const stationName = result[0].region_3depth_name;
+                    const umdName = result[0].region_3depth_name
+                    const sggName = result[0].region_2depth_name
+
+                    const locationData = {
+                        addressName: addressName,
+                        sidoName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sidoName,
+                        stationName: ApiService.AdressException(sidoName,stationName,umdName,sggName).stationName,
+                        umdName: ApiService.AdressException(sidoName,stationName,umdName,sggName).umdName,
+                        sggName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sggName
+                    }
+
+                    setLocationData(prevState => ({ ...prevState, ...locationData }));
                 }
             }
         });
