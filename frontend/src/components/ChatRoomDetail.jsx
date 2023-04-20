@@ -9,7 +9,7 @@ import ChatRoom from './ChatRoom';
 const stompClient = ChatRoom.stompClient
 const [messages,setMessages] = ChatRoom.messages;
 
-axios.get("http://localhost:8080/chat/room/user-list")
+axios.get("/chat/room/user-list")
   .then(res => {
     const userRooms = res.data;
     

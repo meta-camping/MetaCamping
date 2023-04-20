@@ -1,10 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BoardService from '../services/BoardService';
-import {Button} from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../recoil/token";
 
 function ListBoardComponent() {
     const [boards, setBoards] = React.useState([]);
+    const [token,setToken] = useRecoilState(tokenState);
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         BoardService.getBoards().then((res) => {
@@ -12,10 +17,16 @@ function ListBoardComponent() {
         });
     }, []);
 
-    const navigate = useNavigate();
-
     const handleCreateBoard = () => {
-        navigate('/create-board/_create');
+        axios.get("/api/v1/admin", {
+            headers:{
+                Authorization: token
+            }
+        })
+            .then((res) => {
+                navigate('/create-board/_create');
+            })
+            .catch(error => alert("관리자만 사용 가능합니다"))
     };
 
     const handleReadBoard = (postId) => {

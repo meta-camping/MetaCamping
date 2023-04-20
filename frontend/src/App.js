@@ -10,27 +10,32 @@ import ChatRoom from "./components/ChatRoom"
 import Main from "./components/Main";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import Profile from "./components/Profile";
+import { RecoilRoot } from "recoil";
 
 
 function App() {
   return (
       <div>
-          <Router>
-          <HeaderComponent/>
-          <div className="container">
-              <Routes>
-                  <Route path = "/" element = {<Main />} />
-                  <Route path = "/board" element = {<ListBoardComponent />} />
-                  <Route path = "/register" element = {<Register />} />
-                  <Route path = "/login" element = {<Login />} />
-                  <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
-                  <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
-                  <Route path = "/chat/list" element = {<ChatRoomList />} />
-                  <Route path = "/chat/room/:room_id" element = {<ChatRoom />} />
-              </Routes>
-          </div>
-          <FooterComponent/>
-        </Router>
+          <RecoilRoot>
+              <Router>
+              <HeaderComponent/>
+              <div className="container">
+                  <Routes>
+                      <Route path = "/" element = {<Main />} />
+                      <Route path = "/profile" element = {<Profile />} />
+                      <Route path = "/board" element = {<ListBoardComponent />} />
+                      <Route path = "/register" element = {<Register />} />
+                      <Route path = "/login" element = {<Login />} />
+                      <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
+                      <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
+                      <Route path = "/chat/list" element = {<ChatRoomList />} />
+                      <Route path = "/chat/room/:room_id" element = {<ChatRoom />} />
+                  </Routes>
+              </div>
+              <FooterComponent/>
+              </Router>
+          </RecoilRoot>
       </div>
   );
 }

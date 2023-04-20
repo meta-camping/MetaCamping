@@ -40,6 +40,14 @@ class ApiService {
             }
         })
     }
+    calculationDistance(currentX,currentY) {
+        return axios.get('/api/camping/calculate', {
+            params: {
+                latitude: currentX,
+                longitude: currentY,
+            }
+        })
+    }
     dfs_xy_conv(code, v1, v2) {
         const DEGRAD = Math.PI / 180.0;
         const RADDEG = 180.0 / Math.PI;

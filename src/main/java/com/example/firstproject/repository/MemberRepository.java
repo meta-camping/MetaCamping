@@ -10,4 +10,5 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     //findBy(규칙) -> Username 문법
     //select * from user where username = 1?(이게 username)
     public Member findByUsername(String username);//jpa query method
+    public Member findByNickname(String nickname);
 }

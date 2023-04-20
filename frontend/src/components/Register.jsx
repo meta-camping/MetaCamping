@@ -7,7 +7,6 @@ function Register() {
     const [inputPw, setInputPw] = useState("");
     const [inputPw2, setInputPw2] = useState("");
     const [inputNn, setInputNn] = useState("");
-    const [inputEmail, setInputEmail] = useState("");
 
     // input data 의 변화가 있을 때마다 value 값을 변경해서 useState 해준다
     const handleInputId = (e) => {
@@ -26,13 +25,10 @@ function Register() {
         setInputNn(e.target.value);
     };
 
-    const handleInputEmail = (e) => {
-        setInputEmail(e.target.value);
-    };
-
     const axiosBody = {
         username:inputId,
-        password:inputPw
+        password:inputPw,
+        nickname:inputNn
     }
 
     // register 버튼 클릭 이벤트
@@ -49,18 +45,15 @@ function Register() {
                     alert("이미 가입된 회원입니다.");
                 }
             })
-            .catch();
+            .catch(error => alert("회원가입 실패"))
     };
     function checkAll() {
         if (!CheckUserId(inputId)) {
             return false;
         }
-        // if (!CheckNickname(inputNn)) {
-        //     return false;
-        // }
-        // if (!CheckEmail(inputEmail)) {
-        //     return false;
-        // }
+        if (!CheckNickname(inputNn)) {
+            return false;
+        }
         if (!CheckPassword(inputPw)) {
             return false;
         }
@@ -107,13 +100,6 @@ function Register() {
         return true; //확인이 완료되었을 때
     }
 
-    function CheckEmail(Email) {
-        //비밀번호가 입력되었는지 확인하기
-        if (!checkExistData(Email, "이메일을")) return false;
-
-        return true; //확인이 완료되었을 때
-    }
-
     function CheckPassword(password) {
         //비밀번호가 입력되었는지 확인하기
         if (!checkExistData(password, "비밀번호를")) return false;
@@ -153,32 +139,20 @@ function Register() {
                     />
                     <label>ID</label>
                 </div>
-                {/*<div className="form-floating">*/}
-                {/*    <input*/}
-                {/*        type="text"*/}
-                {/*        name="input_Nn"*/}
-                {/*        value={inputNn}*/}
-                {/*        className="form-control"*/}
-                {/*        placeholder="Nickname"*/}
-                {/*        onChange={handleInputNn}*/}
-                {/*        minLength={2}*/}
-                {/*        maxLength={6}*/}
-                {/*        required*/}
-                {/*    />*/}
-                {/*    <label for="floatingPassword">Nickname</label>*/}
-                {/*</div>*/}
-                {/*<div className="form-floating">*/}
-                {/*    <input*/}
-                {/*        type="email"*/}
-                {/*        name="input_email"*/}
-                {/*        value={inputEmail}*/}
-                {/*        className="form-control"*/}
-                {/*        placeholder="Email"*/}
-                {/*        onChange={handleInputEmail}*/}
-                {/*        required*/}
-                {/*    />*/}
-                {/*    <label>Email</label>*/}
-                {/*</div>*/}
+                <div className="form-floating">
+                    <input
+                        type="text"
+                        name="input_Nn"
+                        value={inputNn}
+                        className="form-control"
+                        placeholder="Nickname"
+                        onChange={handleInputNn}
+                        minLength={2}
+                        maxLength={6}
+                        required
+                    />
+                    <label for="floatingPassword">Nickname</label>
+                </div>
                 <div className="form-floating">
                     <input
                         type="password"
