@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import InfoModal from "./InfoModal";
 import {Button} from 'react-bootstrap';
+import ApiService from "../services/ApiService";
 
 function SearchData() {
     const [camping, setCamping] = useState([]);
@@ -10,6 +11,7 @@ function SearchData() {
     const [modalHandle,setModalHandle] = useState(false);
     const [selectedInfo, setSelectedInfo] = useState({location:'', position:''});
 
+    const [isdistance, setIsdistance] = useState(false);
 
     const handleSelectCity = (e) => {
         setCity(e.target.value);
@@ -18,22 +20,35 @@ function SearchData() {
         axios.get('/api/camping/showAllList')
             .then((response) => {
                 setCamping(response.data)
-            }).catch(error => console.log(error))
+                setIsdistance(false);
+            }).catch(error => console.log("전체 캠핑장 조회 실패" + error))
     }
+
     const SelectCity = () => {
-        axios.get('http://localhost:8080/api/camping/showList', {
+
+        axios.get('api/camping/showList', {
             params: {
                 city_name: city
             }
         })
             .then((response) => {
                 setCamping(response.data)
-            }).catch(error => console.log(error))
+                setIsdistance(false);
+            }).catch(error => console.log("시별로 조회 실패 " + error))
     }
 
-    const openModal = (campingName, campingAddress, campingCoordinateX, campingCoordinateY) => {
-        setSelectedInfo({campingName: campingName, campingAddress: campingAddress,
-            campingCoordinateX: campingCoordinateX, campingCoordinateY: campingCoordinateY});
+    const showDistanceList = () => {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            ApiService.calculationDistance(position.coords.latitude, position.coords.longitude)
+                .then((response) => {
+                    setCamping(response.data);
+                    setIsdistance(true);
+                }).catch(error => console.log("거리별 캠핑장 조회 실패 " + error))
+        })
+    }
+
+    const openModal = (name, address, latitude, longitude) => {
+        setSelectedInfo({campingName: name, campingAddress: address, campingCoordinateX: latitude, campingCoordinateY: longitude});
         setModalHandle(true);
     };
 
@@ -44,7 +59,10 @@ function SearchData() {
                     <Button type="button" className="mb-3 search" onClick={showAllList} style={{fontSize:"20px",width: "200px",marginBottom: "20px"}}>
                         전체 캠핑장 조회
                     </Button><br/>
-                    <div style={{display: "flex", marginLeft: "280px"}}>
+                    <Button type="button" className="mb-3 search" onClick={showDistanceList} style={{fontSize:"20px",width: "200px",marginLeft: "30px", marginBottom: "20px"}}>
+                        거리별 캠핑장 조회
+                    </Button><br/>
+                    <div style={{display: "flex", marginLeft: "150px"}}>
                         <table>
                             <tbody>
                             <td>
@@ -77,29 +95,54 @@ function SearchData() {
                 </div>
             </form>
 
-            <table className="table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>주소</th>
-                    <th>이름</th>
-                    <th>위도</th>
-                    <th>경도</th>
-                </tr>
-                </thead>
-                <tbody>
-                {camping.map(
-                    prop =>
-                        <tr key={prop.id}>
-                            <td>{prop.num}</td>
-                            <td><a onClick = {() => openModal(prop.name, prop.address, prop.wgs84_x, prop.wgs84_y)}>{prop.address}</a></td>
-                            <td><a onClick = {() => openModal(prop.name, prop.address, prop.wgs84_x, prop.wgs84_y)}>{prop.name}</a></td>
-                            <td>{prop.wgs84_x}</td>
-                            <td>{prop.wgs84_y}</td>
-                        </tr>
-                )}
-                </tbody>
-            </table>
+            {isdistance ?
+                <table className="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>거리</th>
+                        <th>번호</th>
+                        <th>주소</th>
+                        <th>이름</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {camping.map(
+                        prop =>
+                            <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                <td>{prop.distance.toFixed(2)}(km)</td>
+                                <td>{prop.id}</td>
+                                <td>{prop.address}</td>
+                                <td>{prop.name}</td>
+                            </tr>
+                    )}
+                    </tbody>
+                </table>
+                :
+                <table className="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>주소</th>
+                        <th>이름</th>
+                        <th>위도</th>
+                        <th>경도</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {camping.map(
+                        prop =>
+                            <tr key={prop.id}>
+                                <td>{prop.id}</td>
+                                <td><a onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>{prop.address}</a></td>
+                                <td><a onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>{prop.name}</a></td>
+                                <td>{prop.latitude}</td>
+                                <td>{prop.longitude}</td>
+                            </tr>
+                    )}
+                    </tbody>
+                </table>}
+
+
             {
                 modalHandle && <InfoModal info={selectedInfo} show={modalHandle} handleClose={() => setModalHandle(false)} />
 

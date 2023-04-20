@@ -11,8 +11,8 @@ public interface ChatUserListRepository extends JpaRepository<ChatUserList,Strin
     @Query("SELECT cul FROM chat_user_list cul WHERE cul.room_id = :room_id AND cul.member_id = :member_id")
     ChatUserList findUserList(@Param("room_id") String room_id, @Param("member_id") String member_id);
 
-    default boolean existsByRoomIdAndMemberId(ChatUserListDTO requestDTO) {
-        ChatUserList userList = findUserList(requestDTO.getRoom_id(),requestDTO.getMember_id());
+    public default boolean isUserInRoom(ChatUserListDTO userListCheckDTO) {
+        ChatUserList userList = findUserList(userListCheckDTO.getRoom_id(), userListCheckDTO.getMember_id());
         return userList != null;
     }
 }

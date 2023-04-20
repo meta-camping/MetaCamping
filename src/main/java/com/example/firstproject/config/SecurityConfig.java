@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.cors.CorsUtils;
 
 // 로그인이 완료되면 순서가
 //1. code 받기(인증)
@@ -31,23 +32,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .addFilter(corsConfig.corsFilter())
-                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
+                .csrf().disable()
 
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
                 .authorizeRequests()
                 //login 한 사람만 들어올 수 있음, authenticated()인증만 되면 들어갈 수 있는 주소
-                .antMatchers("/api/v1/user/**")
-                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/user")
+                .access("hasAnyRole('ROLE_USER','ROLE_MANAGER','ROLE_ADMIN')")
                 //admin 또는 manager권한이 있어야 들어올 수 있음
-                .antMatchers("/api/v1/manager/**")
-                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/manager")
+                .access("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
                 //admin만 가능
-                .antMatchers("/api/v1/admin/**")
+                .antMatchers("/api/v1/admin")
                 .access("hasRole('ROLE_ADMIN')")
                 //위 3가지 주소가 아니면 누구나 가능
                 .anyRequest().permitAll();

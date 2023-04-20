@@ -1,15 +1,20 @@
 import React, { useState} from "react";
 import axios from "axios";
-import qs from 'qs';
 import "../styles/Login.css";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../recoil/token";
 
 function Login() {
+    const [token,setToken] = useRecoilState(tokenState);
+    const navigate = useNavigate();
+
     const [inputId, setInputId] = useState("");
     const [inputPw, setInputPw] = useState("");
 
     const axiosConfig = {
         headers:{
-            "Authorization": "cos"
+            Authorization: "cos"
         }
     }
     const axiosBody = {
@@ -28,15 +33,14 @@ function Login() {
 
     // login 버튼 클릭 이벤트
     const LoginCheck = () => {
-        //axios.post('url','body 자리', callback함수)
-        //요청 url에서 bodyparser 설정 후 req.body로 읽을 수 있음
         axios
             .post("/login", axiosBody, axiosConfig)
             .then((res) => {
                 alert("로그인 성공");
-                document.location.href = "/";
+                setToken(res.headers.authorization);
+                navigate("/");
             })
-            .catch();
+            .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };
 
     function checkAll() {

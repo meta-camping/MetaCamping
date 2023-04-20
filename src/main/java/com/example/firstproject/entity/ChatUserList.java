@@ -28,10 +28,8 @@ public class ChatUserList {
     @JoinColumn(name = "room_id")
     private String room_id;
 
-    public ChatUserList(ChatMessageDTO messageDTO) {
-        this.member_id = messageDTO.getSender();
-        this.room_id = messageDTO.getRoom_id();
-    }
+    @Column(name = "join_time")
+    private LocalDateTime join_time;
 
 
 }
