@@ -19,20 +19,21 @@ function SearchData() {
     const showAllList = () => {
         axios.get('/api/camping/showAllList')
             .then((response) => {
-                setCamping(response.data)
+                setPage(1);
+                setCamping(response.data);
                 setIsdistance(false);
             }).catch(error => console.log("전체 캠핑장 조회 실패" + error))
     }
 
     const SelectCity = () => {
-
         axios.get('api/camping/showList', {
             params: {
                 city_name: city
             }
         })
             .then((response) => {
-                setCamping(response.data)
+                setPage(1);
+                setCamping(response.data);
                 setIsdistance(false);
             }).catch(error => console.log("시별로 조회 실패 " + error))
     }
@@ -41,6 +42,7 @@ function SearchData() {
         navigator.geolocation.getCurrentPosition(function (position) {
             ApiService.calculationDistance(position.coords.latitude, position.coords.longitude)
                 .then((response) => {
+                    setPage(1);
                     setCamping(response.data);
                     setIsdistance(true);
                 }).catch(error => console.log("거리별 캠핑장 조회 실패 " + error))
@@ -51,6 +53,23 @@ function SearchData() {
         setSelectedInfo({campingName: name, campingAddress: address, campingCoordinateX: latitude, campingCoordinateY: longitude});
         setModalHandle(true);
     };
+
+    //페이지 인덱싱 처리를 위한 변수
+    const [page, setPage] = useState(1);
+
+    //페이지 이전 버튼
+    const handleNextPage = () => {
+        setPage(page + 1);
+    };
+
+    //페이지 다음 버튼
+    const handlePrevPage = () => {
+        setPage(page - 1);
+    };
+    const itemsPerPage = 10;
+    const startIdx = (page - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const currentItems = camping.slice(startIdx, endIdx);
 
     return (
         <div style={{marginLeft: "100px"}}>
@@ -96,58 +115,68 @@ function SearchData() {
             </form>
 
             {isdistance ?
-                <table className="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th>거리</th>
-                        <th>번호</th>
-                        <th>주소</th>
-                        <th>이름</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {camping.map(
-                        prop =>
-                            <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
-                                <td>{prop.distance.toFixed(2)}(km)</td>
-                                <td>{prop.id}</td>
-                                <td>{prop.address}</td>
-                                <td>{prop.name}</td>
-                            </tr>
-                    )}
-                    </tbody>
-                </table>
+                <div>
+                    <table className="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>거리</th>
+                            <th>번호</th>
+                            <th>주소</th>
+                            <th>이름</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {currentItems.map(
+                            prop =>
+                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                    <td>{prop.distance.toFixed(2)}(km)</td>
+                                    <td>{prop.id}</td>
+                                    <td>{prop.address}</td>
+                                    <td>{prop.name}</td>
+                                </tr>
+                        )}
+                        </tbody>
+                    </table>
+                    <button className="btn btn-outline-primary me-2" onClick={handlePrevPage} disabled={page === 1}>
+                        이전
+                    </button>
+                    <button className="btn btn-outline-primary me-2" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
+                        다음
+                    </button>
+                </div>
                 :
-                <table className="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>주소</th>
-                        <th>이름</th>
-                        <th>위도</th>
-                        <th>경도</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {camping.map(
-                        prop =>
-                            <tr key={prop.id}>
-                                <td>{prop.id}</td>
-                                <td><a onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>{prop.address}</a></td>
-                                <td><a onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>{prop.name}</a></td>
-                                <td>{prop.latitude}</td>
-                                <td>{prop.longitude}</td>
-                            </tr>
-                    )}
-                    </tbody>
-                </table>}
-
-
+                <div>
+                    <table className="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>주소</th>
+                            <th>이름</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {currentItems.map(
+                            prop =>
+                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                    <td>{prop.id}</td>
+                                    <td>{prop.address}</td>
+                                    <td>{prop.name}</td>
+                                </tr>
+                        )}
+                        </tbody>
+                    </table>
+                    <button className="btn btn-primary me-2" onClick={handlePrevPage} disabled={page === 1}>
+                        이전
+                    </button>
+                    <button className="btn btn-primary me-2" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
+                        다음
+                    </button>
+                </div>}
             {
                 modalHandle && <InfoModal info={selectedInfo} show={modalHandle} handleClose={() => setModalHandle(false)} />
 
             }
-            </div>
+        </div>
     )
 }
 export default SearchData;
