@@ -11,7 +11,7 @@ public interface CampingSiteRepository extends JpaRepository<CampingSite,Long> {
     @Override
     ArrayList<CampingSite> findAll();
 
-    @Query(value = "select * from camping_site where city_name = :city_name ORDER BY address", nativeQuery = true)
+    @Query(value = "select * from camping_site where city_name = :city_name", nativeQuery = true)
     ArrayList<CampingSite> findAllBySidoName(@Param("city_name") String city_name);
 }
 

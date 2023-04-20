@@ -186,7 +186,7 @@ function Profile() {
                 </div>
             </div>
             {passwordisEditing ? (
-                <div className="api_content">
+                <div className="api_content" style={{float:"none", margin:"0 auto"}}>
                     기존 비밀번호:
                     <input
                         className="inputbox"
@@ -255,7 +255,7 @@ function Profile() {
                 </div>
             )}
             {nicknameisEditing ? (
-                <div className="api_content">
+                <div className="api_content" style={{float:"none", margin:"50px auto"}}>
                     기존 닉네임: {user.nickname}
                     <br />
                     닉네임 변경:
