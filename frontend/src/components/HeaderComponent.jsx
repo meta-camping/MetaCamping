@@ -5,7 +5,6 @@ import {useRecoilState} from "recoil";
 import { tokenState } from "../recoil/token";
 import { useNavigate } from "react-router-dom";
 import {userState} from "../recoil/user";
-import useDidMountEffect from "../useDidMountEffect";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
