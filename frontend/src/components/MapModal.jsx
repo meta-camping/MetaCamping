@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Modal} from "react-bootstrap";
+import useDidMountEffect from "../useDidMountEffect";
 const { kakao } = window;
 
 function MapModal({ info, show, handleClose }) {
     const [map, setMap] = useState('');
     const [location, setLocation] = useState({ latitude: '', longitude: ''}); // 위도, 경도
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         if (map && location.latitude && location.longitude) {
             const locPosition = new kakao.maps.LatLng(
                 location.latitude,
@@ -47,9 +48,7 @@ function MapModal({ info, show, handleClose }) {
         // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
         var zoomControl = new kakao.maps.ZoomControl();
         map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-    }, []);
 
-    useEffect(() => {
         // 주소-좌표 변환 객체를 생성합니다
         var geocoder = new kakao.maps.services.Geocoder();
 

@@ -51,7 +51,7 @@ public class MemberController {
 
         return jsonObj.toString();
     }
-//@RequestParam String username,@RequestParam String password, @RequestParam String upadate_password
+
     @PostMapping("/user/updatePassword")
     public String updatePassword(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByUsername(memberDTO.getUsername());

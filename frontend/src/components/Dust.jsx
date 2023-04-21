@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import { Popover , OverlayTrigger} from 'react-bootstrap';
 import ApiService from "../services/ApiService";
 import notion from "../images/notion.png";
 import finedust from "../images/dust/finedust.png";
 import ultrafinedust from "../images/dust/ultrafinedust.png";
+import useDidMountEffect from "../useDidMountEffect";
 
 function Dust(props) {
     //마지막 데이터베이스에 찾아오는 지역 이름
@@ -19,11 +20,8 @@ function Dust(props) {
     const [pm25Value, setPm25Value] = useState("--");
     const [pm25Grade, setpm25Grade] = useState("--");
 
-    //알림 이벤트를 위한 변수
-    const [message, setMessage] = useState('');
-
     //측정소 이름으로 미세먼지 데이터 조회
-    useEffect(() => {
+    useDidMountEffect(() => {
         ApiService.measuringStationSearch(measuringStation)
             .then((response) => {
                 setName(props.stationName);
@@ -67,7 +65,7 @@ function Dust(props) {
     },[measuringStation])
 
     //tmX, tmY 저장후 측정소 이름 조회
-    useEffect(() => {
+    useDidMountEffect(() => {
         ApiService.searchByTm(tmx,tmy)
             .then((response) => {
                 setMeasuringStation(response.data.result.response.body.items[0].stationName)
@@ -75,7 +73,7 @@ function Dust(props) {
     },[tmx,tmy])
 
     //좌표를 가지고 TM_X TM_Y 좌표로 변환
-    useEffect(() => {
+    useDidMountEffect(() => {
         ApiService.converToTm(props.stationName)
             .then((response) => {
                 //결과에서 현재 내 위치에 맞는 tmX, tmY 좌표를 선택(왜냐하면 같은 읍면동 이름을 같는 도시가 존재)
