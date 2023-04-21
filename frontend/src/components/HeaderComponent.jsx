@@ -1,10 +1,11 @@
-import {React, useState, useEffect }from 'react';
+import {React, useState}from 'react';
 import camping from '../images/camping.png';
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import { tokenState } from "../recoil/token";
 import { useNavigate } from "react-router-dom";
 import {userState} from "../recoil/user";
+import useDidMountEffect from "../useDidMountEffect";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
@@ -17,13 +18,14 @@ function HeaderComponent() {
 
     const logout = () => {
         setToken(null);
+        setUser(null);
         navigate("/");
         alert("로그아웃 성공");
     }
 
-    useEffect(() => {
-        setNickname(user.nickname);
-    }, [token])
+    // useDidMountEffect(() => {
+    //     setNickname(user.nickname);
+    // }, [token])
 
     const goProfile = () => {
         axios.get("/api/v1/user", {
@@ -60,7 +62,7 @@ function HeaderComponent() {
                     {!token ?
                         <a href="/login" className="btn btn-outline-primary me-2">Login</a>
                     :   <>
-                        <span className="profile_content" style={{marginRight: "20px"}}>{nickname}</span>
+                        {/*<span className="profile_content" style={{marginRight: "20px"}}>{nickname}</span>*/}
                         <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button>
                         </>
                         }
