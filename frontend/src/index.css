@@ -38,6 +38,25 @@ code {
   font-Family: 'Jua', sans-serif;
 }
 
+.profile_content {
+  border-radius: 15px;
+  box-shadow: 0 0 10px #e4e4e4;
+  font-size: 18px;
+  max-width: 500px;
+  padding: 10px;
+  font-Family: 'Gothic A1', sans-serif;
+}
+
+.nickname_content {
+  border-radius: 15px;
+  box-shadow: 0 0 10px #e4e4e4;
+  font-size: 20px;
+  padding: 10px;
+  height: 50px;
+  width: 150px;
+  font-Family: 'Jua', sans-serif;
+}
+
 .search {
   align-items: center;
   display: flex;

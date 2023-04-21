@@ -3,8 +3,8 @@ import camping from '../images/camping.png';
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import { tokenState } from "../recoil/token";
-import { userState } from "../recoil/user";
 import { useNavigate } from "react-router-dom";
+import {userState} from "../recoil/user";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
@@ -18,13 +18,12 @@ function HeaderComponent() {
     }
 
     const goProfile = () => {
-        axios.get("/api/v1/user/profile", {
+        axios.get("/api/v1/user", {
             headers:{
                 Authorization: token
             }
         })
             .then((res) => {
-                setUser(res.data);
                 navigate('/profile');
             })
             .catch(error => alert("로그인이 필요합니다"));
@@ -49,11 +48,12 @@ function HeaderComponent() {
                     <li><a href="#" className="nav-link px-2 link-dark" >About</a></li>
                 </ul>
 
-                <div className="col-md-3 text-end">
+                <div className="col-md-3 text-end" >
                     {!token ?
                         <a href="/login" className="btn btn-outline-primary me-2">Login</a>
                     :
-                        <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button>}
+                        <span>안녕하세요 {user.nickname} 님. <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button></span>
+                        }
                     <a href="/register" className="btn btn-primary">Sign-up</a>
                 </div>
             </header>

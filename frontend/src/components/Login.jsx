@@ -1,12 +1,15 @@
-import React, { useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../recoil/token";
+import { userState } from "../recoil/user";
 
 function Login() {
     const [token,setToken] = useRecoilState(tokenState);
+    const [user,setUser] = useRecoilState(userState);
+
     const navigate = useNavigate();
 
     const [inputId, setInputId] = useState("");
@@ -38,10 +41,22 @@ function Login() {
             .then((res) => {
                 alert("로그인 성공");
                 setToken(res.headers.authorization);
-                navigate("/");
+
             })
             .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };
+
+    useEffect(() => {(
+        axios.get("/api/v1/user/userCheck", {
+            headers:{
+                Authorization: token
+            }
+        })
+            .then((res) => {
+                setUser(res.data);
+                navigate("/");
+            }))
+    }, [token])
 
     function checkAll() {
         if (!CheckUserId(inputId)) {
