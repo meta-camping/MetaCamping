@@ -56,7 +56,7 @@ public class APIServerController {
             String url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty"
                     + "?serviceKey=" + serviceKey
                     + "&returnType=json"            // JSON, XML
-                    + "&numOfRows=500"             // 페이지 ROWS
+                    + "&numOfRows=1000"             // 페이지 ROWS
                     + "&pageNo=1"                 // 페이지 번호
                     + "&sidoName=" + city         // 도시
                     + "&ver=1.0";                  // 오퍼레이션 버전(버전별 상세 결과 문서 참조)

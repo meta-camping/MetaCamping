@@ -44,9 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //login 한 사람만 들어올 수 있음, authenticated()인증만 되면 들어갈 수 있는 주소
                 .antMatchers("/api/v1/user")
                 .access("hasAnyRole('ROLE_USER','ROLE_MANAGER','ROLE_ADMIN')")
-                //admin 또는 manager권한이 있어야 들어올 수 있음
-                .antMatchers("/api/v1/manager")
-                .access("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
                 //admin만 가능
                 .antMatchers("/api/v1/admin")
                 .access("hasRole('ROLE_ADMIN')")
