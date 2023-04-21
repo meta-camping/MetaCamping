@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import BoardService from '../services/BoardService';
+import useDidMountEffect from "../useDidMountEffect";
 
 function CreateBoardComponent() {
     const { postId } = useParams();
@@ -42,7 +43,7 @@ function CreateBoardComponent() {
         }
     }
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         if (postId === '_create') {
             return
         } else {
