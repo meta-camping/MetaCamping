@@ -4,6 +4,7 @@ import Weather from "./Weather";
 import Dust from "./Dust";
 import ApiService from "../services/ApiService";
 import MapModal from "./MapModal";
+import useDidMountEffect from "../useDidMountEffect";
 const { kakao } = window;
 
 function CampingMap({campingAddress,lan, lng}) {
@@ -22,7 +23,7 @@ function CampingMap({campingAddress,lan, lng}) {
     });
 
     // 지도가 준비된 후에 마커와 인포윈도우를 표시합니다
-    useEffect(() => {
+    useDidMountEffect(() => {
         if (map && location.latitude && location.longitude) {
             const locPosition = new kakao.maps.LatLng(
                 location.latitude,
@@ -64,7 +65,7 @@ function CampingMap({campingAddress,lan, lng}) {
         });
     }, []);
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         const geocoder = new window.kakao.maps.services.Geocoder();
 
         const latlng = new window.kakao.maps.LatLng(location.latitude, location.longitude);

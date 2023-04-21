@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../recoil/token";
 import { userState } from "../recoil/user";
+import useDidMountEffect from "../useDidMountEffect";
 
 function Login() {
     const [token,setToken] = useRecoilState(tokenState);
@@ -46,7 +47,8 @@ function Login() {
             .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };
 
-    useEffect(() => {(
+    useDidMountEffect(() => {
+        (
         axios.get("/api/v1/user/userCheck", {
             headers:{
                 Authorization: token
@@ -55,7 +57,8 @@ function Login() {
             .then((res) => {
                 setUser(res.data);
                 navigate("/");
-            }))
+            })
+            .catch(error => alert("로그인 실패")))
     }, [token])
 
     function checkAll() {

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import BoardService from '../services/BoardService';
 import { useParams, useNavigate } from 'react-router-dom';
+import useDidMountEffect from "../useDidMountEffect";
 function ReadBoardComponent() {
     const { postId } = useParams();
     const [board, setBoard] = useState({});
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         BoardService.getOneBoard(postId).then((res) => {
             setBoard(res.data);
         });

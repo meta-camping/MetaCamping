@@ -1,14 +1,19 @@
-import React from 'react';
+import {React, useState, useEffect }from 'react';
 import camping from '../images/camping.png';
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import { tokenState } from "../recoil/token";
 import { useNavigate } from "react-router-dom";
 import {userState} from "../recoil/user";
+import useDidMountEffect from "../useDidMountEffect";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
     const [user,setUser] = useRecoilState(userState);
+
+    /**바로 user.nickname을 사용하면 로그인시 값이 들어오기전에 HeaderComponent에서 user.nickname을 참조해서 오류 발생
+    따라서 token을 인식하는 useEffect를 사용해서 nickname에 user.nickname을 넣어준다.*/
+    const [nickname,setNickname] = useState('');
     const navigate = useNavigate();
 
     const logout = () => {
@@ -16,6 +21,10 @@ function HeaderComponent() {
         navigate("/");
         alert("로그아웃 성공");
     }
+
+    useEffect(() => {
+        setNickname(user.nickname);
+    }, [token])
 
     const goProfile = () => {
         axios.get("/api/v1/user", {
@@ -51,8 +60,10 @@ function HeaderComponent() {
                 <div className="col-md-3 text-end" >
                     {!token ?
                         <a href="/login" className="btn btn-outline-primary me-2">Login</a>
-                    :
-                        <span>안녕하세요 {user.nickname} 님. <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button></span>
+                    :   <>
+                        <span className="profile_content" style={{marginRight: "20px"}}>{nickname}</span>
+                        <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button>
+                        </>
                         }
                     <a href="/register" className="btn btn-primary">Sign-up</a>
                 </div>
