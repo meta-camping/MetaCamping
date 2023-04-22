@@ -42,7 +42,6 @@ function Login() {
             .then((res) => {
                 alert("로그인 성공");
                 setToken(res.headers.authorization);
-
             })
             .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };

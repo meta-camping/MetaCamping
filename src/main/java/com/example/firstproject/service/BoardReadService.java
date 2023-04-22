@@ -42,6 +42,8 @@ public class BoardReadService {
     public ResponseEntity<BoardDTO> getBoard(@PathVariable Integer postId) {
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not exist Board Data by postId : ["+postId+"]"));
+        board.setHits(board.getHits()+1);
+        boardRepository.save(board);
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setPostId(board.getPostId());
         boardDTO.setTitle(board.getTitle());

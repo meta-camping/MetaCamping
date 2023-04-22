@@ -127,11 +127,11 @@ function SearchData() {
                         <tbody>
                         {currentItems.map(
                             prop =>
-                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
-                                    <td>{prop.distance.toFixed(2)}(km)</td>
-                                    <td>{prop.address}</td>
-                                    <td>{prop.name}</td>
-                                </tr>
+                                    <tr className="searchData" key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                        <td>{prop.distance.toFixed(2)}(km)</td>
+                                        <td>{prop.address}</td>
+                                        <td>{prop.name}</td>
+                                    </tr>
                         )}
                         </tbody>
                     </table>
@@ -154,7 +154,7 @@ function SearchData() {
                         <tbody>
                         {currentItems.map(
                             prop =>
-                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                <tr className="searchData" key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
                                     <td>{prop.address}</td>
                                     <td>{prop.name}</td>
                                 </tr>
