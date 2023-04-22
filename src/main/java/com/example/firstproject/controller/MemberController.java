@@ -45,9 +45,11 @@ public class MemberController {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
 
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("id", principal.getMember().getId());
         jsonObj.put("username", principal.getMember().getUsername());
         jsonObj.put("nickname", principal.getMember().getNickname());
+        jsonObj.put("role", principal.getMember().getRoles());
+
+        log.info("userCheck 객체: " + jsonObj);
 
         return jsonObj.toString();
     }

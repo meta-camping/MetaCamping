@@ -1,11 +1,13 @@
-import {React, useState}from 'react';
+import {React, useState, useEffect}from 'react';
 import camping from '../images/camping.png';
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import { tokenState } from "../recoil/token";
 import { useNavigate } from "react-router-dom";
 import {userState} from "../recoil/user";
-import useDidMountEffect from "../useDidMountEffect";
+import "../styles/Header.css";
+import profile from "../images/profile.png";
+import notion from "../images/notion.png";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
@@ -23,9 +25,13 @@ function HeaderComponent() {
         alert("로그아웃 성공");
     }
 
-    // useDidMountEffect(() => {
-    //     setNickname(user.nickname);
-    // }, [token])
+    useEffect(() => {
+        if(user) {
+            setNickname(user.nickname);
+        } else {
+            setNickname('');
+        }
+    }, [user]);
 
     const goProfile = () => {
         axios.get("/api/v1/user", {
@@ -42,7 +48,6 @@ function HeaderComponent() {
     return (
         <div className="container">
             <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-
                 <div className="main_title">
                     <a href="/" className="nav-link px-2" style={{fontSize: "40px", lineHeight: "40px"}}>
                         <img src={camping} alt="logo" />
@@ -50,19 +55,20 @@ function HeaderComponent() {
                     </a>
                 </div>
 
-                <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0" style={{fontSize: "20px"}}>
-                    <li><a href="/" className="nav-link px-2 link-secondary" >Home</a></li>
-                    <li><button className="nav-link px-2 link-dark" onClick={goProfile} style={{ border: "none", backgroundColor: "transparent"}}>Profile</button></li>
-                    <li><a href="/chat/list" className="nav-link px-2 link-dark" >Chatting</a></li>
-                    <li><a href="/board" className="nav-link px-2 link-dark" >Notice</a></li>
-                    <li><a href="#" className="nav-link px-2 link-dark" >About</a></li>
+                <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 nav-custom">
+                    <li><button className="nav-link px-2 link-secondary nav-custom" onClick={()=>navigate("/") } >Home</button></li>
+                    <li><button className="nav-link px-2 link-dark nav-custom"  onClick={()=>navigate("/chat/list")} >Chatting</button></li>
+                    <li><button className="nav-link px-2 link-dark nav-custom" onClick={()=>navigate("/board")} >Notice</button></li>
+                    <li><button className="nav-link px-2 link-dark nav-custom" onClick={()=>navigate("/about")} >About</button></li>
+
                 </ul>
 
                 <div className="col-md-3 text-end" >
                     {!token ?
                         <a href="/login" className="btn btn-outline-primary me-2">Login</a>
                     :   <>
-                        {/*<span className="profile_content" style={{marginRight: "20px"}}>{nickname}</span>*/}
+                        <span className="profile_content" style={{marginRight: "5px"}}>{nickname}</span>
+                        <button className="nav-custom" style={{marginRight: "10px"}} onClick={goProfile} ><img src={profile} width="30" height="30"/></button>
                         <button className="btn btn-outline-primary me-2" onClick={logout}>Logout</button>
                         </>
                         }

@@ -53,6 +53,7 @@ function Profile() {
             .then((res) => {
                 if(res.data==="비밀번호 수정 완료"){
                     setToken(null);
+                    setUser(null);
                     navigate("/");
                     alert("비밀번호 수정 완료. 다시 로그인 해주세요");
                 }
@@ -72,6 +73,7 @@ function Profile() {
             .then((res) => {
                 if(res.data==="닉네임 수정 완료"){
                     setToken(null);
+                    setUser(null);
                     navigate("/");
                     alert("닉네임 수정 완료. 다시 로그인 해주세요");
                 }

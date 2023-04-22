@@ -12,6 +12,10 @@ code {
   monospace;
 }
 
+.searchData:hover {
+  cursor: pointer;
+}
+
 .main_title {
   align-items: center;
   display: flex;
