@@ -92,8 +92,8 @@ function CampingMap({campingAddress,lan, lng}) {
         });
     }, [location]);
 
-    const openModal = (campingAddress) => {
-        setSelectedInfo({campingAddress: campingAddress});
+    const openModal = (campingAddress, lan, lng) => {
+        setSelectedInfo({campingAddress: campingAddress, lan: lan, lng: lng});
         setModalHandle(true);
     };
 
@@ -112,7 +112,7 @@ function CampingMap({campingAddress,lan, lng}) {
                     <div id="map1" style=
                         {{width: "350px", height: "250px", border: "1px solid rgb(207, 207, 207)", borderRadius: "30px" , marginBottom: "20px",
                             boxShadow: "rgb(207, 207, 207) 0px 0px 13px", position: "relative", overflow: "hidden", left: "10px"}}
-                         onClick = {() => openModal(campingAddress)}>
+                         onClick = {() => openModal(campingAddress, lan, lng)}>
                     </div>
                 </OverlayTrigger>
                 <Dust sidoName={locationData.sidoName} stationName={locationData.stationName} umdName={locationData.umdName} sggName={locationData.sggName}/>
