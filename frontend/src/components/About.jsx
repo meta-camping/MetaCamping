@@ -34,7 +34,7 @@ function About() {
                         <tr key={source.id}>
                             <td>{source.id}</td>
                             <td>{source.type}</td>
-                            <td>{source.link ? <a href={source.link} title={source.title}>{source.title} 제작자: {source.author}</a> : source.title}</td>
+                            <td>{source.author ? <a href={source.link} title={source.title}>{source.title} 제작자: {source.author}</a> : <a href={source.link} title={source.title}>{source.title}</a>}</td>
                         </tr>
                     ))}
                     </tbody>
