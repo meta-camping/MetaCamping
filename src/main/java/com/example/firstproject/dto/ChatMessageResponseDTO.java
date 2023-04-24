@@ -5,25 +5,25 @@ import java.time.LocalDateTime;
 public class ChatMessageResponseDTO {
 
     private String sender;
-    private String content;
-    private String send_time;
+    private String message;
+    private LocalDateTime createTime;
 
 
-    public ChatMessageResponseDTO(String send_time, String sender, String content) {
-        this.send_time = send_time;
-        this.sender = sender;
-        this.content = content;
+    public ChatMessageResponseDTO(ChatMessageDTO message) {
+        this.createTime = message.getCreateTime();
+        this.sender = message.getSender();
+        this.message = message.getMessage();
     }
 
     public String getSender() {
         return sender;
     }
 
-    public String getSend_time() {
-        return send_time;
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
-    public String getContent() {
-        return content;
+    public String getMessage() {
+        return message;
     }
 }

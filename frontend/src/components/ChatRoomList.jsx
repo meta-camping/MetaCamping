@@ -3,15 +3,16 @@ import axios from 'axios';
 import { Button, InputGroup, FormControl, ListGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { userState } from "../recoil/user";
 
 function ChatRoomList() {
 
-    const token =  '임시토큰' //localStorage.getItem("key");
     const navigate = useNavigate();
-    const location = useLocation();
     const [chatRooms, setChatRooms] = useState([]);
     const [camping,setCamping] = useState([]);
-    const username = '테스트유저'
+    const [user,setUser] = useRecoilState(userState);
+    const username = user.nickname
 
 
     useEffect(() => {
@@ -27,9 +28,9 @@ function ChatRoomList() {
 
 
     //-----------------채팅방 상세 화면으로 넘어가는 함수----------------
-    const handleClick = (room_id) => {
+    const handleClick = (roomId) => {
         //회원 여부 확인
-        if (token == null) {
+        if (!username) {
             alert('채팅방 기능은 로그인 후 이용하실 수 있습니다.')
             navigate(`/login`)
         }
@@ -42,21 +43,21 @@ function ChatRoomList() {
          */
 
         axios.post("/chat/room/user-check", {
-            room_id: room_id,
-            member_id: username
+            roomId: roomId,
+            memberId: username
         })
             .then(res => {
                 const userCheck = res.data
                 if (userCheck === "다른 방 구독 유저"){
-                    if(window.confirm("기존 참여했던 채팅방의 내역들이 사라집니다. 입장하시겠습니까?\n(동시에 하나의 채팅방만 이용 가능합니다.") === true ){
+                    if(window.confirm("동시에 하나의 채팅방만 이용 가능합니다. 입장하시겠습니까?\n(기존에 참여했던 채팅방의 기록이 사라집니다.)") === true ){
                         //기존 구독정보 갱신
-                        navigate(`/chat/room/${room_id}`)
+                        navigate(`/chat/room/${roomId}`,{ state : { userCheck: userCheck }} )
                     }else {
                         navigate(`/chat/list`)
                     }
                 }
                 else{
-                    navigate(`/chat/room/${room_id}`, { state : { userCheck: userCheck } });
+                    navigate(`/chat/room/${roomId}`, { state : { userCheck: userCheck }} );
                 }
             })
             .catch(error => console.error(error));
@@ -71,23 +72,8 @@ function ChatRoomList() {
     검색 내용 없으면 => 캠핑장 정보가 없음을 알림
     */
 
-    const SearchCamp = () => {
-
-        useEffect(() => {
-            axios.get("/chat/is-camping")
-                .then(res => {
-                    console.log(res.data);
-                    setCamping(res.data);
-                })
-                .catch(
-                    error => console.error(error)
-                )
-        }, []);
-
-    }
-
     const addChatRoom = async () => {
-        if(token == null){
+        if(username == null){
             alert('로그인 후 다시 시도해주세요.')
         }
         else{
@@ -115,9 +101,9 @@ function ChatRoomList() {
                         {
                             chatRooms.map(
                                 chatRooms =>
-                                    <tr key = {chatRooms.room_id} onClick={() => handleClick(chatRooms.room_id)}>
-                                        <td>{chatRooms.room_name}</td>
-                                        <td>{chatRooms.updated_time}</td>
+                                    <tr key = {chatRooms.roomId} onClick={() => handleClick(chatRooms.roomId)}>
+                                        <td>{chatRooms.roomName}</td>
+                                        <td>{new Date(chatRooms.updatedTime).toLocaleString()}</td>
                                     </tr>
                             )
                         }

@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
 
-
+    @Query("SELECT r.roomId FROM ChatRoom r WHERE r.roomName = :roomName")
+    String existsByRoomName(@Param("roomName") String roomName);
 }

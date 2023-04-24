@@ -22,7 +22,7 @@ public class ChatService {
 
     public ChatMessage saveChat(ChatMessageDTO messageDTO) {
         ChatMessage chatMessage = new ChatMessage(messageDTO);
-        ChatRoom chatRoom = chatRoomRepository.findById(messageDTO.getRoom_id())
+        ChatRoom chatRoom = chatRoomRepository.findById(messageDTO.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 ChatRoom이 없습니다."));
         // ChatRoom의 updateTime을 수정합니다.
         chatRoom.update(LocalDateTime.now());
