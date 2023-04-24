@@ -20,16 +20,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name="chat_user_list")
 public class ChatUserList {
+
     @Id
     @Column(name = "member_id")
-    private String member_id; //유니크로 중복을 배제
+    private String memberId; //유니크로 중복을 배제
 
-    //@ManyToOne (ChatRoom)
-    @JoinColumn(name = "room_id")
-    private String room_id;
+    @Column(name = "room_id")
+    private String roomId;
 
     @Column(name = "join_time")
-    private LocalDateTime join_time;
+    private LocalDateTime joinTime;
 
 
 }

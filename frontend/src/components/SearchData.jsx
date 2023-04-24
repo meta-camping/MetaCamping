@@ -7,12 +7,12 @@ import ApiService from "../services/ApiService";
 function SearchData() {
     const [camping, setCamping] = useState([]);
     const [city, setCity] = useState("강원도");
-
+    const [RoomCheckValue, setRoomCheckValue] = useState('');
     const [modalHandle,setModalHandle] = useState(false);
     const [selectedInfo, setSelectedInfo] = useState({location:'', position:''});
 
     const [isdistance, setIsdistance] = useState(false);
-
+    
     const handleSelectCity = (e) => {
         setCity(e.target.value);
     };
@@ -49,11 +49,35 @@ function SearchData() {
         })
     }
 
+     
+    const RoomChecking = (name) => {
+        return axios.get(`http://localhost:8080/chat/room/exist/${name}`)
+        .then((result) => {
+            return result.data // 'roomId'
+          })
+            .catch((err)=> {
+                console.error(err);
+            });
+    }
+    
     const openModal = (name, address, latitude, longitude) => {
-        setSelectedInfo({campingName: name, campingAddress: address, campingCoordinateX: latitude, campingCoordinateY: longitude});
-        setModalHandle(true);
-    };
+        RoomChecking(name) //비동기적 함수이기에 check에 값이 들어가기 전에 다른 데이터들이 모달창에 넘어가면 안되므로 잠시 대기
+          .then((check) => {
+            setSelectedInfo({
+              campingName: name, 
+              campingAddress: address, 
+              campingCoordinateX: latitude, 
+              campingCoordinateY: longitude,
+              roomId: check // Promise 객체에서 추출한 값을 전달
+            });
+            setModalHandle(true);
+          })
+          .catch((error) => console.error(error));
+      };
 
+    
+    
+      
     //페이지 인덱싱 처리를 위한 변수
     const [page, setPage] = useState(1);
 

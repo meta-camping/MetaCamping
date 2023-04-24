@@ -1,9 +1,6 @@
 package com.example.firstproject.service;
 
-import com.example.firstproject.dto.ChatMessageDTO;
-import com.example.firstproject.dto.ChatRoomRequestDTO;
-import com.example.firstproject.dto.ChatRoomResponseDTO;
-import com.example.firstproject.dto.ChatUserListDTO;
+import com.example.firstproject.dto.*;
 import com.example.firstproject.entity.ChatRoom;
 import com.example.firstproject.entity.ChatUserList;
 import com.example.firstproject.repository.ChatRoomRepository;
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -41,9 +39,24 @@ public class ChatRoomService {
         return result;
     }
     //채팅방 하나 불러오기
-    public ChatRoomResponseDTO findRoomById(String room_id) {
-        ChatRoom chatRoom = chatRoomRepository.findById(room_id) .orElse(null);
+    public ChatRoomResponseDTO findRoomByRoomId(String roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId) .orElse(null);
         return new ChatRoomResponseDTO(chatRoom);
+    }
+    //채팅방 유저리스트 조회
+    public List<ChatUserListResponseDTO> findUserListRoomByRoomId(String roomId) {
+        List<ChatUserListResponseDTO> userList = chatUserListRepository.findAllByRoomId(roomId);
+        return userList;
+    }
+
+
+    public String findRoomByRoomName(String roomName) {
+        String result = chatRoomRepository.existsByRoomName(roomName);
+        return result;
+    }
+
+
+
         /*
 
         회원 기능 병합 되면 주석 풀고 연결
@@ -60,20 +73,29 @@ public class ChatRoomService {
          //채팅방 내부 userList 조회
 
          */
-    }
+
 
     //채팅방 유저 리스트에 참가자 추가
     public ChatUserList insertUserList(ChatMessageDTO chatMessage) {
             ChatUserList chatUserList = new ChatUserList(
-                    chatMessage.getSender(), chatMessage.getRoom_id(), LocalDateTime.now());
+                    chatMessage.getSender(), chatMessage.getRoomId(), LocalDateTime.now());
             return chatUserListRepository.save(chatUserList);
     }
 
     //유저 기참여여부 확인
-    public boolean isUserInRoom(ChatUserListDTO userListCheckDTO) {
-            // false = 채팅방 입장, 입장 푸쉬, 유저 리스트 추가
-            // true =위에 세가지 건너 뜀
-        return chatUserListRepository.isUserInRoom(userListCheckDTO);
+    public String isUserInRoom(ChatUserListDTO userListCheckDTO) {
+        ChatUserList userList = chatUserListRepository.findUserList(userListCheckDTO.getRoomId(), userListCheckDTO.getMemberId());
+        if (userList != null) {
+            return "InUser";
+        } else {
+            ChatUserList memberCheck = chatUserListRepository.findOtherUserList(userListCheckDTO.getRoomId(), userListCheckDTO.getMemberId());
+            if (memberCheck != null) {
+                return "OtherInUser";
+            }
+            return "OK";
+        }
+        // 일치하는 조건이 없는 경우
 
     }
+
 }
