@@ -1,8 +1,8 @@
 package com.example.firstproject.controller;
 
-import com.example.firstproject.entity.Camping;
+import com.example.firstproject.entity.CampingSite;
 import com.example.firstproject.entity.Dust;
-import com.example.firstproject.repository.CampingRepository;
+import com.example.firstproject.repository.CampingSiteRepository;
 import com.example.firstproject.repository.DustRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,35 +26,67 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class APIController {
+    // 거리 계산을 위한 함수
+    public static double distance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // 지구 반경 (km)
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; //km
+    }
     @Value("${env.serviceKey}")
     private String serviceKey;
     private final DustRepository dustRepository;
 
-    private final CampingRepository campingRepository;
+    private final CampingSiteRepository campingSiteRepository;
 
     //캠핑 전체 데이터 찾아서 리턴
     @GetMapping("/camping/showAllList")
-    public List<Camping> showAllCampingList() {
+    public List<CampingSite> showAllCampingList() {
         //모든 Article을 가져온다!
-        List<Camping> campingEntityList = campingRepository.findAll();
+        List<CampingSite> campingSiteEntityList = campingSiteRepository.findAll();
 
-        return campingEntityList;
+        return campingSiteEntityList;
     }
 
     //시이름으로 데이터 찾아서 리턴
     @GetMapping("/camping/showList")
-    public List<Camping> showCampingListBySidoName(@RequestParam String city_name) {
-        List<Camping> sidoEntityList = campingRepository.findAllBySidoName(city_name);
+    public List<CampingSite> showCampingListBySidoName(@RequestParam String city_name) {
+        List<CampingSite> sidoEntityList = campingSiteRepository.findAllBySidoName(city_name);
 
         return sidoEntityList;
     }
 
+    //현재위치와 캠핑장 거리 계산하여 거리순으로 최대 30개의 데이터를 오름차순으로 return
+    @GetMapping("/camping/calculate")
+    public List<CampingSite> getCampingSitesNearby(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
+        ArrayList<CampingSite> CampingSites = campingSiteRepository.findAll();
+
+        for (CampingSite CampingSite : CampingSites) {
+            double distance = distance(latitude, longitude, CampingSite.getLatitude(), CampingSite.getLongitude());
+            CampingSite.setDistance(distance);
+        }
+
+        Collections.sort(CampingSites, Comparator.comparing(CampingSite::getDistance));
+
+        return CampingSites.stream()
+                .limit(30)
+                .collect(Collectors.toList());
+    }
 
 
     @GetMapping("/weatherforecast")
@@ -88,9 +120,9 @@ public class APIController {
         c2.add(Calendar.DATE, +1); // 오늘날짜로부터 +1
         String tomorrow = sdf.format(c2.getTime()); // String으로 저장
 
-        log.info("yesterday: " + yesterday); // 어제 날짜 출력
-        log.info("today: " + today); // 오늘 날짜 출력
-        log.info("tomorrow: " + tomorrow); // 내일 날짜 출력
+//        log.info("yesterday: " + yesterday); // 어제 날짜 출력
+//        log.info("today: " + today); // 오늘 날짜 출력
+//        log.info("tomorrow: " + tomorrow); // 내일 날짜 출력
 
         //날씨를 가져오기 위한 url
         String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
@@ -116,7 +148,7 @@ public class APIController {
         Map<String, String> tomorrowDataSub = new HashMap<>(); // 내일의 각 시간별 데이터를 저장할 객체
 
         JSONArray items = resultObject.getJSONObject("response").getJSONObject("body").getJSONObject("items").getJSONArray("item");
-        log.info(items);
+//        log.info(items);
 
         for (int i = 0; i < items.length(); i++) {
             JSONObject item = items.getJSONObject(i);
@@ -206,15 +238,38 @@ public class APIController {
     //지역이름으로 데이터 찾아서 리턴
     @GetMapping("/dust/searchStation")
     public List<Dust> showByStationName(@RequestParam String station_name) {
+        log.info("@DB에서 찾을 측정소명: " + station_name);
         List<Dust> EntityList = dustRepository.findAllByStationName(station_name);
+
+        log.info("#DB에서 찾은 측정소: " + EntityList);
         return EntityList;
+    }
+
+    //현재 위치에서 가까운 근처 측정소 조회
+    @GetMapping("/dust/search/measuringstation")
+    public String searchMeasuringStation(@RequestParam String tmX, @RequestParam String tmY) throws Exception {
+        log.info("근처 측정소 조회할 tm좌표: " + tmX + "/" + tmY);
+        String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList"
+                + "?serviceKey=" + serviceKey
+                + "&returnType=json"            // JSON, XML
+                + "&tmX=" + tmX             // 페이지 ROWS
+                + "&tmY=" + tmY;             // 페이지 번호
+        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+
+        JSONObject jsonObj = new JSONObject();
+
+        jsonObj.put("result", resultMap);
+
+        log.info("근처 측정소 조회: " + jsonObj.getJSONObject("result"));
+
+        return jsonObj.toString();
     }
 
     //읍면동을 가지고 TM 기준좌표 조회
     @GetMapping("/dust/convert")
     public String convertToTM(@RequestParam String station_name) throws Exception {
         String stationName = URLEncoder.encode(station_name);
-
+        log.info("TM 좌표를 구할 station_name: " + station_name);
         String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getTMStdrCrdnt"
                 + "?serviceKey=" + serviceKey
                 + "&returnType=json"            // JSON, XML
@@ -227,37 +282,8 @@ public class APIController {
         JSONObject jsonObj = new JSONObject();
 
         jsonObj.put("result", resultMap);
-
+        log.info("변환된 tm 좌표: " + jsonObj.getJSONObject("result"));
         return jsonObj.toString();
-    }
-
-    //현재 위치에서 가까운 근처 측정소 조회
-    @GetMapping("/dust/search/measuringstation")
-    public String searchMeasuringStation(@RequestParam String tmX, @RequestParam String tmY) throws Exception {
-
-        String url = "http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList"
-                + "?serviceKey=" + serviceKey
-                + "&returnType=json"            // JSON, XML
-                + "&tmX=" + tmX             // 페이지 ROWS
-                + "&tmY=" + tmY;             // 페이지 번호
-        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
-
-        JSONObject jsonObj = new JSONObject();
-
-        jsonObj.put("result", resultMap);
-
-        return jsonObj.toString();
-//        try {
-//            URL addr = new URL(url);
-//
-//            HttpURLConnection con = (HttpURLConnection)addr.openConnection();
-//
-//            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-//
-//            String line = br.readLine();
-//        }catch(Exception e){
-//            System.out.println(e.getLocalizedMessage());
-//        }
     }
 
     public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {

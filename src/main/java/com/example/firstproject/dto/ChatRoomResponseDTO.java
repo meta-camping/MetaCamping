@@ -4,21 +4,21 @@ import com.example.firstproject.entity.ChatRoom;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 @Data
 public class ChatRoomResponseDTO {
-    private String room_name;// 채팅방 이름
-    private double location_x;
-    private double location_y;
-    private LocalDateTime update_time;
-    private HashMap<String,String> userList = new HashMap<>();
+    private String roomId;
+    private String roomName;// 채팅방 이름
+    private double locationX;
+    private double locationY;
+    private LocalDateTime updatedTime;
+
 
     public ChatRoomResponseDTO(ChatRoom chatRoom) {
-        this.room_name = chatRoom.getRoom_name();
-        this.location_x = chatRoom.getLocation_x();
-        this.location_y = chatRoom.getLocation_y();
-        this.update_time = chatRoom.getUpdated_time();
-        //this.userList = userList;
+        this.roomId = chatRoom.getRoomId();
+        this.roomName = chatRoom.getRoomName();
+        this.locationX = chatRoom.getLocationX();
+        this.locationY = chatRoom.getLocationY();
+        this.updatedTime = chatRoom.getUpdatedTime();
     }
 }

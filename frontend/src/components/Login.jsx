@@ -1,20 +1,25 @@
 import React, { useState} from "react";
 import axios from "axios";
-import qs from 'qs';
 import "../styles/Login.css";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../recoil/token";
 
 function Login() {
+    const [token,setToken] = useRecoilState(tokenState);
+    const navigate = useNavigate();
+
     const [inputId, setInputId] = useState("");
     const [inputPw, setInputPw] = useState("");
 
     const axiosConfig = {
         headers:{
-            "Content-Type": "application/x-www-form-urlencoded"
+            Authorization: "cos"
         }
     }
     const axiosBody = {
         username:inputId,
-        userpassword:inputPw
+        password:inputPw
     }
 
     // input data 의 변화가 있을 때마다 value 값을 변경해서 useState 해준다
@@ -28,15 +33,14 @@ function Login() {
 
     // login 버튼 클릭 이벤트
     const LoginCheck = () => {
-        //axios.post('url','body 자리', callback함수)
-        //요청 url에서 bodyparser 설정 후 req.body로 읽을 수 있음
         axios
-            .post("/dologin", qs.stringify(axiosBody), axiosConfig)
+            .post("/login", axiosBody, axiosConfig)
             .then((res) => {
-                console.log("login"+res.data);
-
+                alert("로그인 성공");
+                setToken(res.headers.authorization);
+                navigate("/");
             })
-            .catch();
+            .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };
 
     function checkAll() {
@@ -119,7 +123,7 @@ function Login() {
                 </div>
 
                 <button
-                    className="w-100 btn btn-lg btn-primary"
+                    className="w-100 btn loginBtn btn-lg btn-primary"
                     type="button"
                     onClick={checkAll}
                 >

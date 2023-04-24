@@ -38,6 +38,12 @@ code {
   font-Family: 'Jua', sans-serif;
 }
 
+.search {
+  align-items: center;
+  display: flex;
+  font-family: 'Jua', sans-serif;
+}
+
 .weather_graph_in {
   display: flex;
   height: 50px;

@@ -1,9 +1,7 @@
 package com.example.firstproject.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -12,10 +10,12 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Getter // 롬복으로 게터 추가
-public class Camping {
+@Setter
+@EntityListeners(AuditingEntityListener.class)
+public class CampingSite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int num;
+    private Long id;
     @Column
     private String address;
     @Column
@@ -23,9 +23,11 @@ public class Camping {
     @Column
     private String name;
     @Column
-    private String wgs84_x;
+    private Double latitude;
     @Column
-    private String wgs84_y;
+    private Double longitude;
     @Column
     private String city_name;
+    @Column
+    private Double distance;
 }

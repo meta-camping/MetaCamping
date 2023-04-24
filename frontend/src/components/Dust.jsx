@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import { Popover , OverlayTrigger} from 'react-bootstrap';
 import ApiService from "../services/ApiService";
 import notion from "../images/notion.png";
 import finedust from "../images/dust/finedust.png";
@@ -82,10 +83,18 @@ function Dust(props) {
                     alert("데이터가 없습니다.")
                 } else {
                     for(let i=0; i<response.data.result.response.body.items.length; i++){
-                        if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].sggName === props.sggName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
-                            setTmx(response.data.result.response.body.items[i].tmX);
-                            setTmy(response.data.result.response.body.items[i].tmY);
-                            console.log("tmX,tmY 좌표변환 api 성공")
+                        if(props.sggName==="") {
+                            if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
+                                setTmx(response.data.result.response.body.items[i].tmX);
+                                setTmy(response.data.result.response.body.items[i].tmY);
+                                console.log("tmX,tmY 좌표변환 api 성공")
+                            }
+                        }else {
+                            if((response.data.result.response.body.items[i].sidoName === props.sidoName) && (response.data.result.response.body.items[i].sggName === props.sggName) && (response.data.result.response.body.items[i].umdName === props.umdName)){
+                                setTmx(response.data.result.response.body.items[i].tmX);
+                                setTmy(response.data.result.response.body.items[i].tmY);
+                                console.log("tmX,tmY 좌표변환 api 성공")
+                            }
                         }
                     }
                 }
@@ -98,10 +107,18 @@ function Dust(props) {
                 미세먼지·초미세먼지
                 <span style={{margin: "0px 5px"}}>|</span>
                 <span style={{marginRight: "10px", color: "#b6b6b6"}}>{name} 기준</span>
-                <img src={notion} alt="미세먼지 안내" width="20" height="20" onMouseEnter={() => setMessage("데이터는 실시간 관측된 자료이며 측정소 현지 사정이나 데이터의 수신상태에 따라 미수신 될 수 있습니다.　　　　　　▶ 출처: 환경부/한국환경공단")}
-                     onMouseLeave={() => setMessage('')}/><br/>
+                <OverlayTrigger overlay={
+                    <Popover id={`popover-positioned-top`}>
+                        <Popover.Header as="h3">출처: 환경부/한국환경공단</Popover.Header>
+                        <Popover.Body>
+                        데이터는 <strong>실시간 관측된 자료</strong>이며 측정소 현지 사정이나 데이터의 수신상태에 따라 <strong>미수신</strong> 될 수 있습니다.
+                        </Popover.Body>
+                    </Popover>
+                    }
+                >
+                    <img src={notion} alt="미세먼지 안내" width="30" height="30"/>
+                </OverlayTrigger>
             </div>
-            <div className="api_content">{message}</div>
             <div className="api_content" style={{display: "flex", flexDirection: "row"}}>
                 <div
                     style={{display: "flex", width: "50%", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>

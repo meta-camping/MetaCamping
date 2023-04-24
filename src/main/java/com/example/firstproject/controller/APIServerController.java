@@ -56,7 +56,7 @@ public class APIServerController {
             String url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty"
                     + "?serviceKey=" + serviceKey
                     + "&returnType=json"            // JSON, XML
-                    + "&numOfRows=100"             // 페이지 ROWS
+                    + "&numOfRows=500"             // 페이지 ROWS
                     + "&pageNo=1"                 // 페이지 번호
                     + "&sidoName=" + city         // 도시
                     + "&ver=1.0";                  // 오퍼레이션 버전(버전별 상세 결과 문서 참조)
@@ -104,26 +104,25 @@ public class APIServerController {
         return "redirect:/api/dust/list";
     }
 
-//    @Transactional
-//    @PostMapping("/dust/update")
-//    //업데이트하는 메서드
-//    public String update() throws Exception {
-//        log.info("미세먼지 데이터 업데이트 시작");
-//        //DB에 저장된 데이터 전체 삭제
-//        dustRepository.deleteAll();
-//
-//        //DB에 설정된 auto_increment값 1로 초기화
-//        //이 설정을 해야 id가 다시 1부터 시작
-//        dustRepository.initialization();
-//
-//        //위에서 만든 데이터 전체 생성하는 메서드
-//        createAll();
-//
-//        log.info("미세먼지 데이터 업데이트 완료");
-//        return "redirect:/api/dust/list";
-//    }
     @Transactional
-    @PostMapping("/dust/update")
+    @PostMapping("/dust/selfupdate")
+    //업데이트하는 메서드
+    public String selfupdate() throws Exception {
+        log.info("미세먼지 데이터 업데이트 시작");
+        //DB에 저장된 데이터 전체 삭제
+        dustRepository.deleteAll();
+
+        //DB에 설정된 auto_increment값 1로 초기화
+        //이 설정을 해야 id가 다시 1부터 시작
+        dustRepository.initialization();
+
+        //위에서 만든 데이터 전체 생성하는 메서드
+        createAll();
+
+        log.info("미세먼지 데이터 업데이트 완료");
+        return "redirect:/api/dust/list";
+    }
+    @Transactional
     @Scheduled(cron = "0 20 * * * *") //데이터가 매 시 15분 내외로 업데이트 되므로 매 시 20분에 메서드가 실행되도록 설정
     public void update() throws Exception {
         log.info("미세먼지 데이터 업데이트 시작");

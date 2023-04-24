@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Weather from "./Weather";
 import Dust from "./Dust";
+import ApiService from "../services/ApiService";
 const { kakao } = window;
 
 function Map() {
     const [map, setMap] = useState('');
     const [location, setLocation] = useState({ latitude: '', longitude: ''}); // 위도, 경도
 
-    const [addressName, setAddressName] = useState(''); // 현재 주소
-    const [sidoName, setSidoName] = useState(''); // 도 이름
-    const [sggName, setSggName] = useState(''); // 시 이름
-    const [stationName, setStationName] = useState(''); // 지역 이름
-    const [umdName, setUmdName] = useState(''); // 동 이름 << stationName과 값은 같은데 근처 측정소 찾는 api에서 필요한 값
+    const [locationData, setLocationData] = useState({
+        addressName: '', // 현재 주소
+        sidoName: '', // 도 이름
+        sggName: '', // 시 이름
+        stationName: '', // 지역 이름
+        umdName: '' // 동 이름 << stationName과 값은 같은데 근처 측정소 찾는 api에서 필요한 값
+    });
 
     // 지도가 준비된 후에 마커와 인포윈도우를 표시합니다
     useEffect(() => {
@@ -76,24 +79,21 @@ function Map() {
         geocoder.coord2RegionCode(latlng.getLng(), latlng.getLat(), (result, status) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 if (result.length > 0) {
-                    setAddressName(result[1].address_name)
+                    const addressName = result[1].address_name;
+                    const sidoName = result[0].region_1depth_name;
+                    const stationName = result[0].region_3depth_name;
+                    const umdName = result[0].region_3depth_name
+                    const sggName = result[0].region_2depth_name
 
-                    if(result[0].region_3depth_name==="송도동"){
-                        setSidoName(result[0].region_1depth_name);
-                        setStationName("송도"); //송도동으로 검색하면 포항 송도동만 나와서 예외처리
-                        if(result[1].region_3depth_name==="송도4동"||result[1].region_3depth_name==="송도5동"){ //송도4동, 송도5동은 근처 측정소 api 파라미터로 줄 수 없음
-                            setUmdName("송도2동"); //송도4동, 송도5동과 제일 가까운게 송도2동
-                            setSggName(result[0].region_2depth_name)
-                        } else {
-                            setUmdName(result[1].region_3depth_name); //송도1동, 송도2동, 송도3동
-                            setSggName(result[0].region_2depth_name)
-                        }
-                    }else {
-                        setSidoName(result[0].region_1depth_name);
-                        setStationName(result[0].region_3depth_name);
-                        setUmdName(result[0].region_3depth_name);
-                        setSggName(result[0].region_2depth_name)
+                    const locationData = {
+                        addressName: addressName,
+                        sidoName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sidoName,
+                        stationName: ApiService.AdressException(sidoName,stationName,umdName,sggName).stationName,
+                        umdName: ApiService.AdressException(sidoName,stationName,umdName,sggName).umdName,
+                        sggName: ApiService.AdressException(sidoName,stationName,umdName,sggName).sggName
                     }
+
+                    setLocationData(prevState => ({ ...prevState, ...locationData }));
                 }
             }
         });
@@ -105,8 +105,8 @@ function Map() {
                 {{width: "350px", height: "200px", border: "1px solid rgb(207, 207, 207)", borderRadius: "30px", marginTop: "20px", marginBottom: "20px",
                     boxShadow: "rgb(207, 207, 207) 0px 0px 13px", position: "relative", overflow: "hidden", left: "10px"}}>
             </div>
-            <Weather addressName={addressName} location={location}/>
-            <Dust sidoName={sidoName} stationName={stationName} umdName={umdName} sggName={sggName}/>
+            <Weather addressName={locationData.addressName} location={location}/>
+            <Dust sidoName={locationData.sidoName} stationName={locationData.stationName} umdName={locationData.umdName} sggName={locationData.sggName}/>
         </div>
     )
 }

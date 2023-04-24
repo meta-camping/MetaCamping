@@ -1,35 +1,29 @@
 package com.example.firstproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 
+import java.time.LocalDateTime;
 
 @Data
-public class ChatMessageDTO<T> implements Message<T> {
-
+public class ChatMessageDTO {
 
     public enum MessageType {
         ENTER, TALK, LEAVE
     }
-    private String room_id;
+
+    private String roomId;
     private MessageType type;
     private String sender;
     private String message;
-    private String created_time;
-    private T payload;
-    private T headers;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 
-
-    @Override
-    public T getPayload() {
-        return payload;
-    }
-
-    @Override
-    public MessageHeaders getHeaders() {
-        return (MessageHeaders) headers;
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
 }
+
+
 
