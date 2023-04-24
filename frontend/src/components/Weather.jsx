@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ApiService from "../services/ApiService";
 import locationImage from "../images/location.gif"
 import sunny from "../images/weather/sunny.gif";
@@ -8,6 +8,7 @@ import snow from "../images/weather/snow.gif"
 import snowrain from "../images/weather/snowrain.gif"
 import shower from "../images/weather/shower.gif"
 import rain from "../images/weather/rain.gif"
+import useDidMountEffect from "../useDidMountEffect";
 
 function Weather(props) {
     //현재 시간 날씨 예보에 쓰이는 변수
@@ -45,7 +46,7 @@ function Weather(props) {
         }
     }
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         ApiService.weather(coordinate.x,coordinate.y).then((response) => {
             //현재 시간 날씨 예보에 쓰이는 변수 설정
             setWeatherData(prevState => ({...prevState, TMP: response.data.TMP}))
@@ -144,7 +145,7 @@ function Weather(props) {
         }).catch(error => console.log("날씨 API 요청 실패 " + error))
     }, [coordinate.x,coordinate.y])
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         setCoordinate(ApiService.dfs_xy_conv("toXY",props.location.latitude,props.location.longitude))
     }, [props])
 

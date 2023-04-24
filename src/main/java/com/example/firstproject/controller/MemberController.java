@@ -40,18 +40,20 @@ public class MemberController {
     }
 
     // 유저 혹은 매니저 혹은 어드민이 접근 가능- 프로필 화면 들어갈때 nickname 값을 리턴
-    @GetMapping("/user/profile")
+    @GetMapping("/user/userCheck")
     public String userProfile(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
 
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("id", principal.getMember().getId());
         jsonObj.put("username", principal.getMember().getUsername());
         jsonObj.put("nickname", principal.getMember().getNickname());
+        jsonObj.put("role", principal.getMember().getRoles());
+
+        log.info("userCheck 객체: " + jsonObj);
 
         return jsonObj.toString();
     }
-//@RequestParam String username,@RequestParam String password, @RequestParam String upadate_password
+
     @PostMapping("/user/updatePassword")
     public String updatePassword(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByUsername(memberDTO.getUsername());
@@ -84,13 +86,6 @@ public class MemberController {
                 return "이미 존재하는 닉네임 입니다";
             }
         }
-    }
-
-    // 매니저 혹은 어드민이 접근 가능
-    @GetMapping("/manager")
-    public String manager(Authentication authentication) {
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        return "<h1>manager</h1>";
     }
 
     // 어드민이 접근 가능

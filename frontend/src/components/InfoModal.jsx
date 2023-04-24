@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {Modal, Button} from "react-bootstrap";
 import CampingMap from './CampingMap';
 import axios from 'axios';
@@ -68,8 +68,7 @@ function InfoModal({ info, show, handleClose }) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <CampingMap lan={info.campingCoordinateX} lng={info.campingCoordinateY}/>
-                {/*{info.campingAddress}*/}
+                <CampingMap lan={info.campingCoordinateX} lng={info.campingCoordinateY} campingAddress={info.campingAddress}/>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>

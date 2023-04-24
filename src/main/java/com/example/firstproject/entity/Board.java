@@ -32,7 +32,7 @@ public class Board {
     @Column(name = "content")
     private String content;
     @Column(name = "hits")
-    @ColumnDefault("1")
+    @ColumnDefault("0")
     private Integer hits;
     @CreatedDate
     @Column(name = "created_time")

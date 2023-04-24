@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import InfoModal from "./InfoModal";
 import {Button} from 'react-bootstrap';
@@ -9,7 +9,7 @@ function SearchData() {
     const [city, setCity] = useState("강원도");
     const [RoomCheckValue, setRoomCheckValue] = useState('');
     const [modalHandle,setModalHandle] = useState(false);
-    const [selectedInfo, setSelectedInfo] = useState({location:'', position:''});
+    const [selectedInfo, setSelectedInfo] = useState('');
 
     const [isdistance, setIsdistance] = useState(false);
     
@@ -144,7 +144,6 @@ function SearchData() {
                         <thead>
                         <tr>
                             <th>거리</th>
-                            <th>번호</th>
                             <th>주소</th>
                             <th>이름</th>
                         </tr>
@@ -152,12 +151,11 @@ function SearchData() {
                         <tbody>
                         {currentItems.map(
                             prop =>
-                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
-                                    <td>{prop.distance.toFixed(2)}(km)</td>
-                                    <td>{prop.id}</td>
-                                    <td>{prop.address}</td>
-                                    <td>{prop.name}</td>
-                                </tr>
+                                    <tr className="searchData" key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
+                                        <td>{prop.distance.toFixed(2)}(km)</td>
+                                        <td>{prop.address}</td>
+                                        <td>{prop.name}</td>
+                                    </tr>
                         )}
                         </tbody>
                     </table>
@@ -173,7 +171,6 @@ function SearchData() {
                     <table className="table table-striped table-bordered">
                         <thead>
                         <tr>
-                            <th>번호</th>
                             <th>주소</th>
                             <th>이름</th>
                         </tr>
@@ -181,8 +178,7 @@ function SearchData() {
                         <tbody>
                         {currentItems.map(
                             prop =>
-                                <tr key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
-                                    <td>{prop.id}</td>
+                                <tr className="searchData" key={prop.id} onClick = {() => openModal(prop.name, prop.address, prop.latitude, prop.longitude)}>
                                     <td>{prop.address}</td>
                                     <td>{prop.name}</td>
                                 </tr>

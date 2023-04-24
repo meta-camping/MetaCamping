@@ -11,6 +11,7 @@ import Main from "./components/Main";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
+import About from "./components/About";
 import { RecoilRoot } from "recoil";
 
 
@@ -31,6 +32,7 @@ function App() {
                       <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
                       <Route path = "/chat/list" element = {<ChatRoomList />} />
                       <Route path = "/chat/room/:roomId" element = {<ChatRoom />} />
+                      <Route path = "/about" element = {<About />} />
                   </Routes>
               </div>
               <FooterComponent/>
