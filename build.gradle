@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.json:json:20220924'
 
 	//validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.3'
 
 	//security
 	implementation 'org.springframework.boot:spring-boot-starter-security'

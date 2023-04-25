@@ -116,10 +116,10 @@ function Profile() {
         if (!checkExistData(password2, "비밀번호 확인을")) return false;
         if (!CheckSamePassword(password1,password2)) return false;
 
-        var passwordRegExp = /^[a-zA-z0-9]{2,16}$/; //비밀번호 유효성 검사
+        var passwordRegExp = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/; //비밀번호 유효성 검사
         if (passwordRegExp.test(password1) === false) {
             alert(
-                "비밀번호는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!"
+                "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요."
             );
             return false;
         }

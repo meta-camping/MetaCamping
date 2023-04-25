@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.Valid;
+
 @Log4j2
 @RestController
 @RequestMapping("/api/v1")
@@ -94,9 +96,9 @@ public class MemberController {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         return "<h1>admin</h1>";
     }
-
+    //유효성 검사를 위해 @Valid 추가
     @PostMapping("/join")
-    public String join(@RequestBody Member member) {
+    public String join(@Valid @RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
         if (isMember != null) {
             return "이미 가입된 회원입니다.";
