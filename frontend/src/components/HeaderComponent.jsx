@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import {userState} from "../recoil/user";
 import "../styles/Header.css";
 import profile from "../images/profile.png";
-import notion from "../images/notion.png";
 
 function HeaderComponent() {
     const [token,setToken] = useRecoilState(tokenState);
@@ -60,7 +59,6 @@ function HeaderComponent() {
                     <li><button className="nav-link px-2 link-dark nav-custom"  onClick={()=>navigate("/chat/list")} >Chatting</button></li>
                     <li><button className="nav-link px-2 link-dark nav-custom" onClick={()=>navigate("/board")} >Notice</button></li>
                     <li><button className="nav-link px-2 link-dark nav-custom" onClick={()=>navigate("/about")} >About</button></li>
-
                 </ul>
 
                 <div className="col-md-3 text-end" >

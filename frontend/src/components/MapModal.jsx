@@ -39,12 +39,8 @@ function MapModal({ info, show, handleClose }) {
             document.getElementById("map2"),
             mapOption
         );
-        const marker = new window.kakao.maps.Marker({
-            position: map.getCenter()
-        });
-        marker.setMap(map);
-        setMap(map);
 
+        setMap(map);
         // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
         var zoomControl = new kakao.maps.ZoomControl();
         map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
@@ -54,20 +50,26 @@ function MapModal({ info, show, handleClose }) {
 
         // 주소로 좌표를 검색합니다
         geocoder.addressSearch(info.campingAddress, function(result, status) {
-            // 정상적으로 검색이 완료됐으면
+            if (status === kakao.maps.services.Status.OK) {
                 setLocation({
                     latitude: result[0].y,
                     longitude: result[0].x
                 });
+            } else {
+                setLocation({
+                    latitude: info.lan,
+                    longitude: info.lng
+                });
+            }
         });
     }, []);
 
     return (
         <Modal size={'xl'} show={show} onHide={handleClose} centered>
             <Modal.Body>
-                    <div id="map2" style=
-                        {{width:"1100px",height:"600px"}}>
-                    </div>
+                <div id="map2" style=
+                    {{width:"1100px",height:"600px"}}>
+                </div>
             </Modal.Body>
         </Modal>
     )

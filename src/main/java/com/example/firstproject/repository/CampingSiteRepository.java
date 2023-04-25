@@ -13,5 +13,8 @@ public interface CampingSiteRepository extends JpaRepository<CampingSite,Long> {
 
     @Query(value = "select * from camping_site where city_name = :city_name", nativeQuery = true)
     ArrayList<CampingSite> findAllBySidoName(@Param("city_name") String city_name);
+
+    @Query(value = "select * from camping_site where name like %:camping_name%", nativeQuery = true)
+    ArrayList<CampingSite> findAllByCampingName(@Param("camping_name") String camping_name);
 }
 

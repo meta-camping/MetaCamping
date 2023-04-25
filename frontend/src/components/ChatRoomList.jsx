@@ -12,8 +12,16 @@ function ChatRoomList() {
     const [chatRooms, setChatRooms] = useState([]);
     const [camping,setCamping] = useState([]);
     const [user,setUser] = useRecoilState(userState);
-    const username = user.nickname
+    // const username = user.nickname;
+    const [username,setUsername]= useState(null);
 
+    useEffect(() => {
+        if(user) {
+            setUsername(user.nickname);
+        } else {
+            setUsername('');
+        }
+    }, [user]);
 
     useEffect(() => {
         axios.get("/chat/list")
@@ -33,34 +41,36 @@ function ChatRoomList() {
         if (!username) {
             alert('채팅방 기능은 로그인 후 이용하실 수 있습니다.')
             navigate(`/login`)
+        } else {
+            /**
+             * 회원의 채팅방 기참여 여부 확인하는 함수
+             * room_id, username을 넘겨주고 user_list 테이블에 있는 지 확인 후
+             * 기참여 여부 없으면 '가능',
+             * 있으면 userCheck에 '구독 유저' 할당
+             */
+
+            axios.post("/chat/room/user-check", {
+                roomId: roomId,
+                memberId: username
+            })
+                .then(res => {
+                    const userCheck = res.data
+                    if (userCheck === "다른 방 구독 유저"){
+                        if(window.confirm("동시에 하나의 채팅방만 이용 가능합니다. 입장하시겠습니까?\n(기존에 참여했던 채팅방의 기록이 사라집니다.)") === true ){
+                            //기존 구독정보 갱신
+                            navigate(`/chat/room/${roomId}`,{ state : { userCheck: userCheck }} )
+                        }else {
+                            navigate(`/chat/list`)
+                        }
+                    }
+                    else{
+                        navigate(`/chat/room/${roomId}`, { state : { userCheck: userCheck }} );
+                    }
+                })
+                .catch(error => console.error(error));
         }
 
-        /**
-         * 회원의 채팅방 기참여 여부 확인하는 함수
-         * room_id, username을 넘겨주고 user_list 테이블에 있는 지 확인 후
-         * 기참여 여부 없으면 '가능',
-         * 있으면 userCheck에 '구독 유저' 할당
-         */
 
-        axios.post("/chat/room/user-check", {
-            roomId: roomId,
-            memberId: username
-        })
-            .then(res => {
-                const userCheck = res.data
-                if (userCheck === "다른 방 구독 유저"){
-                    if(window.confirm("동시에 하나의 채팅방만 이용 가능합니다. 입장하시겠습니까?\n(기존에 참여했던 채팅방의 기록이 사라집니다.)") === true ){
-                        //기존 구독정보 갱신
-                        navigate(`/chat/room/${roomId}`,{ state : { userCheck: userCheck }} )
-                    }else {
-                        navigate(`/chat/list`)
-                    }
-                }
-                else{
-                    navigate(`/chat/room/${roomId}`, { state : { userCheck: userCheck }} );
-                }
-            })
-            .catch(error => console.error(error));
     };
 
 
