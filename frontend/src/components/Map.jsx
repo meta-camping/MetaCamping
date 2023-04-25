@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Weather from "./Weather";
 import Dust from "./Dust";
 import ApiService from "../services/ApiService";
+import { useRecoilState } from "recoil";
+import { locationState } from "../recoil/location";
 import useDidMountEffect from "../useDidMountEffect";
 const { kakao } = window;
 
 function Map() {
+    
+    const [nowLocation,setNowLocation] = useRecoilState(locationState);
+    
     const [map, setMap] = useState('');
     const [location, setLocation] = useState({ latitude: '', longitude: ''}); // 위도, 경도
+
 
     const [locationData, setLocationData] = useState({
         addressName: '', // 현재 주소
@@ -62,6 +68,10 @@ function Map() {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
                 });
+                setNowLocation({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                })
             });
         } else {
             // geolocation을 사용할 수 없는 경우 초기 위치를 설정합니다.
