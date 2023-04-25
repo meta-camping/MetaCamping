@@ -1,9 +1,9 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=auto&height=300&section=header&text=Meta%20Camping&fontSize=90)
+cd ![header](https://capsule-render.vercel.app/api?type=waving&color=auto&height=300&section=header&text=Meta%20Camping&fontSize=90)
 
 
 # Meta Camping - Camping Site Community
 
--
+- 11
 추후 수정
 
 ## Team 👩‍👦‍👦
@@ -11,8 +11,9 @@
 |------|------|------|------|-----|
 ||||
 ||||
-
+np
 ## Tool 🛠️
+Jenknis
 
 ## API 🗺
 
