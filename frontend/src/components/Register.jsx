@@ -151,7 +151,7 @@ function Register() {
                         maxLength={6}
                         required
                     />
-                    <label for="floatingPassword">Nickname</label>
+                    <label>Nickname</label>
                 </div>
                 <div className="form-floating">
                     <input

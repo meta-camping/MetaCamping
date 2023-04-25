@@ -71,6 +71,14 @@ public class APIController {
         return sidoEntityList;
     }
 
+    //캠핑장 이름으로 데이터 찾아서 리턴
+    @GetMapping("/camping/showCampingList")
+    public List<CampingSite> showCampingListByCampingName(@RequestParam String camping_name) {
+        List<CampingSite> campingSiteEntityList = campingSiteRepository.findAllByCampingName(camping_name);
+
+        return campingSiteEntityList;
+    }
+
     //현재위치와 캠핑장 거리 계산하여 거리순으로 최대 30개의 데이터를 오름차순으로 return
     @GetMapping("/camping/calculate")
     public List<CampingSite> getCampingSitesNearby(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
@@ -309,8 +317,8 @@ public class APIController {
 
         try {
             conn = (HttpURLConnection) apiURL.openConnection();
-            conn.setConnectTimeout(20000);
-            conn.setReadTimeout(20000);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(5000);
             conn.setDoOutput(true);
 
             if (isPost) {

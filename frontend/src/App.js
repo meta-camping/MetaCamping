@@ -31,7 +31,7 @@ function App() {
                       <Route path = "/create-board/:postId" element = {<CreateBoardComponent />} />
                       <Route path = "/read-board/:postId" element = {<ReadBoardComponent />} />
                       <Route path = "/chat/list" element = {<ChatRoomList />} />
-                      <Route path = "/chat/room/:room_id" element = {<ChatRoom />} />
+                      <Route path = "/chat/room/:roomId" element = {<ChatRoom />} />
                       <Route path = "/about" element = {<About />} />
                   </Routes>
               </div>

@@ -37,23 +37,19 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
 
 
-    @MessageMapping("/hello/{room_id}")
-    @SendTo("/topic/{room_id}")
-    public ChatMessageResponseDTO greeting(ChatMessageDTO message, @DestinationVariable("room_id") String room_id) throws Exception {
-        //Thread.sleep(1000); // simulated delay
+    @MessageMapping("/hello/{roomId}")
+    @SendTo("/topic/{roomId}")
+    public ChatMessageResponseDTO greeting(ChatMessageDTO message, @DestinationVariable("roomId") String roomId) throws Exception {
+        chatService.saveChat(message);
         if (message.getType() == ENTER) {
-            chatService.saveChat(message);
             chatRoomService.insertUserList(message);
-            return new ChatMessageResponseDTO(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
-                    message.getSender(), "님이 입장했습니다.");
         }
-        if (message.getType() == TALK) {
-            chatService.saveChat(message);
-            return new ChatMessageResponseDTO(LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
-                    message.getSender(), message.getMessage());
-        }
-        return null;
+        return new ChatMessageResponseDTO(message);
     }
+
+
+
+
 
 }
 

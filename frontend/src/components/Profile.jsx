@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import {React, useEffect, useState} from "react";
 import axios from "axios";
 import "../styles/Profile.css";
 import { useRecoilState } from "recoil";
@@ -9,6 +9,8 @@ import {useNavigate} from "react-router-dom";
 function Profile() {
     const [token,setToken] = useRecoilState(tokenState);
     const [user,setUser] = useRecoilState(userState);
+    const [username,setUsername]= useState(null);
+    const [nickname,setNickname]= useState(null);
     const navigate = useNavigate();
 
     const [passwordisEditing, setPasswordIsEditing] = useState(false);
@@ -18,6 +20,31 @@ function Profile() {
     const [inputPw1, setInputPw1] = useState("");
     const [inputPw2, setInputPw2] = useState("");
     const [inputNn1, setInputNn1] = useState("");
+
+    useEffect(() => {
+        if(user) {
+            setUsername(user.username);
+            setNickname(user.nickname);
+        } else {
+            setUsername('');
+        }
+    }, [user]);
+
+    useEffect(() => {
+        (
+            axios.get("/api/v1/user", {
+                headers:{
+                    Authorization: token
+                }
+            })
+                .then((res) => {
+                })
+                .catch((error) => {
+                    alert("로그인이 필요합니다");
+                    navigate('/');
+                })
+        )
+    }, [token])
 
     const handleInputPw = (e) => {
         setInputPw(e.target.value);
@@ -41,9 +68,9 @@ function Profile() {
         }
     }
     const axiosBody = {
-        username: user.username,
+        username: username,
         password: inputPw,
-        nickname: user.nickname,
+        nickname: nickname,
         upadate_password: inputPw1,
         upadate_nickname: inputNn1
     }

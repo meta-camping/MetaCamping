@@ -14,28 +14,27 @@ public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long message_id;
+    private long messageId;
     @Column(name = "room_id")
-    private String room_id;
+    private String roomId;
     @Column(name = "type")
     private ChatMessageDTO.MessageType type;
     //채팅방 ID
     //보내는 사람
     @Column(name = "member_id")
-    private String member_id;
+    private String memberId;
     //내용
     @Column(name = "message")
     private String message;
     @CreatedDate
     @Column(name = "created_time")
-    private LocalDateTime created_time;
+    private LocalDateTime createdTime;
 
     public ChatMessage(ChatMessageDTO messageDTO) {
-        this.room_id = messageDTO.getRoom_id();
+        this.roomId = messageDTO.getRoomId();
         this.message = messageDTO.getMessage();
         this.type = messageDTO.getType();
-        this.member_id = messageDTO.getSender();
-        this.created_time = LocalDateTime.now();
+        this.memberId = messageDTO.getSender();
+        this.createdTime = LocalDateTime.now();
     }
-
 }
