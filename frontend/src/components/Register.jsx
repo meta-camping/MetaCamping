@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import {React, useState} from "react";
 import axios from "axios";
 import "../styles/Register.css";
 
@@ -26,9 +26,9 @@ function Register() {
     };
 
     const axiosBody = {
-        username:inputId,
-        password:inputPw,
-        nickname:inputNn
+        username: inputId,
+        password: inputPw,
+        nickname: inputNn
     }
 
     // register 버튼 클릭 이벤트
@@ -38,15 +38,16 @@ function Register() {
         axios
             .post("/api/v1/join", axiosBody)
             .then((res) => {
-                if(res.data==="회원가입 완료"){
+                if (res.data === "회원가입 완료") {
                     alert("회원가입 성공");
                     document.location.href = "/";
-                } else if (res.data==="이미 가입된 회원입니다."){
+                } else if (res.data === "이미 가입된 회원입니다.") {
                     alert("이미 가입된 회원입니다.");
                 }
             })
             .catch(error => alert("회원가입 실패"))
     };
+
     function checkAll() {
         if (!CheckUserId(inputId)) {
             return false;
@@ -60,7 +61,7 @@ function Register() {
         if (!CheckPassword(inputPw2)) {
             return false;
         }
-        if (!CheckSamePassword(inputPw,inputPw2)) {
+        if (!CheckSamePassword(inputPw, inputPw2)) {
             return false;
         }
 
@@ -105,14 +106,14 @@ function Register() {
         if (!checkExistData(password, "비밀번호를")) return false;
 
         var passwordRegExp = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/; //비밀번호 유효성 검사
-        if (passwordRegExp.test(password)=== false) {
+        if (passwordRegExp.test(password) === false) {
             alert("비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.");
             return false;
         }
         return true; //확인이 완료되었을 때
     }
 
-    function CheckSamePassword(password,password2) {
+    function CheckSamePassword(password, password2) {
         if (password !== password2) {
             alert("비밀번호가 일치하지 않습니다.");
             return false;

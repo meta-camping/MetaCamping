@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import axios from "axios";
 import "../styles/Login.css";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { tokenState } from "../recoil/token";
-import { userState } from "../recoil/user";
+import {useNavigate} from "react-router-dom";
+import {useRecoilState} from "recoil";
+import {tokenState} from "../recoil/token";
+import {userState} from "../recoil/user";
 import useDidMountEffect from "../useDidMountEffect";
 
 function Login() {
-    const [token,setToken] = useRecoilState(tokenState);
-    const [user,setUser] = useRecoilState(userState);
+    const [token, setToken] = useRecoilState(tokenState);
+    const [user, setUser] = useRecoilState(userState);
 
     const navigate = useNavigate();
 
@@ -17,13 +17,13 @@ function Login() {
     const [inputPw, setInputPw] = useState("");
 
     const axiosConfig = {
-        headers:{
+        headers: {
             Authorization: "cos"
         }
     }
     const axiosBody = {
-        username:inputId,
-        password:inputPw
+        username: inputId,
+        password: inputPw
     }
 
     // input data 의 변화가 있을 때마다 value 값을 변경해서 useState 해준다
@@ -48,16 +48,16 @@ function Login() {
 
     useDidMountEffect(() => {
         (
-        axios.get("/api/v1/user/userCheck", {
-            headers:{
-                Authorization: token
-            }
-        })
-            .then((res) => {
-                setUser(res.data);
-                navigate("/");
+            axios.get("/api/v1/user/userCheck", {
+                headers: {
+                    Authorization: token
+                }
             })
-            .catch(error => alert("로그인 실패")))
+                .then((res) => {
+                    setUser(res.data);
+                    navigate("/");
+                })
+                .catch(error => alert("로그인 실패")))
     }, [token])
 
     function checkAll() {
@@ -97,7 +97,7 @@ function Login() {
         if (!checkExistData(password, "비밀번호를")) return false;
 
         var passwordRegExp = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/; //비밀번호 유효성 검사
-        if (passwordRegExp.test(password)=== false) {
+        if (passwordRegExp.test(password) === false) {
             alert("비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.");
             return false;
         }
