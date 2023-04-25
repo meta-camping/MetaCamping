@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Modal, Button} from "react-bootstrap";
 import CampingMap from './CampingMap';
 import axios from 'axios';
