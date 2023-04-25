@@ -1,4 +1,4 @@
-import { React, useState, useRef } from "react";
+import {React, useEffect, useState} from "react";
 import axios from "axios";
 import "../styles/Profile.css";
 import { useRecoilState } from "recoil";
@@ -9,6 +9,8 @@ import {useNavigate} from "react-router-dom";
 function Profile() {
     const [token,setToken] = useRecoilState(tokenState);
     const [user,setUser] = useRecoilState(userState);
+    const [username,setUsername]= useState(null);
+    const [nickname,setNickname]= useState(null);
     const navigate = useNavigate();
 
     const [passwordisEditing, setPasswordIsEditing] = useState(false);
@@ -18,6 +20,31 @@ function Profile() {
     const [inputPw1, setInputPw1] = useState("");
     const [inputPw2, setInputPw2] = useState("");
     const [inputNn1, setInputNn1] = useState("");
+
+    useEffect(() => {
+        if(user) {
+            setUsername(user.username);
+            setNickname(user.nickname);
+        } else {
+            setUsername('');
+        }
+    }, [user]);
+
+    useEffect(() => {
+        (
+            axios.get("/api/v1/user", {
+                headers:{
+                    Authorization: token
+                }
+            })
+                .then((res) => {
+                })
+                .catch((error) => {
+                    alert("로그인이 필요합니다");
+                    navigate('/');
+                })
+        )
+    }, [token])
 
     const handleInputPw = (e) => {
         setInputPw(e.target.value);
@@ -41,9 +68,9 @@ function Profile() {
         }
     }
     const axiosBody = {
-        username: user.username,
+        username: username,
         password: inputPw,
-        nickname: user.nickname,
+        nickname: nickname,
         upadate_password: inputPw1,
         upadate_nickname: inputNn1
     }
@@ -53,6 +80,7 @@ function Profile() {
             .then((res) => {
                 if(res.data==="비밀번호 수정 완료"){
                     setToken(null);
+                    setUser(null);
                     navigate("/");
                     alert("비밀번호 수정 완료. 다시 로그인 해주세요");
                 }
@@ -72,6 +100,7 @@ function Profile() {
             .then((res) => {
                 if(res.data==="닉네임 수정 완료"){
                     setToken(null);
+                    setUser(null);
                     navigate("/");
                     alert("닉네임 수정 완료. 다시 로그인 해주세요");
                 }
@@ -181,12 +210,9 @@ function Profile() {
         <div>
             <div>
                 <h2 className="text-center" style={{marginBottom: "30px"}}>프로필</h2>
-                <div className="api_title">
-                    안녕하세요 {user.nickname} 님. <br />
-                </div>
             </div>
             {passwordisEditing ? (
-                <div className="api_content" style={{float:"none", margin:"0 auto"}}>
+                <div className="profile_content" style={{float:"none", margin:"0 auto"}}>
                     기존 비밀번호:
                     <input
                         className="inputbox"
@@ -255,7 +281,7 @@ function Profile() {
                 </div>
             )}
             {nicknameisEditing ? (
-                <div className="api_content" style={{float:"none", margin:"50px auto"}}>
+                <div className="profile_content" style={{float:"none", margin:"50px auto"}}>
                     기존 닉네임: {user.nickname}
                     <br />
                     닉네임 변경:

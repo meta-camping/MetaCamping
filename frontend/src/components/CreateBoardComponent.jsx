@@ -1,12 +1,34 @@
 import React, {useEffect, useState} from 'react';
+import axios from "axios";
 import {useNavigate, useParams} from 'react-router-dom';
 import BoardService from '../services/BoardService';
+import useDidMountEffect from "../useDidMountEffect";
+import {useRecoilState} from "recoil";
+import {tokenState} from "../recoil/token";
 
 function CreateBoardComponent() {
     const { postId } = useParams();
     const navigate = useNavigate();
+    const [token,setToken] = useRecoilState(tokenState);
     const [title, setTitle] = useState('');
     const [content, setContents] = useState('');
+
+    useEffect(() => {
+        (
+            axios.get("/api/v1/admin", {
+                headers:{
+                    Authorization: token
+                }
+            })
+                .then((res) => {
+                })
+                .catch((error) => {
+                    alert("관리자만 사용 가능합니다");
+                    navigate('/');
+                    })
+        )
+    }, [token])
+
     const changeTitleHandler = (event) => {
         setTitle(event.target.value);
     }
@@ -42,7 +64,7 @@ function CreateBoardComponent() {
         }
     }
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         if (postId === '_create') {
             return
         } else {

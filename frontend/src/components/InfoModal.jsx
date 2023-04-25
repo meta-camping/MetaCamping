@@ -2,17 +2,26 @@ import React, {useState, useEffect} from 'react';
 import {Modal, Button} from "react-bootstrap";
 import CampingMap from './CampingMap';
 import axios from 'axios';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/user";
 
 function InfoModal({ info, show, handleClose }) {
 
     const [user,setUser] = useRecoilState(userState);
-    console.log(user.nickname)
-    const username = user.nickname
+
     const navigate = useNavigate();
     const [roomId,setRoomId] = useState('');
+
+    const [username,setUsername]= useState(null);
+
+    useEffect(() => {
+        if(user) {
+            setUsername(user.nickname);
+        } else {
+            setUsername('');
+        }
+    }, [user]);
 
     const inToChatRoom = () => {
         
@@ -68,8 +77,7 @@ function InfoModal({ info, show, handleClose }) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <CampingMap lan={info.campingCoordinateX} lng={info.campingCoordinateY}/>
-                {/*{info.campingAddress}*/}
+                <CampingMap lan={info.campingCoordinateX} lng={info.campingCoordinateY} campingAddress={info.campingAddress}/>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>

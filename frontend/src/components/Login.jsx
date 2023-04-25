@@ -1,12 +1,16 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../recoil/token";
+import { userState } from "../recoil/user";
+import useDidMountEffect from "../useDidMountEffect";
 
 function Login() {
     const [token,setToken] = useRecoilState(tokenState);
+    const [user,setUser] = useRecoilState(userState);
+
     const navigate = useNavigate();
 
     const [inputId, setInputId] = useState("");
@@ -38,10 +42,29 @@ function Login() {
             .then((res) => {
                 alert("로그인 성공");
                 setToken(res.headers.authorization);
-                navigate("/");
             })
             .catch(error => alert("아이디와 비밀번호를 확인하세요"));
     };
+
+    useEffect(() => {
+            if (token) {
+                navigate('/');
+            }
+    }, [token])
+
+    useDidMountEffect(() => {
+        (
+        axios.get("/api/v1/user/userCheck", {
+            headers:{
+                Authorization: token
+            }
+        })
+            .then((res) => {
+                setUser(res.data);
+                navigate("/");
+            })
+            .catch(error => alert("로그인 실패")))
+    }, [token])
 
     function checkAll() {
         if (!CheckUserId(inputId)) {
@@ -67,7 +90,7 @@ function Login() {
         //Id가 입력되었는지 확인하기
         if (!checkExistData(id, "아이디를")) return false;
 
-        var idRegExp = /^[a-zA-z0-9]{2,16}$/; //아이디 유효성 검사
+        const idRegExp = /^[a-zA-z0-9]{2,16}$/; //아이디 유효성 검사
         if (!idRegExp.test(id)) {
             alert("아이디는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!");
             return false;
@@ -79,7 +102,7 @@ function Login() {
         //비밀번호가 입력되었는지 확인하기
         if (!checkExistData(password, "비밀번호를")) return false;
 
-        var passwordRegExp = /^[a-zA-z0-9]{2,16}$/; //비밀번호 유효성 검사
+        const passwordRegExp = /^[a-zA-z0-9]{2,16}$/; //비밀번호 유효성 검사
         if (passwordRegExp.test(password)=== false) {
             alert("비밀번호는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!");
             return false;
