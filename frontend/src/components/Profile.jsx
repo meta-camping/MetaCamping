@@ -1,14 +1,14 @@
-import { React, useState } from "react";
+import {React, useState} from "react";
 import axios from "axios";
 import "../styles/Profile.css";
-import { useRecoilState } from "recoil";
-import { userState } from "../recoil/user";
-import { tokenState } from "../recoil/token";
+import {useRecoilState} from "recoil";
+import {userState} from "../recoil/user";
+import {tokenState} from "../recoil/token";
 import {useNavigate} from "react-router-dom";
 
 function Profile() {
-    const [token,setToken] = useRecoilState(tokenState);
-    const [user,setUser] = useRecoilState(userState);
+    const [token, setToken] = useRecoilState(tokenState);
+    const [user, setUser] = useRecoilState(userState);
     const navigate = useNavigate();
 
     const [passwordisEditing, setPasswordIsEditing] = useState(false);
@@ -36,7 +36,7 @@ function Profile() {
     };
 
     const axiosConfig = {
-        headers:{
+        headers: {
             Authorization: token
         }
     }
@@ -51,16 +51,16 @@ function Profile() {
         axios
             .post("/api/v1/user/updatePassword", axiosBody, axiosConfig)
             .then((res) => {
-                if(res.data==="비밀번호 수정 완료"){
+                if (res.data === "비밀번호 수정 완료") {
                     setToken(null);
                     setUser(null);
                     navigate("/");
                     alert("비밀번호 수정 완료. 다시 로그인 해주세요");
                 }
-                if(res.data==="잘못된 접근입니다"){
+                if (res.data === "잘못된 접근입니다") {
                     alert("잘못된 접근입니다");
                 }
-                if(res.data==="기존 비밀번호를 확인하세요"){
+                if (res.data === "기존 비밀번호를 확인하세요") {
                     alert("기존 비밀번호를 확인하세요");
                 }
             })
@@ -71,13 +71,13 @@ function Profile() {
         axios
             .post("/api/v1/user/updateNickname", axiosBody, axiosConfig)
             .then((res) => {
-                if(res.data==="닉네임 수정 완료"){
+                if (res.data === "닉네임 수정 완료") {
                     setToken(null);
                     setUser(null);
                     navigate("/");
                     alert("닉네임 수정 완료. 다시 로그인 해주세요");
                 }
-                if(res.data==="이미 존재하는 닉네임 입니다"){
+                if (res.data === "이미 존재하는 닉네임 입니다") {
                     alert("이미 존재하는 닉네임 입니다");
                 }
             })
@@ -114,7 +114,7 @@ function Profile() {
         if (!checkExistData(password, "기존 비밀번호를")) return false;
         if (!checkExistData(password1, "수정할 비밀번호를")) return false;
         if (!checkExistData(password2, "비밀번호 확인을")) return false;
-        if (!CheckSamePassword(password1,password2)) return false;
+        if (!CheckSamePassword(password1, password2)) return false;
 
         var passwordRegExp = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/; //비밀번호 유효성 검사
         if (passwordRegExp.test(password1) === false) {
@@ -139,7 +139,7 @@ function Profile() {
         return true; //확인이 완료되었을 때
     }
 
-    function CheckSamePassword(password,password2) {
+    function CheckSamePassword(password, password2) {
         if (password !== password2) {
             alert("비밀번호가 일치하지 않습니다.");
             return false;
@@ -185,7 +185,7 @@ function Profile() {
                 <h2 className="text-center" style={{marginBottom: "30px"}}>프로필</h2>
             </div>
             {passwordisEditing ? (
-                <div className="profile_content" style={{float:"none", margin:"0 auto"}}>
+                <div className="profile_content" style={{float: "none", margin: "0 auto"}}>
                     기존 비밀번호:
                     <input
                         className="inputbox"
@@ -198,7 +198,7 @@ function Profile() {
                         maxLength={16}
                         required
                     />
-                    <br />
+                    <br/>
                     비밀번호 변경:
                     <input
                         className="inputbox"
@@ -211,7 +211,7 @@ function Profile() {
                         maxLength={16}
                         required
                     />
-                    <br />
+                    <br/>
                     비밀번호 확인:
                     <input
                         className="inputbox"
@@ -224,7 +224,7 @@ function Profile() {
                         maxLength={16}
                         required
                     />
-                    <br />
+                    <br/>
                     <button
                         type="button"
                         className="w-100 btn loginBtn btn-lg btn-danger"
@@ -239,7 +239,7 @@ function Profile() {
                     >
                         비밀번호 변경완료
                     </button>
-                    <br />
+                    <br/>
                 </div>
             ) : (
                 <div>
@@ -250,13 +250,13 @@ function Profile() {
                     >
                         비밀번호 변경
                     </button>
-                    <br />
+                    <br/>
                 </div>
             )}
             {nicknameisEditing ? (
-                <div className="profile_content" style={{float:"none", margin:"50px auto"}}>
+                <div className="profile_content" style={{float: "none", margin: "50px auto"}}>
                     기존 닉네임: {user.nickname}
-                    <br />
+                    <br/>
                     닉네임 변경:
                     <input
                         className="inputbox"
@@ -269,7 +269,7 @@ function Profile() {
                         maxLength={6}
                         required
                     />
-                    <br />
+                    <br/>
                     <button
                         type="button"
                         className="w-100 btn loginBtn btn-lg btn-danger"
@@ -284,7 +284,7 @@ function Profile() {
                     >
                         닉네임 변경완료
                     </button>
-                    <br />
+                    <br/>
                 </div>
             ) : (
                 <div>
@@ -295,7 +295,7 @@ function Profile() {
                     >
                         닉네임 변경
                     </button>
-                    <br />
+                    <br/>
                 </div>
             )}
         </div>

@@ -1,7 +1,5 @@
 package com.example.firstproject.controller;
 
-import java.util.List;
-
 import com.example.firstproject.config.auth.PrincipalDetails;
 import com.example.firstproject.dto.UpdateUserDTO;
 import com.example.firstproject.entity.Member;
@@ -11,11 +9,7 @@ import org.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-
 import lombok.RequiredArgsConstructor;
-
-import javax.validation.Valid;
 
 @Log4j2
 @RestController
@@ -60,14 +54,14 @@ public class MemberController {
     public String updatePassword(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByUsername(memberDTO.getUsername());
 
-        if (member==null) {
+        if (member == null) {
             return "잘못된 접근입니다";
         } else {
             if (bCryptPasswordEncoder.matches(memberDTO.getPassword(), member.getPassword())) {
                 member.setPassword(bCryptPasswordEncoder.encode(memberDTO.getUpadate_password()));
                 memberRepository.save(member);
                 return "비밀번호 수정 완료";
-            }else {
+            } else {
                 return "기존 비밀번호를 확인하세요";
             }
         }
@@ -77,10 +71,10 @@ public class MemberController {
     public String updateNickname(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByNickname(memberDTO.getNickname());
         Member member1 = memberRepository.findByNickname(memberDTO.getUpadate_nickname());
-        if (member==null) {
+        if (member == null) {
             return "잘못된 접근입니다";
         } else {
-            if (member1==null) {
+            if (member1 == null) {
                 member.setNickname(memberDTO.getUpadate_nickname());
                 memberRepository.save(member);
                 return "닉네임 수정 완료";
@@ -92,13 +86,13 @@ public class MemberController {
 
     // 어드민이 접근 가능
     @GetMapping("/admin")
-    public String admin(Authentication authentication){
+    public String admin(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         return "<h1>admin</h1>";
     }
-    //유효성 검사를 위해 @Valid 추가
+
     @PostMapping("/join")
-    public String join(@Valid @RequestBody Member member) {
+    public String join(@RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
         if (isMember != null) {
             return "이미 가입된 회원입니다.";
