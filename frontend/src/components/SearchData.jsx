@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import InfoModal from "./InfoModal";
 import {Button} from 'react-bootstrap';
@@ -12,10 +12,17 @@ function SearchData() {
     const [selectedInfo, setSelectedInfo] = useState('');
 
     const [isdistance, setIsdistance] = useState(false);
-    
+    const [campingName, setCampingName] = useState('');
+
+    const handleCampingName = (e) => {
+        setCampingName(e.target.value);
+    };
+
     const handleSelectCity = (e) => {
         setCity(e.target.value);
     };
+
+    //전체 캠핑장 조회 버튼을 클릭했을 때 실행되는 메서드
     const showAllList = () => {
         axios.get('/api/camping/showAllList')
             .then((response) => {
@@ -25,6 +32,7 @@ function SearchData() {
             }).catch(error => console.log("전체 캠핑장 조회 실패" + error))
     }
 
+    //시별로 조회 버튼을 클릭했을 때 실행되는 메서드
     const SelectCity = () => {
         axios.get('api/camping/showList', {
             params: {
@@ -38,6 +46,19 @@ function SearchData() {
             }).catch(error => console.log("시별로 조회 실패 " + error))
     }
 
+    //첫 랜더링시 거리별 조회 결과를 보여주는 함수
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            ApiService.calculationDistance(position.coords.latitude, position.coords.longitude)
+                .then((response) => {
+                    setPage(1);
+                    setCamping(response.data);
+                    setIsdistance(true);
+                }).catch(error => console.log("거리별 캠핑장 조회 실패 " + error))
+        })
+    }, []);
+
+    //거리별 캠핑장 조회 버튼을 클릭했을 때 실행되는 메서드
     const showDistanceList = () => {
         navigator.geolocation.getCurrentPosition(function (position) {
             ApiService.calculationDistance(position.coords.latitude, position.coords.longitude)
@@ -49,6 +70,24 @@ function SearchData() {
         })
     }
 
+    //캠핑장명 검색 버튼을 클릭했을 때 실행되는 메서드
+    const showByCampingName = () => {
+        if (campingName === '') {
+            alert("캠핑장명을 입력해주세요")
+        } else {
+            axios
+                .get("api/camping/showCampingList", {
+                    params: {
+                        camping_name: campingName
+                    }
+                })
+                .then((response) => {
+                    setPage(1);
+                    setCamping(response.data);
+                    setIsdistance(false);
+                }).catch(error => console.log("캠핑장 이름으로 조회 실패 " + error))
+        }
+    }
      
     const RoomChecking = (name) => {
         return axios.get(`http://localhost:8080/chat/room/exist/${name}`)
@@ -74,9 +113,6 @@ function SearchData() {
           })
           .catch((error) => console.error(error));
       };
-
-    
-    
       
     //페이지 인덱싱 처리를 위한 변수
     const [page, setPage] = useState(1);
@@ -98,18 +134,18 @@ function SearchData() {
     return (
         <div style={{marginLeft: "100px"}}>
             <form>
-                <div className="mb-3 search" style={{display: "flex"}}>
-                    <Button type="button" className="mb-3 search" onClick={showAllList} style={{fontSize:"20px",width: "200px",marginBottom: "20px"}}>
+                <div className="mb-3 search">
+                    <Button type="button" onClick={showAllList} style={{width: "160px", fontSize:"20px", marginBottom: "10px"}}>
                         전체 캠핑장 조회
                     </Button><br/>
-                    <Button type="button" className="mb-3 search" onClick={showDistanceList} style={{fontSize:"20px",width: "200px",marginLeft: "30px", marginBottom: "20px"}}>
+                    <Button type="button" onClick={showDistanceList} style={{width: "180px", fontSize:"20px", marginBottom: "10px", marginLeft: "30px"}}>
                         거리별 캠핑장 조회
                     </Button><br/>
-                    <div style={{display: "flex", marginLeft: "150px"}}>
+                    <div style={{display: "flex", marginLeft: "100px"}}>
                         <table>
                             <tbody>
                             <td>
-                                <select className="form-control" style={{fontSize:"20px", width: "140px", marginBottom: "20px"}} onChange={handleSelectCity}>
+                                <select className="form-control" style={{width: "140px", fontSize:"20px", marginBottom: "10px"}} onChange={handleSelectCity}>
                                     <option value="강원도">강원도</option>
                                     <option value="경기도">경기도</option>
                                     <option value="경상북도">경상북도</option>
@@ -131,12 +167,19 @@ function SearchData() {
                             </td>
                             </tbody>
                         </table>
-                        <Button type="button" onClick={SelectCity} style={{fontSize:"20px",width: "170px",marginLeft: "20px", marginBottom: "20px"}}>
+                        <Button type="button" onClick={SelectCity} style={{width: "170px",fontSize:"20px", marginBottom: "10px",marginLeft: "20px"}}>
                             시별로 조회
                         </Button>
                     </div>
                 </div>
+                <div className="mb-3 search">
+                    <input type="text" value={campingName} placeholder="캠핑장명" onChange={handleCampingName} minLength={2} maxLength={16} style={{width: "140px", padding: "6px 12px 6px 12px", marginLeft:"470px"}}/>
+                    <Button type="button" onClick={showByCampingName} style={{width: "170px",fontSize:"20px", marginLeft: "20px"}}>
+                        캠핑장명 검색
+                    </Button>
+                </div>
             </form>
+
 
             {isdistance ?
                 <div>

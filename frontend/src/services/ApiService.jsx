@@ -10,6 +10,7 @@ const OLAT = 38.0; // 기준점 위도(degree)
 const XO = 43; // 기준점 X좌표(GRID)
 const YO = 136; // 기1준점 Y좌표(GRID)
 class ApiService {
+    //날씨 open API-위도 경도를 사용해서 날씨 데이터 return
     weather(x,y) {
         return axios.get('/api/weatherforecast', {
             params: {
@@ -18,6 +19,8 @@ class ApiService {
             }
         })
     }
+
+    //미세먼지 open API-근처 측정소 이름을 DB에서 검색해서 미세먼지 데이터 return
     measuringStationSearch(measuringStation) {
         return axios.get('/api/dust/searchStation', {
             params: {
@@ -25,6 +28,8 @@ class ApiService {
             }
         })
     }
+
+    //미세먼지 open API-tm좌표를 사용해서 근처 측정소 return
     searchByTm(tmx,tmy) {
         return axios.get('/api/dust/search/measuringstation', {
             params: {
@@ -33,6 +38,8 @@ class ApiService {
             }
         })
     }
+
+    //미세먼지 open API-읍면동이름을 사용해서 tm좌표로 변환
     converToTm(stationName) {
         return axios.get('/api/dust/convert', {
             params: {
@@ -40,6 +47,8 @@ class ApiService {
             }
         })
     }
+
+    //현재위치와 캠핑장 위치의 위도 경도를 가지고 거리순으로 캠핑장 데이터를 return
     calculationDistance(currentX,currentY) {
         return axios.get('/api/camping/calculate', {
             params: {
@@ -48,6 +57,8 @@ class ApiService {
             }
         })
     }
+
+    //날씨 open API를 사용하기 위한 좌표계 변환
     dfs_xy_conv(code, v1, v2) {
         const DEGRAD = Math.PI / 180.0;
         const RADDEG = 180.0 / Math.PI;
@@ -108,6 +119,7 @@ class ApiService {
         return rs;
     }
 
+    //읍면동 이름때문에 미세먼지 데이터 안나오는 오류를 해결하기 위한 예외 처리
     AdressException(sidoName,stationName,umdName,sggName) {
         const locationData = {
             sidoName: sidoName,
