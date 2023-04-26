@@ -18,7 +18,7 @@ function ListBoardComponent() {
     }, []);
 
     const handleCreateBoard = () => {
-        axios.get("/api/v1/admin", {
+        axios.get("/api/admin", {
             headers:{
                 Authorization: token
             }

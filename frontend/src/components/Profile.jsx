@@ -32,7 +32,7 @@ function Profile() {
 
     useEffect(() => {
         (
-            axios.get("/api/v1/user", {
+            axios.get("/api/user", {
                 headers:{
                     Authorization: token
                 }
@@ -40,7 +40,7 @@ function Profile() {
                 .then((res) => {
                 })
                 .catch((error) => {
-                    alert("로그인이 필요합니다");
+                    // alert("로그인이 필요합니다");
                     navigate('/');
                 })
         )
@@ -74,9 +74,33 @@ function Profile() {
         upadate_password: inputPw1,
         upadate_nickname: inputNn1
     }
+
+    const axiosBody2 = {
+        username: username
+    }
+
+    //회원 탈퇴 구현
+    const unRegister = () => {
+        if(window.confirm("정말로 회원 탈퇴 하시겠습니까?\n탈퇴된 계정은 복구 할 수 없습니다.")) {
+            axios
+                .post("/api/user/delete", axiosBody2, axiosConfig)
+                .then((res) => {
+                    if(res.data === "회원 탈퇴 성공"){
+                        setToken(null);
+                        setUser(null);
+                        alert("회원 탈퇴 완료");
+                        navigate("/");
+                    }
+                    if(res.data==="잘못된 접근입니다"){
+                        alert("잘못된 접근입니다");
+                    }
+                })
+                .catch(error => alert("회원 탈퇴 실패"))
+        }
+    };
     const UpdatePasswordCheck = () => {
         axios
-            .post("/api/v1/user/updatePassword", axiosBody, axiosConfig)
+            .post("/api/user/updatePassword", axiosBody, axiosConfig)
             .then((res) => {
                 if(res.data==="비밀번호 수정 완료"){
                     setToken(null);
@@ -96,7 +120,7 @@ function Profile() {
 
     const UpdateNicknameCheck = () => {
         axios
-            .post("/api/v1/user/updateNickname", axiosBody, axiosConfig)
+            .post("/api/user/updateNickname", axiosBody, axiosConfig)
             .then((res) => {
                 if(res.data==="닉네임 수정 완료"){
                     setToken(null);
@@ -137,17 +161,23 @@ function Profile() {
     }
 
     function CheckPassword(password, password1, password2) {
-        //비밀번호가 입력되었는지 확인하기
-        if (!checkExistData(password, "기존 비밀번호를")) return false;
-        if (!checkExistData(password1, "수정할 비밀번호를")) return false;
-        if (!checkExistData(password2, "비밀번호 확인을")) return false;
-        if (!CheckSamePassword(password1,password2)) return false;
+        ///비밀번호가 입력되었는지 확인하기
+        if (!checkExistData(password, "비밀번호를")) return false;
 
-        var passwordRegExp = /^[a-zA-z0-9]{2,16}$/; //비밀번호 유효성 검사
-        if (passwordRegExp.test(password1) === false) {
-            alert(
-                "비밀번호는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!"
-            );
+        var passwordRegExp = /^[a-zA-Z0-9]{8,20}$/ //비밀번호 유효성 검사
+        var chk_num = password.search(/[0-9]/g);
+        var chk_eng = password.search(/[a-z]/ig);
+
+        if(!passwordRegExp.test(password)){
+            alert("비밀번호는 숫자와 영문자 조합으로 8~20자리를 사용해야 합니다.");
+            return false;
+        }
+        if(chk_num<0 || chk_eng<0){
+            alert("비밀번호는 숫자와 영문자를 혼용하여야 합니다.");
+            return false;
+        }
+        if(/(\w)\1\1\1/.test(password)){
+            alert("비밀번호에 같은 문자를 4번 이상 사용하실 수 없습니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
@@ -157,10 +187,10 @@ function Profile() {
         //닉네임이 입력되었는지 확인하기
         if (!checkExistData(nickname, "닉네임을")) return false;
 
-        var nicknameRegExp = /^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,6}$/; //닉네임 유효성 검사
+        var nicknameRegExp = /^[가-힣a-z0-9-_]{2,10}$/; //닉네임 유효성 검사
+
         if (!nicknameRegExp.test(nickname)) {
-            alert("닉네임은 한글 2 ~ 6자리로 입력해야합니다!");
-            setInputNn1("");
+            alert("닉네임은 특수문자와 초성을 제외한 2~10자리여야 합니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
@@ -204,7 +234,6 @@ function Profile() {
     const nicknameEditingCancleHandler = () => {
         setNicknameIsEditing(false);
     };
-
 
     return (
         <div>
@@ -325,6 +354,13 @@ function Profile() {
                     <br />
                 </div>
             )}
+            <button
+                type="button"
+                className="w-100 btn loginBtn btn-lg btn-primary"
+                onClick={unRegister}
+            >
+                회원 탈퇴
+            </button>
         </div>
     );
 }
