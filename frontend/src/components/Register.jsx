@@ -93,9 +93,9 @@ function Register() {
         //닉네임이 입력되었는지 확인하기
         if (!checkExistData(nickname, "닉네임을")) return false;
 
-        var nicknameRegExp = /^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,6}$/; //닉네임 유효성 검사
+        var nicknameRegExp = /^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|A-Za-z]{2,6}$/; //닉네임 유효성 검사
         if (!nicknameRegExp.test(nickname)) {
-            alert("닉네임은 한글 2 ~ 6자리로 입력해야합니다!");
+            alert("닉네임은 한글, 영어 2 ~ 6자리로 입력해야합니다!");
             return false;
         }
         return true; //확인이 완료되었을 때
