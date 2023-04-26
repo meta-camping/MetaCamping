@@ -69,7 +69,7 @@ function ChatRoom() {
 
    
     //채팅(웹소켓) 접속 설정
-    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    const socket = new SockJS('http://127.0.0.1:8080/ws-stomp');
     const stompClient = Stomp.over(socket);
 
     if (username.trim() !== '' ) {
@@ -158,13 +158,13 @@ return (
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ul>
+            <strong>참여 유저</strong>
             {userList.map((user, index) => (
-              <li key={index}>
-                <strong>참여 유저</strong>
+              <ol key={index}>
                 <br />
+                {user.memberId}
                 <br />
-                닉네임: {user.memberId}
-              </li>
+              </ol>
             ))}
           </ul>
         </Offcanvas.Body>
@@ -186,9 +186,18 @@ return (
     </div>
 
     <div className="chat-input">
-      <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-      <button onClick={handleSend} disabled={isDisabled}>Send</button>
-    </div>
+  <input
+    type="text"
+    value={newMessage}
+    onChange={(e) => setNewMessage(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        handleSend();
+      }
+    }}
+  />
+  <button onClick={handleSend} disabled={isDisabled}>Send</button>
+</div>
     
     <button className="exit-button" onClick={exit}>채팅방 나가기</button>
 

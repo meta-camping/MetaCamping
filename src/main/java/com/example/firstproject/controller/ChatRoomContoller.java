@@ -41,6 +41,13 @@ public class ChatRoomContoller {
         return new ResponseEntity<ChatRoom>(chatRoom, HttpStatus.CREATED);
     }
 
+    //채팅방 나가기
+    @DeleteMapping("/room/{roomId}/{memberId}/out")
+    public ResponseEntity<String> userOut(@PathVariable String roomId, @PathVariable String memberId) {
+        chatRoomService.DeleteUserList(roomId,memberId);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
     // 특정 채팅방 조회 (1)
     // 채팅방 정보를 가져오는 메서드
     @GetMapping("/room/{roomId}")

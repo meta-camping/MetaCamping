@@ -49,6 +49,11 @@ public class ChatRoomService {
         return userList;
     }
 
+    public String DeleteUserList(String roomId, String memberId) {
+        ChatUserList userList = chatUserListRepository.findUserList(roomId,memberId);
+        chatUserListRepository.delete(userList);
+        return "삭제 완료";
+    }
 
     public String findRoomByRoomName(String roomName) {
         String result = chatRoomRepository.existsByRoomName(roomName);
