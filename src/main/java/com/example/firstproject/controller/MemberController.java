@@ -17,17 +17,11 @@ import lombok.RequiredArgsConstructor;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    // 모든 사람이 접근 가능
-    @GetMapping("/home")
-    public String home() {
-        return "<h1>home</h1>";
-    }
 
     // Tip : JWT를 사용하면 UserDetailsService를 호출하지 않기 때문에 @AuthenticationPrincipal 사용 불가능.
     // 왜냐하면 @AuthenticationPrincipal은 UserDetailsService에서 리턴될 때 만들어지기 때문이다.
@@ -85,6 +79,18 @@ public class MemberController {
             } else {
                 return "이미 존재하는 닉네임 입니다";
             }
+        }
+    }
+
+    @PostMapping("/user/delete")
+    public String delete(@RequestBody Member member) {
+        Member isMember = memberRepository.findByUsername(member.getUsername());
+        System.out.println("삭제된 계정" + isMember);
+        if (isMember == null) {
+            return "잘못된 요청입니다.";
+        } else {
+            memberRepository.delete(isMember);
+            return "회원 탈퇴 성공";
         }
     }
 

@@ -47,23 +47,23 @@ function Login() {
     };
 
     useEffect(() => {
-            if (token) {
-                navigate('/');
-            }
+        if (token) {
+            navigate('/');
+        }
     }, [token])
 
     useDidMountEffect(() => {
         (
-        axios.get("/api/v1/user/userCheck", {
-            headers:{
-                Authorization: token
-            }
-        })
-            .then((res) => {
-                setUser(res.data);
-                navigate("/");
+            axios.get("/api/user/userCheck", {
+                headers:{
+                    Authorization: token
+                }
             })
-            .catch(error => alert("로그인 실패")))
+                .then((res) => {
+                    setUser(res.data);
+                    navigate("/");
+                })
+                .catch(error => alert("로그인 실패")))
     }, [token])
 
     function checkAll() {
@@ -90,9 +90,16 @@ function Login() {
         //Id가 입력되었는지 확인하기
         if (!checkExistData(id, "아이디를")) return false;
 
-        const idRegExp = /^[a-zA-z0-9]{2,16}$/; //아이디 유효성 검사
+        var idRegExp = /^[a-zA-z0-9]{2,16}$/; //아이디 유효성 검사
+        var chk_num = id.search(/[0-9]/g);
+        var chk_eng = id.search(/[a-z]/ig);
+
         if (!idRegExp.test(id)) {
-            alert("아이디는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!");
+            alert("아이디는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다.");
+            return false;
+        }
+        if(chk_num<0 || chk_eng<0){
+            alert("아이디는 숫자와 영문자의 조합이어야 합니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
@@ -102,9 +109,10 @@ function Login() {
         //비밀번호가 입력되었는지 확인하기
         if (!checkExistData(password, "비밀번호를")) return false;
 
-        const passwordRegExp = /^[a-zA-z0-9]{2,16}$/; //비밀번호 유효성 검사
-        if (passwordRegExp.test(password)=== false) {
-            alert("비밀번호는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!");
+        var passwordRegExp = /^[a-zA-z0-9]{8,20}$/; //비밀번호 유효성 검사
+
+        if(!passwordRegExp.test(password)){
+            alert("비밀번호는 숫자와 영문자 조합으로 8~20자리를 사용해야 합니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
