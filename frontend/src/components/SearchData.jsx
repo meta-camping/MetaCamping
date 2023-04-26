@@ -133,7 +133,6 @@ function SearchData() {
 
     return (
         <div style={{marginLeft: "100px"}}>
-            <form>
                 <div className="mb-3 search">
                     <Button type="button" onClick={showAllList} style={{width: "160px", fontSize:"20px", marginBottom: "10px"}}>
                         전체 캠핑장 조회
@@ -178,8 +177,6 @@ function SearchData() {
                         캠핑장명 검색
                     </Button>
                 </div>
-            </form>
-
 
             {isdistance ?
                 <div>

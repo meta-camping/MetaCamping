@@ -43,6 +43,8 @@ function Register() {
                     document.location.href = "/";
                 } else if (res.data==="이미 가입된 회원입니다."){
                     alert("이미 가입된 회원입니다.");
+                }  else if (res.data==="중복된 닉네임 입니다."){
+                    alert("중복된 닉네임 입니다.");
                 }
             })
             .catch(error => alert("회원가입 실패"))

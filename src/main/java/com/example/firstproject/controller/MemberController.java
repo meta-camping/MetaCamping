@@ -98,14 +98,19 @@ public class MemberController {
     @PostMapping("/join")
     public String join(@RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
+        Member isNickname = memberRepository.findByNickname(member.getNickname());
         if (isMember != null) {
             return "이미 가입된 회원입니다.";
         } else {
-            member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
-            member.setRoles("ROLE_USER");
-            member.setNickname(member.getNickname());
-            memberRepository.save(member);
-            return "회원가입 완료";
+            if (isNickname != null) {
+                return "중복된 닉네임 입니다.";
+            } else {
+                member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
+                member.setRoles("ROLE_USER");
+                member.setNickname(member.getNickname());
+                memberRepository.save(member);
+                return "회원가입 완료";
+            }
         }
     }
 
