@@ -48,6 +48,7 @@ public class APIController {
 
         return R * c; //km
     }
+
     @Value("${env.serviceKey}")
     private String serviceKey;
     private final DustRepository dustRepository;
@@ -98,7 +99,7 @@ public class APIController {
 
 
     @GetMapping("/weatherforecast")
-    public String restApiGetWeatherNow(@RequestParam String coordinate_x,@RequestParam String coordinate_y) throws Exception {
+    public String restApiGetWeatherNow(@RequestParam String coordinate_x, @RequestParam String coordinate_y) throws Exception {
         // 현재 시간
         LocalTime now = LocalTime.now();
 
@@ -209,7 +210,7 @@ public class APIController {
                 tomorrowData.put(fcstTime, tomorrowDataSub);
             }
         }
-        for(int j = 0; j < todayData.length(); j++){
+        for (int j = 0; j < todayData.length(); j++) {
             String hour = (j < 10) ? "0" + j + "00" : j + "00";
             int tempTMP = Integer.parseInt(todayData.getJSONObject(hour).getString("TMP"));
             if (tempTMP > jsonObj2.getInt("TMX")) {
@@ -226,13 +227,14 @@ public class APIController {
 
         return jsonObj2.toString();
     }
+
     //미세먼지 전체 데이터 찾아서 리턴
     @GetMapping("/dust/showAllList")
     public List<Dust> showAllList() {
-            //모든 Article을 가져온다!
-            List<Dust> dustEntityList = dustRepository.findAll();
+        //모든 Article을 가져온다!
+        List<Dust> dustEntityList = dustRepository.findAll();
 
-            return dustEntityList;
+        return dustEntityList;
     }
 
     //도시이름으로 데이터 찾아서 리턴
@@ -294,69 +296,66 @@ public class APIController {
         return jsonObj.toString();
     }
 
+    /** url, encoding, type 및 jsonStr의 네 가지 인수를 사용한다.
+     * type의 값이 "post"인지 여부에 isPost를 설정한 다음 jsonStr이 빈 문자열이 아닌 경우 쿼리 매개변수로 jsonStr 값을 추가하여 url 변수를 수정한다.
+     * 마지막으로 수정된 url 및 기타 인수를 사용하여 다음 메서드 getStringFromURL()을 호출하여 JSON 데이터를 검색한다.*/
     public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {
-        boolean isPost = false;
-
-        if ("post".equals(type)) {
-            isPost = true;
-        } else {
-            url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
-        }
-
+        boolean isPost = "post".equals(type);
+        url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
         return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
     }
 
+    /** url, encoding, isPost, parameter 및 contentType의 다섯 가지 인수를 사용한다.
+     * 지정된 연결 및 읽기 시간 초과로 주어진 url에 대한 HTTP 연결을 설정하고 isPost 값을 기반으로 HTTP 메서드를 POST 또는 GET으로 설정한다.
+     * 또한 Content-Type 및 Accept 헤더를 설정합니다. HTTP 메서드가 POST인 경우 출력 스트림에 매개변수를 쓴다.
+     * 그런 다음 입력 스트림에서 응답 데이터를 읽고 StringBuilder에 추가한다.
+     * 마지막으로 Jackson 라이브러리의 ObjectMapper를 사용하여 JSON 데이터를 구문 분석하고 HashMap 개체로 변환한다.
+     * 이 메소드는 finally 블록에서 HTTP 연결과 입력 및 출력 스트림을 닫고 결과 HashMap 개체를 반환한다.*/
     public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter, String contentType) throws Exception {
-        URL apiURL = new URL(url);
-
         HttpURLConnection conn = null;
         BufferedReader br = null;
         BufferedWriter bw = null;
-
-        HashMap<String, Object> resultMap = new HashMap<String, Object>();
+        HashMap<String, Object> resultMap = new HashMap<>();
 
         try {
-            conn = (HttpURLConnection) apiURL.openConnection();
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(5000);
+            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setConnectTimeout(20000);
+            conn.setReadTimeout(20000);
             conn.setDoOutput(true);
-
-            if (isPost) {
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", contentType);
-                conn.setRequestProperty("Accept", "*/*");
-            } else {
-                conn.setRequestMethod("GET");
-            }
-
+            conn.setRequestMethod(isPost ? "POST" : "GET");
+            conn.setRequestProperty("Content-Type", contentType);
+            conn.setRequestProperty("Accept", "*/*");
             conn.connect();
 
             if (isPost) {
                 bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
                 bw.write(parameter);
                 bw.flush();
-                bw = null;
             }
 
             br = new BufferedReader(new InputStreamReader(conn.getInputStream(), encoding));
+            StringBuilder result = new StringBuilder();
+            String line;
 
-            String line = null;
-
-            StringBuffer result = new StringBuffer();
-
-            while ((line=br.readLine()) != null) result.append(line);
+            while ((line = br.readLine()) != null) {
+                result.append(line);
+            }
 
             ObjectMapper mapper = new ObjectMapper();
-
             resultMap = mapper.readValue(result.toString(), HashMap.class);
-
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception(url + " interface failed" + e.toString());
+            throw new Exception(url + " interface failed" + e);
         } finally {
-            if (conn != null) conn.disconnect();
-            if (br != null) br.close();
-            if (bw != null) bw.close();
+            if (conn != null) {
+                conn.disconnect();
+            }
+            if (br != null) {
+                br.close();
+            }
+            if (bw != null) {
+                bw.close();
+            }
         }
 
         return resultMap;
