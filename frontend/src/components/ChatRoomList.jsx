@@ -73,32 +73,12 @@ function ChatRoomList() {
 
     };
 
-
-    //------------------------ 채팅방 생성 ----------------
-    /*
-    검색창 만들기!
-    검색 : DB에서 캠핑장 정보확인
-    검색 내용 있으면 => 백단에서 DB로부터 캠핑장 이름, x좌표, y좌표 채팅방DTO에 설정하고 채킹방 생성 and 채팅방 입장
-    검색 내용 없으면 => 캠핑장 정보가 없음을 알림
-    */
-
-    const addChatRoom = async () => {
-        if(username == null){
-            alert('로그인 후 다시 시도해주세요.')
-        }
-        else{
-            //글 등록버튼을 누르면 일단 유저인지 확인해야함. 세션에 있는 어떤걸 기준으로 인증을 할건지??
-            alert("캠핑장 검색 기능 구현되면 코드 수정. 지금은 postman으로만 생성 확인")
-            //navigate('/')
-        }
-
-    };
-
     return (
         <>
 
             <div>
                 <h2 className="text-center" style={{marginBottom: "30px"}}>채팅방</h2>
+                <div className="text-center" style={{marginBottom: "30px"}}> {chatRooms.length}개의 채팅방이 있습니다.</div>
                 <div className="row">
                     <table className="table table-striped table-bordered">
                         <thead>
@@ -120,8 +100,6 @@ function ChatRoomList() {
                         </tbody>
                     </table>
                 </div>
-                <span> {chatRooms.length}개의 채팅방이 있습니다.</span>
-                <Button style={{float: "right"}} onClick={addChatRoom}>채팅방 생성</Button>
             </div>
 
 
