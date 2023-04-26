@@ -15,7 +15,7 @@ function CreateBoardComponent() {
 
     useEffect(() => {
         (
-            axios.get("/api/v1/admin", {
+            axios.get("/api/admin", {
                 headers:{
                     Authorization: token
                 }

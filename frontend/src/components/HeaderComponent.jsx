@@ -33,7 +33,7 @@ function HeaderComponent() {
     }, [user]);
 
     const goProfile = () => {
-        axios.get("/api/v1/user", {
+        axios.get("/api/user", {
             headers:{
                 Authorization: token
             }

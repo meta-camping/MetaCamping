@@ -33,7 +33,7 @@ function ReadBoardComponent() {
     }
 
     let goToUpdate = (event) => {
-        axios.get("/api/v1/admin", {
+        axios.get("/api/admin", {
             headers:{
                 Authorization: token
             }
@@ -46,7 +46,7 @@ function ReadBoardComponent() {
     }
 
     let deleteView = () => {
-        axios.get("/api/v1/admin", {
+        axios.get("/api/admin", {
             headers:{
                 Authorization: token
             }
