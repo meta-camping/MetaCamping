@@ -90,7 +90,7 @@ function SearchData() {
     }
      
     const RoomChecking = (name) => {
-        return axios.get(`http://localhost:8080/chat/room/exist/${name}`)
+        return axios.get(`/chat/room/exist/${name}`)
         .then((result) => {
             return result.data // 'roomId'
           })
