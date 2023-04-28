@@ -13,7 +13,6 @@ public class ChatRoomResponseDTO {
     private double locationY;
     private LocalDateTime updatedTime;
 
-
     public ChatRoomResponseDTO(ChatRoom chatRoom) {
         this.roomId = chatRoom.getRoomId();
         this.roomName = chatRoom.getRoomName();
