@@ -64,13 +64,12 @@ function CreateBoardComponent() {
         }
     }
 
-    useDidMountEffect(() => {
+    useEffect(() => {
         if (postId === '_create') {
             return
         } else {
             BoardService.getOneBoard(postId).then( (res) => {
                 let board = res.data;
-
                 setTitle(board.title);
                 setContents(board.content);
             });

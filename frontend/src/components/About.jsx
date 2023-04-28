@@ -13,7 +13,7 @@ const sources = [
     { id: 10, type: 'open API', link: 'https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073877', title: '에어코리아 측정소 정보' },
     { id: 11, type: 'open API', link: 'https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073861', title: '에어코리아 대기오염 정보' },
     { id: 12, type: 'open API', link: 'https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15084084', title: '기상청 단기예보 조회서비스' },
-    { id: 13, type: 'standard Data', link: 'https://www.data.go.kr/data/15021139/standard.do', title: '기상자료개방포털' }
+    { id: 13, type: 'standard Data', link: 'https://www.data.go.kr/data/15021139/standard.do', title: '전국야영(캠핑)장표준데이터' }
 ];
 
 function About() {

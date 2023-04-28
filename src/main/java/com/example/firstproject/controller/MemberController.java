@@ -48,7 +48,7 @@ public class MemberController {
         return jsonObj.toString();
     }
 
-    @PostMapping("/user/updatePassword")
+    @PutMapping("/user/updatePassword")
     public String updatePassword(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByUsername(memberDTO.getUsername());
 
@@ -65,7 +65,7 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/user/updateNickname")
+    @PutMapping("/user/updateNickname")
     public String updateNickname(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByNickname(memberDTO.getNickname());
         Member member1 = memberRepository.findByNickname(memberDTO.getUpadate_nickname());
@@ -82,7 +82,7 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/user/delete")
+    @DeleteMapping("/user/delete")
     public String delete(@RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
         System.out.println("삭제된 계정" + isMember);

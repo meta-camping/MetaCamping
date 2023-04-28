@@ -42,10 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
                 .authorizeRequests()
                 //login 한 사람만 들어올 수 있음, authenticated()인증만 되면 들어갈 수 있는 주소
-                .antMatchers("/api/v1/user")
+                .antMatchers("/api/user")
                 .access("hasAnyRole('ROLE_USER','ROLE_MANAGER','ROLE_ADMIN')")
                 //admin만 가능
-                .antMatchers("/api/v1/admin")
+                .antMatchers("/api/admin")
                 .access("hasRole('ROLE_ADMIN')")
                 //위 3가지 주소가 아니면 누구나 가능
                 .anyRequest().permitAll();
