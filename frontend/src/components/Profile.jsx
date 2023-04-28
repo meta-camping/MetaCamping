@@ -37,8 +37,6 @@ function Profile() {
                     Authorization: token
                 }
             })
-                .then((res) => {
-                })
                 .catch((error) => {
                     // alert("로그인이 필요합니다");
                     navigate('/');
@@ -83,7 +81,7 @@ function Profile() {
     const unRegister = () => {
         if(window.confirm("정말로 회원 탈퇴 하시겠습니까?\n탈퇴된 계정은 복구 할 수 없습니다.")) {
             axios
-                .post("/api/user/delete", axiosBody2, axiosConfig)
+                .delete("/api/user/delete", axiosBody2, axiosConfig)
                 .then((res) => {
                     if(res.data === "회원 탈퇴 성공"){
                         setToken(null);
@@ -100,7 +98,7 @@ function Profile() {
     };
     const UpdatePasswordCheck = () => {
         axios
-            .post("/api/user/updatePassword", axiosBody, axiosConfig)
+            .put("/api/user/updatePassword", axiosBody, axiosConfig)
             .then((res) => {
                 if(res.data==="비밀번호 수정 완료"){
                     setToken(null);
@@ -120,7 +118,7 @@ function Profile() {
 
     const UpdateNicknameCheck = () => {
         axios
-            .post("/api/user/updateNickname", axiosBody, axiosConfig)
+            .put("/api/user/updateNickname", axiosBody, axiosConfig)
             .then((res) => {
                 if(res.data==="닉네임 수정 완료"){
                     setToken(null);
@@ -136,7 +134,13 @@ function Profile() {
     };
 
     function UpdatePasswordcheckAll() {
-        if (!CheckPassword(inputPw, inputPw1, inputPw2)) {
+        if (!CheckPassword(inputPw)) {
+            return false;
+        }
+        if (!CheckPassword(inputPw2)) {
+            return false;
+        }
+        if (!CheckSamePassword(inputPw1,inputPw2)) {
             return false;
         }
 
@@ -160,7 +164,7 @@ function Profile() {
         return true;
     }
 
-    function CheckPassword(password, password1, password2) {
+    function CheckPassword(password) {
         ///비밀번호가 입력되었는지 확인하기
         if (!checkExistData(password, "비밀번호를")) return false;
 
@@ -183,6 +187,14 @@ function Profile() {
         return true; //확인이 완료되었을 때
     }
 
+    function CheckSamePassword(password1,password2) {
+        if (password1 !== password2) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return false;
+        }
+        return true; //확인이 완료되었을 때
+    }
+
     function CheckNickname(nickname) {
         //닉네임이 입력되었는지 확인하기
         if (!checkExistData(nickname, "닉네임을")) return false;
@@ -191,14 +203,6 @@ function Profile() {
 
         if (!nicknameRegExp.test(nickname)) {
             alert("닉네임은 특수문자와 초성을 제외한 2~10자리여야 합니다.");
-            return false;
-        }
-        return true; //확인이 완료되었을 때
-    }
-
-    function CheckSamePassword(password,password2) {
-        if (password !== password2) {
-            alert("비밀번호가 일치하지 않습니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
