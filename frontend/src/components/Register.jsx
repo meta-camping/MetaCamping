@@ -83,15 +83,14 @@ function Register() {
         if (!checkExistData(id, "아이디를")) return false;
 
         var idRegExp = /^[a-zA-z0-9]{2,16}$/; //아이디 유효성 검사
-        var chk_num = id.search(/[0-9]/g);
         var chk_eng = id.search(/[a-z]/ig);
 
-        if(chk_num<0 || chk_eng<0){
-            alert("아이디는 숫자와 영문자의 조합이어야 합니다.");
-            return false;
-        }
         if (!idRegExp.test(id)) {
             alert("아이디는 영문 대소문자와 숫자 2 ~ 16자리로 입력해야합니다!");
+            return false;
+        }
+        if(chk_eng<0){
+            alert("아이디는 1개 이상의 영문자를 포함하여야 합니다.");
             return false;
         }
         return true; //확인이 완료되었을 때
