@@ -4,10 +4,11 @@ import axios from 'axios';
 import Stomp from 'stompjs';
 import '../styles/ChatRoom.css';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import moment, { now } from 'moment';
+import moment from 'moment';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/user";
 import { locationState } from "../recoil/location";
+import { tokenState } from '../recoil/token';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -23,13 +24,15 @@ function ChatRoom() {
   const [newMessage, setNewMessage] = useState('');
   const [connected, setConnected] = useState(false);
   const subscribeUrl = `/topic/${roomId}`;
-  const publishUrl = `/app/hello/${roomId}`;
+  const publishUrl = `/app/chat/${roomId}`;
 
   //멤버
   const [user,setUser] = useRecoilState(userState);
+  const [token,setToken] = useRecoilState(tokenState);
   const username = user.nickname
   const navigate = useNavigate();
   const messageEndRef = useRef(null);
+
 
   //유효성 검사
   const [isDisabled, setIsDisabled] = useState(false);
@@ -41,14 +44,15 @@ function ChatRoom() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  
+
 
   useEffect(() => {
+
     messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     console.log(nowLocation)
 
     //roomInfo 받아오기
-    axios.get(`/chat/room/${roomId}`)
+    axios.get(`/api/chat/room/${roomId}`)
       .then((res) => {
         if (res.data) {
           setRoomInfo(res.data);
@@ -58,18 +62,19 @@ function ChatRoom() {
         console.error(error);
       });
 
-      //user-List 받아오기
-      axios.get(`/chat/room/${roomId}/user-list`)
-      .then((res) =>{
-        if(res.data){
-          console.log(res.data)
-          setUserList(res.data)
-        }
-      })
+    //user-List 받아오기
+    axios.get(`/api/chat/room/${roomId}/user-list`)
+    .then((res) =>{
+      if(res.data){
+        console.log(res.data)
+        setUserList(res.data)
+      }
+    })
+
 
    
     //채팅(웹소켓) 접속 설정
-    const socket = new SockJS('http://127.0.0.1:8080/ws-stomp');
+    const socket = new SockJS(`http://127.0.0.1:8080/ws-stomp`);
     const stompClient = Stomp.over(socket);
 
     if (username.trim() !== '' ) {
@@ -92,14 +97,11 @@ function ChatRoom() {
             message: username+'님이 입장했습니다.',
             locationX:nowLocation.latitude,
             locationY:nowLocation.longitude,
-            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
+            createdTime: moment().format('YYYY-MM-DD HH:mm:ss')
           })).then(() => {
             //Enter type 메세지가 전송되면 해당 채팅방의 userList 유저 정보가 편입 된다.
             //따라서 변경된 userList에서 다시 한번 user-check를 수행해 상태를 업데이트 한다.
-            axios.post("/chat/room/user-check", {
-              roomId: roomInfo.roomId,
-              memberId: username
-            }).then(res => {
+            axios.post(`/api/chat/room/${roomInfo.roomId}/${username}/$user-check`).then(res => {
               setUserCheck(res.data)
               console.log("업데이트 된",userCheck)
             }).catch(err => {
@@ -109,7 +111,18 @@ function ChatRoom() {
             console.log(err);
           });
         }
+        if (userCheck === "구독 유저") {
+          axios.get(`/api/chat/room//${roomId}/${username}/before-messages`)
+          .then(res => {
+            console.log(res.data)
+            const previousMessages = res.data;
+            setMessages([...previousMessages, ...messages]);
+          })
+        }
       });
+    }else{
+      alert("유효하지 않은 접근입니다.")
+      navigate("/")
     }
 
     return () => {
@@ -123,7 +136,7 @@ function ChatRoom() {
 
   //채팅방 나가기
   const exit = () => {
-    axios.delete(`/chat/room/${roomId}/${username}/out`)
+    axios.delete(`/api/chat/room/${roomId}/${username}/out`)
     stompClient.unsubscribe(subscribeUrl);
     setConnected(false);
     setStompClient(null);
@@ -136,7 +149,7 @@ function ChatRoom() {
       roomId: roomId,
       type: 'TALK',
       sender: username,
-      createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      createdTime: moment().format('YYYY-MM-DD HH:mm:ss'),
       locationX:nowLocation.latitude,
       locationY:nowLocation.longitude,
       message: newMessage }));
@@ -145,37 +158,36 @@ function ChatRoom() {
   
 };
 
-
-
+const uniqueSenders = new Set();
+messages.forEach((msg) => uniqueSenders.add(msg.sender));
 return (
+  <>
+  <h1><strong>{roomInfo.roomName}</strong></h1>
   <div>
-    <h1><strong>{roomInfo.roomName}</strong></h1>
-    <div>
-      <Button className="user-list" variant="primary" onClick={handleShow}>채팅방 참여 유저</Button>
-      <Offcanvas show={show} onHide={handleClose} placement="end">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title><strong>{roomInfo.roomName}</strong></Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          <ul>
-            <strong>참여 유저</strong>
-            {userList.map((user, index) => (
-              <ol key={index}>
-                <br />
-                {user.memberId}
-                <br />
-              </ol>
-            ))}
-          </ul>
-        </Offcanvas.Body>
-      </Offcanvas>
-    </div>
+    <Button className="user-list" variant="primary" onClick={handleShow}>채팅방 참여 유저</Button>
+    <Offcanvas show={show} onHide={handleClose} placement="end">
+      <Offcanvas.Header closeButton>
+        <Offcanvas.Title><h2><strong>{roomInfo.roomName}</strong></h2></Offcanvas.Title>
+      </Offcanvas.Header>
+      <Offcanvas.Body>
+        <ul>
+          <br />
+        <h3>참여 유저</h3>
+          {userList.map((user, index) => (
+            <li key={index}>
+              {user.memberId}
+            </li>
+          ))}
+        </ul>
+      </Offcanvas.Body>
+    </Offcanvas>
+  </div>
 
     <div>
       {messages.map((msg, idx) => (
         <div key={idx} className={`chat-bubble ${msg.sender === username ? 'self' : 'others'}`}>
           <span>
-            <strong>{msg.sender}</strong> {msg.nearOrNot && '⛺'}| {new Date(msg.createTime).toLocaleString()}
+            <strong>{msg.sender}</strong> {msg.nearOrNot && '⛺'}| {new Date(msg.createdTime).toLocaleString()}
           </span>
           <div className="bubble">
             <span>{msg.message}</span>
@@ -191,17 +203,17 @@ return (
     value={newMessage}
     onChange={(e) => setNewMessage(e.target.value)}
     onKeyDown={(e) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter'&&newMessage.trim() !== '') {
         handleSend();
       }
     }}
   />
-  <button onClick={handleSend} disabled={isDisabled}>Send</button>
+  <button onClick={handleSend} disabled={newMessage.trim()===''}>Send</button>
 </div>
     
     <button className="exit-button" onClick={exit}>채팅방 나가기</button>
 
-  </div>
+</>
 );
 }
 

@@ -2,7 +2,6 @@ package com.example.firstproject.controller;
 
 import com.example.firstproject.dto.ChatRoomRequestDTO;
 import com.example.firstproject.dto.ChatRoomResponseDTO;
-import com.example.firstproject.dto.ChatUserListDTO;
 import com.example.firstproject.dto.ChatUserListResponseDTO;
 import com.example.firstproject.entity.ChatRoom;
 import com.example.firstproject.repository.ChatRoomRepository;
@@ -19,15 +18,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat")
+@RequestMapping("/api")
 @CrossOrigin("*")
 public class ChatRoomContoller {
     private final ChatRoomService chatRoomService;
-    private final ChatRoomRepository chatRoomRepository;
-    private final ChatUserListRepository chatUserListRepository;
 
     // 채팅 리스트 화면
-    @GetMapping("/list")
+    @GetMapping("/chat/room/list")
     @ResponseBody
     public ResponseEntity<List<ChatRoom>> getRoomList() {
         List<ChatRoom> chatRooms = chatRoomService.findAllRoom();
@@ -35,14 +32,14 @@ public class ChatRoomContoller {
     }
 
     // 채팅방 생성
-    @PostMapping("/create")
-    public ResponseEntity<ChatRoom> createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
+    @PostMapping("/chat/create")
+    public ResponseEntity<ChatRoomResponseDTO> createRoom(@RequestBody ChatRoomRequestDTO chatRoomRequestDTO) {
         ChatRoom chatRoom = chatRoomService.createRoom(chatRoomRequestDTO);
-        return new ResponseEntity<ChatRoom>(chatRoom, HttpStatus.CREATED);
+        return new ResponseEntity<ChatRoomResponseDTO>(new ChatRoomResponseDTO(chatRoom), HttpStatus.CREATED);
     }
 
     //채팅방 나가기
-    @DeleteMapping("/room/{roomId}/{memberId}/out")
+    @DeleteMapping("/chat/room/{roomId}/{memberId}/out")
     public ResponseEntity<String> userOut(@PathVariable String roomId, @PathVariable String memberId) {
         chatRoomService.DeleteUserList(roomId,memberId);
         return ResponseEntity.ok("삭제 완료");
@@ -50,7 +47,7 @@ public class ChatRoomContoller {
 
     // 특정 채팅방 조회 (1)
     // 채팅방 정보를 가져오는 메서드
-    @GetMapping("/room/{roomId}")
+    @GetMapping("/chat/room/{roomId}")
     @ResponseBody
     public ResponseEntity<ChatRoomResponseDTO> getRoomInfo(@PathVariable String roomId) {
         // roomId를 이용하여 채팅방 정보를 조회하고 ResponseDTO를 생성하여 반환합니다.
@@ -63,14 +60,14 @@ public class ChatRoomContoller {
 
     //특정 채팅방 조회 (2)
     //채팅방 존재 여부 확인 메서드 (없으면 false, 있으면 true 반환)
-    @GetMapping("/room/exist/{roomName}")
+    @GetMapping("/chat/room/exist/{roomName}")
     public String chatRoomCheck(@PathVariable String roomName) {
         String roomCheck = chatRoomService.findRoomByRoomName(roomName);
         return roomCheck; // 문자열을 JSON 형태로 변환하지 않음
     }
 
     //채팅방 유저 리스트 조회
-    @GetMapping("/room/{roomId}/user-list")
+    @GetMapping("/chat/room/{roomId}/user-list")
     public ResponseEntity<List<ChatUserListResponseDTO>> userList(@PathVariable String roomId) {
         List<ChatUserListResponseDTO> userList = new ArrayList<>(chatRoomService.findUserListRoomByRoomId(roomId));
         if (userList.isEmpty()) {
@@ -80,9 +77,9 @@ public class ChatRoomContoller {
     }
 
     //채팅방 기참여 여부 조회
-    @PostMapping("/room/user-check")
-    public ResponseEntity<String> userInRoomCheck(@RequestBody ChatUserListDTO user) {
-        String result = chatRoomService.isUserInRoom(user);
+    @GetMapping("/chat/room/{roomId}/{memberId}/user-check")
+    public ResponseEntity<String> userInRoomCheck(@PathVariable String roomId, @PathVariable String memberId) {
+        String result = chatRoomService.isUserInRoom(roomId,memberId);
         if (result == "InUser") {
             return ResponseEntity.ok("구독 유저");
         } else {
@@ -93,8 +90,6 @@ public class ChatRoomContoller {
             }
         }
     }
-
-
 
 
 }

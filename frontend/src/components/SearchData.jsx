@@ -76,7 +76,7 @@ function SearchData() {
             alert("캠핑장명을 입력해주세요")
         } else {
             axios
-                .get("api/camping/showCampingList", {
+                .get("/api/camping/showCampingList", {
                     params: {
                         camping_name: campingName
                     }
@@ -90,7 +90,7 @@ function SearchData() {
     }
      
     const RoomChecking = (name) => {
-        return axios.get(`/chat/room/exist/${name}`)
+        return axios.get(`/api/chat/room/exist/${name}`)
         .then((result) => {
             return result.data // 'roomId'
           })

@@ -24,15 +24,6 @@ public class ChatRoomRequestDTO {
 
     }
 
-
-/*
-
- 회원 기능 합쳐지면 이거 주석 풀고 기능 연결
-    public void addUser(Member member) {
-        userList.put(user.getMember_id(), Member.getMember_name());
-    }
-
- */
 }
 
 
