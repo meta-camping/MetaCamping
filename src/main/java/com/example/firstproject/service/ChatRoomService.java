@@ -108,6 +108,7 @@ public class ChatRoomService {
             dto.setMessage(message.getMessage());
             dto.setSender(message.getMemberId());
             dto.setCreatedTime(message.getCreatedTime());
+            dto.setNearOrNot(message.getNearOrNot());
             dtos.add(dto);
         }
         return dtos;

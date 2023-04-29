@@ -11,11 +11,12 @@ public class ChatMessageResponseDTO {
     private String sender;
     private String message;
     private LocalDateTime createdTime;
-
-    public ChatMessageResponseDTO(ChatMessageRequestDTO message) {
+    private Boolean nearOrNot;
+    public ChatMessageResponseDTO(ChatMessageRequestDTO message,boolean nearOrNot) {
         this.createdTime = message.getCreatedTime();
         this.sender = message.getSender();
         this.message = message.getMessage();
+        this.nearOrNot = nearOrNot;
     }
 
 }

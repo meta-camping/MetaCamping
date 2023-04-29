@@ -3,9 +3,6 @@ package com.example.firstproject.controller;
 import com.example.firstproject.dto.ChatBeforeMessageResponseDTO;
 import com.example.firstproject.dto.ChatMessageRequestDTO;
 import com.example.firstproject.dto.ChatMessageResponseDTO;
-import com.example.firstproject.entity.ChatMessage;
-import com.example.firstproject.repository.ChatRepository;
-import com.example.firstproject.repository.ChatUserListRepository;
 import com.example.firstproject.service.ChatRoomService;
 import com.example.firstproject.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +16,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.firstproject.dto.ChatMessageRequestDTO.MessageType.ENTER;
@@ -36,11 +31,15 @@ public class ChatController {
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     public ChatMessageResponseDTO chatting(ChatMessageRequestDTO message, @DestinationVariable("roomId") String roomId) throws Exception {
-        chatService.saveChat(message);
+
+        //캠핑장 - 사용자 반경 측정 후 boolean 값으로 저장
+        Boolean nearOrNot = chatService.getDistance(message);
+
+        chatService.saveChat(message,nearOrNot);
         if (message.getType() == ENTER) {
             chatRoomService.insertUserList(message);
         }
-        return new ChatMessageResponseDTO(message);
+        return new ChatMessageResponseDTO(message,nearOrNot);
     }
 
     @GetMapping("/api/chat/room/{roomId}/{memberId}/before-messages")

@@ -33,7 +33,7 @@ function ChatRoomList() {
 
         axios.get("/api/chat/room/list")
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setChatRooms(res.data);
             })
             .catch(
@@ -57,7 +57,6 @@ function ChatRoomList() {
              * 기참여 여부 없으면 '가능',
              * 있으면 userCheck에 '구독 유저' 할당
              */
-
             axios.get(`/api/chat/room/${roomId}/${username}/user-check`)
                 .then(res => {
                     const userCheck = res.data
@@ -74,10 +73,10 @@ function ChatRoomList() {
                 })
                 .catch(error => console.error(error));
         })
-        // .catch((error) => {
-        //     alert("로그인이 필요합니다");
-        //     navigate('/chat/list');
-        // })
+        .catch((error) => {
+            alert("로그인이 필요합니다");
+            navigate('/chat/list');
+        })
     }
 
 

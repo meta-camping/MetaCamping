@@ -30,12 +30,15 @@ public class ChatMessage {
     @Column(name = "created_time")
     private LocalDateTime createdTime;
 
-    public ChatMessage(ChatMessageRequestDTO messageDTO) {
+    @Column(name = "near_or_not")
+    private Boolean nearOrNot;
+
+    public ChatMessage(ChatMessageRequestDTO messageDTO, Boolean nearOrNot) {
         this.roomId = messageDTO.getRoomId();
         this.message = messageDTO.getMessage();
         this.type = messageDTO.getType();
         this.memberId = messageDTO.getSender();
         this.createdTime = LocalDateTime.now();
+        this.nearOrNot = nearOrNot;
     }
-
 }

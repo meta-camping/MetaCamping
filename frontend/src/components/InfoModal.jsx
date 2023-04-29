@@ -60,17 +60,27 @@ function InfoModal({ info, show, handleClose }) {
             }else{
                 axios.get(`/api/chat/room/${info.roomId}/${username}/user-check`)
 
-                    .then(res => {
-                        const userCheck= res.data
-                        navigate(`/chat/room/${info.roomId}`,{ state : { 
-                            roomName: info.campingName,
-                            userCheck: userCheck
-                        } })
-                    })
+                .then(res => {
+                    const userCheck = res.data;
+                    
+                    let navigateToChat = false;
+                    
+                    if (userCheck === "다른 방 구독 유저") {
+                      navigateToChat = window.confirm("동시에 하나의 채팅방만 이용 가능합니다. 입장하시겠습니까?\n(기존에 참여했던 채팅방의 기록이 사라집니다.)");
+                    } else {
+                      navigateToChat = true;
+                    }
+                    
+                    if (navigateToChat) {
+                      navigate(`/chat/room/${info.roomId}`, { state : { 
+                        roomName: info.campingName,
+                        userCheck: userCheck
+                    } });
+                    } else {
+                      navigate(`/`);
+                    }
+                  })
 
-                    .catch(err =>{
-                        console.log(err)
-                    })
                 
             }}
         

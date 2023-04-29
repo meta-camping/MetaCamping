@@ -14,42 +14,61 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
 function ChatRoom() {
-  const { roomId } = useParams();
-  const location = useLocation();
-  const [userCheck,setUserCheck] = useState(`${location.state?.userCheck}`);
-  const [userList, setUserList] =useState([]); //userList.memberId = 닉네임들만 추출!
-  const [stompClient, setStompClient] = useState(null);
-  const [roomInfo,setRoomInfo]= useState({});
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [connected, setConnected] = useState(false);
-  const subscribeUrl = `/topic/${roomId}`;
-  const publishUrl = `/app/chat/${roomId}`;
 
-  //멤버
-  const [user,setUser] = useRecoilState(userState);
-  const [token,setToken] = useRecoilState(tokenState);
+  /**
+   * 이전 경로에서 넘어오는 데이터
+   */
+  const { roomId } = useParams(); //채팅방 UUID
+  const location = useLocation(); 
+  const [userCheck,setUserCheck] = useState(`${location.state?.userCheck}`); //채팅방 입장 전, 회원의 채팅방 기참여여부
+  const prevUserCheckRef = useRef('');
+
+  // useEffect(() => {
+  //   prevUserCheckRef.current = userCheck;
+  // }, [userCheck]);
+  
+  /**
+   * Recoil에 담긴 데이터 (유저 관련)
+   */
+  const [user,setUser] = useRecoilState(userState); //유저 정보
+  const [token,setToken] = useRecoilState(tokenState); //유저 Authentication
+  const [nowLocation,setNowLocation] = useRecoilState(locationState); //유저 현재 위치
   const username = user.nickname
   const navigate = useNavigate();
-  const messageEndRef = useRef(null);
+  
+  /**
+   * DB에서 조회해오는 데이터
+   */
+  const [userList, setUserList] =useState([]); //유저리스트
+  const [roomInfo,setRoomInfo]= useState({}); //채팅방 정보 (roomId, roomName, locationX,locationY ...)
 
+  /**
+   * 웹소켓 연결 관련 변수
+   */
+  const [stompClient, setStompClient] = useState(null); // 채팅 서버 연결 정보
+  const [connected, setConnected] = useState(false); //연결 여부를 확인
+  const subscribeUrl = `/topic/${roomId}`; //접속 시 채팅 서버 연결 경로
+  const publishUrl = `/app/chat/${roomId}`; // 메세지 보내는 경로
 
-  //유효성 검사
-  const [isDisabled, setIsDisabled] = useState(false);
-
-  //유저 현재 위치 from Map
-  const [nowLocation,setNowLocation] = useRecoilState(locationState);
-
-  //유저리스트 UI 관련
+  /**
+   * 화면에서 비동기적으로 메세지를 처리하는 변수들
+   */
+  const [messages, setMessages] = useState([]); //채팅방 내 메세지들을 담는 변수
+  const [newMessage, setNewMessage] = useState(''); //새로운 메세지를 입력하는 변수
+  
+  /**
+   * UI 관련
+   */
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const messageEndRef = useRef(null);
 
 
   useEffect(() => {
 
+    //새로운 메세지가 발행되면 화면을 아래로 내려줌
     messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    console.log(nowLocation)
 
     //roomInfo 받아오기
     axios.get(`/api/chat/room/${roomId}`)
@@ -71,8 +90,6 @@ function ChatRoom() {
       }
     })
 
-
-   
     //채팅(웹소켓) 접속 설정
     const socket = new SockJS(`http://127.0.0.1:8080/ws-stomp`);
     const stompClient = Stomp.over(socket);
@@ -95,24 +112,25 @@ function ChatRoom() {
             type: 'ENTER',
             sender: username,
             message: username+'님이 입장했습니다.',
-            locationX:nowLocation.latitude,
-            locationY:nowLocation.longitude,
+            locationX: nowLocation.latitude,
+            locationY: nowLocation.longitude,
             createdTime: moment().format('YYYY-MM-DD HH:mm:ss')
-          })).then(() => {
-            //Enter type 메세지가 전송되면 해당 채팅방의 userList 유저 정보가 편입 된다.
-            //따라서 변경된 userList에서 다시 한번 user-check를 수행해 상태를 업데이트 한다.
-            axios.post(`/api/chat/room/${roomInfo.roomId}/${username}/$user-check`).then(res => {
-              setUserCheck(res.data)
-              console.log("업데이트 된",userCheck)
-            }).catch(err => {
-              console.log(err)
-            });
-          }).catch(err => {
-            console.log(err);
-          });
+          }), () => {
+            // Enter type 메세지가 전송되면 해당 userList 유저 정보가 DB에 편입된다.
+            // 따라서 변경된 userList에서 다시 한번 user-check를 수행해 상태를 업데이트한다.
+            axios.get(`/api/chat/room/${roomInfo.roomId}/${username}/user-check`)
+              .then(res => {
+                console.log(res.data);
+                setUserCheck(res.data);
+                console.log("업데이트 된",userCheck);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          });      
         }
         if (userCheck === "구독 유저") {
-          axios.get(`/api/chat/room//${roomId}/${username}/before-messages`)
+          axios.get(`/api/chat/room/${roomId}/${username}/before-messages`)
           .then(res => {
             console.log(res.data)
             const previousMessages = res.data;
