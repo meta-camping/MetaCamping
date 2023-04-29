@@ -16,7 +16,7 @@ function ChatRoomList() {
     const [user,setUser] = useRecoilState(userState);
     // const username = user.nickname;
     const [username,setUsername]= useState(null);
-    const [token,setToken] = useRecoilState(userState); 
+    const [token,setToken] = useRecoilState(tokenState); 
    
     useEffect(() => {
 
@@ -33,7 +33,7 @@ function ChatRoomList() {
 
         axios.get("/api/chat/room/list")
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setChatRooms(res.data);
             })
             .catch(
@@ -57,8 +57,7 @@ function ChatRoomList() {
              * 기참여 여부 없으면 '가능',
              * 있으면 userCheck에 '구독 유저' 할당
              */
-
-            axios.get(`api/chat/room/${roomId}/${username}/user-check`)
+            axios.get(`/api/chat/room/${roomId}/${username}/user-check`)
                 .then(res => {
                     const userCheck = res.data
                     if (userCheck === "다른 방 구독 유저") {
@@ -66,7 +65,7 @@ function ChatRoomList() {
                             //기존 구독정보 갱신
                             navigate(`/chat/room/${roomId}`, {state: {userCheck: userCheck}})
                         } else {
-                            navigate(`/api/chat/list`)
+                            navigate(`/chat/list`)
                         }
                     } else {
                         navigate(`/chat/room/${roomId}`, {state: {userCheck: userCheck}});

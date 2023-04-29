@@ -4,8 +4,6 @@ import com.example.firstproject.dto.ChatRoomRequestDTO;
 import com.example.firstproject.dto.ChatRoomResponseDTO;
 import com.example.firstproject.dto.ChatUserListResponseDTO;
 import com.example.firstproject.entity.ChatRoom;
-import com.example.firstproject.repository.ChatRoomRepository;
-import com.example.firstproject.repository.ChatUserListRepository;
 import com.example.firstproject.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
