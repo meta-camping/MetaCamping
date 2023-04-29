@@ -85,7 +85,6 @@ function ChatRoom() {
     axios.get(`/api/chat/room/${roomId}/user-list`)
     .then((res) =>{
       if(res.data){
-        console.log(res.data)
         setUserList(res.data)
       }
     })
@@ -93,11 +92,13 @@ function ChatRoom() {
     //채팅(웹소켓) 접속 설정
     const socket = new SockJS(`http://127.0.0.1:8080/ws-stomp`);
     const stompClient = Stomp.over(socket);
+    
+    stompClient.debug = null; // 디버그 정보 출력하지 않음
 
     if (username.trim() !== '' ) {
       stompClient.connect({}, function (frame) {
         setConnected(true);
-        console.log('Connected: ' + frame);
+        //console.log('Connected: ' + frame);
 
         stompClient.subscribe(subscribeUrl, function (greeting) {
           setMessages((messages) => [...messages, JSON.parse(greeting.body)]);
@@ -120,19 +121,19 @@ function ChatRoom() {
             // 따라서 변경된 userList에서 다시 한번 user-check를 수행해 상태를 업데이트한다.
             axios.get(`/api/chat/room/${roomInfo.roomId}/${username}/user-check`)
               .then(res => {
-                console.log(res.data);
+                //console.log(res.data);
                 setUserCheck(res.data);
-                console.log("업데이트 된",userCheck);
+                //console.log("업데이트 된",userCheck);
               })
               .catch(err => {
-                console.log(err);
+                //console.log(err);
               });
           });      
         }
         if (userCheck === "구독 유저") {
           axios.get(`/api/chat/room/${roomId}/${username}/before-messages`)
           .then(res => {
-            console.log(res.data)
+            //console.log(res.data)
             const previousMessages = res.data;
             setMessages([...previousMessages, ...messages]);
           })
@@ -148,7 +149,7 @@ function ChatRoom() {
         stompClient.disconnect();
       }
       setConnected(false);
-      console.log('Disconnected');
+      //console.log('Disconnected');
     };
   }, [roomId, username, subscribeUrl, userCheck]);
 
