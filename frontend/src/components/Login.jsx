@@ -33,7 +33,7 @@ function Login() {
     // login 버튼 클릭 이벤트
     const LoginCheck = () => {
         axios
-            .post("/login", axiosBody)
+            .post("http://meta-camping-service.com/login", axiosBody)
             .then((res) => {
                 alert("로그인 성공");
                 setToken(res.headers.authorization);
