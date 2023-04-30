@@ -1,25 +1,26 @@
 package com.example.firstproject.service;
 
 import com.example.firstproject.dto.*;
+import com.example.firstproject.entity.ChatMessage;
 import com.example.firstproject.entity.ChatRoom;
 import com.example.firstproject.entity.ChatUserList;
+import com.example.firstproject.repository.ChatRepository;
 import com.example.firstproject.repository.ChatRoomRepository;
 import com.example.firstproject.repository.ChatUserListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ChatRoomService {
+    private final ChatRepository chatRepository;
 
     private final ChatRoomRepository chatRoomRepository;
 
@@ -38,11 +39,13 @@ public class ChatRoomService {
         Collections.reverse(result);
         return result;
     }
+
     //채팅방 하나 불러오기
     public ChatRoomResponseDTO findRoomByRoomId(String roomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId) .orElse(null);
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElse(null);
         return new ChatRoomResponseDTO(chatRoom);
     }
+
     //채팅방 유저리스트 조회
     public List<ChatUserListResponseDTO> findUserListRoomByRoomId(String roomId) {
         List<ChatUserListResponseDTO> userList = chatUserListRepository.findAllByRoomId(roomId);
@@ -50,7 +53,7 @@ public class ChatRoomService {
     }
 
     public String DeleteUserList(String roomId, String memberId) {
-        ChatUserList userList = chatUserListRepository.findUserList(roomId,memberId);
+        ChatUserList userList = chatUserListRepository.findUserList(roomId, memberId);
         chatUserListRepository.delete(userList);
         return "삭제 완료";
     }
@@ -66,34 +69,26 @@ public class ChatRoomService {
 
         회원 기능 병합 되면 주석 풀고 연결
 
-        HttpSession session = request.getSession();
-        String member_id = (String) session.getAttribute("member_id");
-        // 유저를 userList에 추가하여 DB에 업데이트
-        chatRoom.getUserList().put(member_id, member_name);
-
         // 채팅방 참여 인원 표시 - userList의 count 수만 가져오기
         chatRoom.setNumberOfUsers(chatRoom.getUserList().size());
-
-
-         //채팅방 내부 userList 조회
 
          */
 
 
     //채팅방 유저 리스트에 참가자 추가
-    public ChatUserList insertUserList(ChatMessageDTO chatMessage) {
-            ChatUserList chatUserList = new ChatUserList(
-                    chatMessage.getSender(), chatMessage.getRoomId(), LocalDateTime.now());
-            return chatUserListRepository.save(chatUserList);
+    public ChatUserList insertUserList(ChatMessageRequestDTO chatMessage) {
+        ChatUserList chatUserList = new ChatUserList(
+                chatMessage.getSender(), chatMessage.getRoomId(), LocalDateTime.now());
+        return chatUserListRepository.save(chatUserList);
     }
 
     //유저 기참여여부 확인
-    public String isUserInRoom(ChatUserListDTO userListCheckDTO) {
-        ChatUserList userList = chatUserListRepository.findUserList(userListCheckDTO.getRoomId(), userListCheckDTO.getMemberId());
+    public String isUserInRoom(String roomId, String memberId) {
+        ChatUserList userList = chatUserListRepository.findUserList(roomId, memberId);
         if (userList != null) {
             return "InUser";
         } else {
-            ChatUserList memberCheck = chatUserListRepository.findOtherUserList(userListCheckDTO.getRoomId(), userListCheckDTO.getMemberId());
+            ChatUserList memberCheck = chatUserListRepository.findOtherUserList(roomId, memberId);
             if (memberCheck != null) {
                 return "OtherInUser";
             }
@@ -101,6 +96,22 @@ public class ChatRoomService {
         }
         // 일치하는 조건이 없는 경우
 
+    }
+
+    public List<ChatBeforeMessageResponseDTO> ChatBeforeMessages(String roomId, String memberId) {
+        LocalDateTime joinTime = chatUserListRepository.findJoinTime(roomId,memberId);
+        List<ChatMessage> messages = chatRepository.findByRoomIdAndCreatedTimeAfter(roomId, joinTime);
+        List<ChatBeforeMessageResponseDTO> dtos = new ArrayList<>();
+        for(ChatMessage message : messages) {
+            ChatBeforeMessageResponseDTO dto = new ChatBeforeMessageResponseDTO();
+            // ChatMessageResponseDTO 객체의 필드 값을 ChatMessage 객체의 필드 값으로 설정
+            dto.setMessage(message.getMessage());
+            dto.setSender(message.getMemberId());
+            dto.setCreatedTime(message.getCreatedTime());
+            dto.setNearOrNot(message.getNearOrNot());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
 }

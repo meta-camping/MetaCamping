@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ChatMessageDTO {
+public class ChatMessageRequestDTO {
 
     public enum MessageType {
         ENTER, TALK, LEAVE
@@ -16,12 +16,11 @@ public class ChatMessageDTO {
     private MessageType type;
     private String sender;
     private String message;
+    private double locationX;
+    private double locationY;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
 
 }
 
