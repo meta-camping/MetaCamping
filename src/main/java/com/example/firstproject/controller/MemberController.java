@@ -1,6 +1,16 @@
 package com.example.firstproject.controller;
 
-import java.util.List;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 import com.example.firstproject.config.auth.PrincipalDetails;
 import com.example.firstproject.dto.UpdateUserDTO;
@@ -99,6 +109,23 @@ public class MemberController {
     public String admin(Authentication authentication){
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         return "<h1>admin</h1>";
+    }
+
+    @PostMapping("/loginProcess")
+    public String loginProcess(@RequestBody Member member) throws IOException {
+        // Create HTTP client
+        HttpClient client = HttpClientBuilder.create().build();
+
+        // Create POST request with member object as JSON string in request body
+        HttpPost  request = new HttpPost("/login");
+        String json = "{\"username\":\"" + member.getUsername() + "\",\"password\":\"" + member.getPassword() + "\"}";
+        StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        request.setEntity(entity);
+
+        // Execute request and get response
+        HttpResponse response = client.execute(request);
+
+        return response.getFirstHeader("Authorization").getValue();
     }
 
     @PostMapping("/join")

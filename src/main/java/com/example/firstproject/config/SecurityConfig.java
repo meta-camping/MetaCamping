@@ -47,9 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //admin만 가능
                 .antMatchers("/api/admin")
                 .access("hasRole('ROLE_ADMIN')")
-                //https post요청 위해 코드 추가
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-                //위 3가지 주소가 아니면 누구나 가능
                 .anyRequest().permitAll();
     }
 }

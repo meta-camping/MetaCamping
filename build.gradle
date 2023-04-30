@@ -27,6 +27,7 @@ task copySecret(type: Copy) {
 dependencies {
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	implementation 'org.json:json:20220924'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
 	//validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
