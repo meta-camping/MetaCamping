@@ -113,17 +113,20 @@ public class MemberController {
 
     @PostMapping("/loginProcess")
     public String loginProcess(@RequestBody Member member) throws IOException {
+        System.out.println("@@@@member " +member);
         // Create HTTP client
         HttpClient client = HttpClientBuilder.create().build();
 
         // Create POST request with member object as JSON string in request body
-        HttpPost  request = new HttpPost("/login");
+        HttpPost  request = new HttpPost("http://localhost:8080/login");
         String json = "{\"username\":\"" + member.getUsername() + "\",\"password\":\"" + member.getPassword() + "\"}";
         StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        System.out.println("@@@@entity " +entity);
         request.setEntity(entity);
 
         // Execute request and get response
         HttpResponse response = client.execute(request);
+        System.out.println("@@@@response " +response);
 
         return response.getFirstHeader("Authorization").getValue();
     }
