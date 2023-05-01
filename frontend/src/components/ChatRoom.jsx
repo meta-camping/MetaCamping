@@ -93,6 +93,7 @@ function ChatRoom() {
     //채팅(웹소켓) 접속 설정
     const socket = new SockJS(`/api/ws-stomp`);
     const stompClient = Stomp.over(socket);
+    stompClient.debug = null; // 통신 내역 콘솔 출력 방지
 
     if (username.trim() !== '' ) {
       stompClient.connect({}, function (frame) {
