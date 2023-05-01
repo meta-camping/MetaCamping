@@ -91,7 +91,7 @@ function ChatRoom() {
     })
 
     //채팅(웹소켓) 접속 설정
-    const socket = new SockJS(`http://127.0.0.1:8080/ws-stomp`);
+    const socket = new SockJS(`/api/ws-stomp`);
     const stompClient = Stomp.over(socket);
 
     if (username.trim() !== '' ) {
