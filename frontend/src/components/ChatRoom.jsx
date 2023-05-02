@@ -91,7 +91,7 @@ useEffect(() => {
     return navigate("/")
   });
 
-}, [roomId]);
+}, [roomId, userList]);
 
 
 
@@ -117,7 +117,7 @@ useEffect(() => {
     /**
      * 채팅(웹소켓) 접속 설정
      */
-    const socket = new SockJS(`/api/ws-stomp`);
+    const socket = new SockJS(`http://localhost:8080/api/ws-stomp`);
     const stompClient = Stomp.over(socket);
     stompClient.debug = null; // 통신 내역 콘솔 출력 방지
 
@@ -152,10 +152,8 @@ useEffect(() => {
             axios.get(`/api/chat/room/${roomInfo.roomId}/${username}/user-check`)
               .then((res) => {
                 //console.log(res.data);
-                setUserCheck(res.data);
-                // 새로운 유저를 userList에 추가
-                setUserList([...userList, username]);
-                //console.log("업데이트 된",userCheck);
+                // userList 상태 변경
+                setUserList((prevUserList) => [...prevUserList, username]);
               })
               .catch((err) => {
                 //console.log(err);
@@ -188,15 +186,28 @@ useEffect(() => {
     };
   }, [roomId, userState, userCheck]);
 
+  
   //채팅방 나가기 버튼을 누르면 구독이 해제되고, 리스트로 돌아감.
+  //유지하고싶으면 채팅방 화면에서 뒤로 가기 버튼 클릭
   const exit = () => {
-    axios.delete(`/api/chat/room/${roomId}/${username}/out`)
-    stompClient.unsubscribe(subscribeUrl);
-    setConnected(false);
-    setStompClient(null);
-    // 유저 리스트에서 해당 유저를 제거
-  setUserList(userList.filter(user => user !== username));
-    navigate('/chat/list');
+    const confirmExit = window.confirm('채팅방을 나가면 채팅기록이 삭제됩니다.\n (채팅 내용을 유지하고싶으면 취소 후 뒤로 가기를 눌러주세요.)');
+    if (confirmExit) {
+      stompClient.send(publishUrl, {}, JSON.stringify({ 
+        roomId: roomId,
+        type: 'LEAVE',
+        sender: username,
+        createdTime: moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss'),
+        locationX:nowLocation.latitude,
+        locationY:nowLocation.longitude,
+        message: username+'님이 퇴장했습니다.' }));
+  
+      stompClient.unsubscribe(subscribeUrl);
+      setConnected(false);
+      setStompClient(null);
+      // 유저 리스트에서 해당 유저를 제거
+      setUserList(userList.filter(user => user !== username));
+      navigate('/chat/list');
+    }
   }
   
   //캠핑장에 있는 유저 / 아닌 유저의 메세지를 구분하기 위해

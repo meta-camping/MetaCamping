@@ -2,7 +2,7 @@
   "name": "react",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://meta-camping-service.com",
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -11,6 +11,7 @@
     "bootstrap": "^5.2.3",
     "http-proxy-middleware": "^2.0.6",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "net": "^1.0.2",
     "qs": "^6.11.1",
     "react": "^18.2.0",
