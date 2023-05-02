@@ -99,7 +99,7 @@ function ChatRoomList() {
                         {
                             chatRooms.map(
                                 chatRooms =>
-                                    <tr key = {chatRooms.roomId} onClick={() => handleClick(chatRooms.roomId)}>
+                                    <tr className="chatroomData" key = {chatRooms.roomId} onClick={() => handleClick(chatRooms.roomId)}>
                                         <td>{chatRooms.roomName}</td>
                                         <td>{new Date(chatRooms.updatedTime).toLocaleString()}</td>
                                     </tr>

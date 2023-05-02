@@ -12,6 +12,10 @@ code {
   monospace;
 }
 
+.chatroomData:hover {
+  cursor: pointer;
+}
+
 .searchData:hover {
   cursor: pointer;
 }
@@ -50,6 +54,14 @@ code {
   font-Family: 'Jua', sans-serif;
 }
 
+.searchdata_content {
+  border-radius: 15px;
+  box-shadow: 0 0 10px #e4e4e4;
+  max-width: 900px;
+  padding: 10px;
+  font-Family: 'Jua', sans-serif;
+}
+
 .profile_content {
   border-radius: 15px;
   box-shadow: 0 0 10px #e4e4e4;
@@ -72,7 +84,6 @@ code {
 .search {
   align-items: center;
   display: flex;
-  font-size: 20px;
   font-family: 'Jua', sans-serif;
 }
 

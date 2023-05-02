@@ -81,7 +81,7 @@ function Profile() {
     const unRegister = () => {
         if(window.confirm("정말로 회원 탈퇴 하시겠습니까?\n탈퇴된 계정은 복구 할 수 없습니다.")) {
             axios
-                .delete("/api/user/delete", axiosBody2, axiosConfig)
+                .post("/api/user/delete", axiosBody2, axiosConfig)
                 .then((res) => {
                     if(res.data === "회원 탈퇴 성공"){
                         setToken(null);

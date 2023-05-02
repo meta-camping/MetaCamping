@@ -126,61 +126,55 @@ function SearchData() {
     const handlePrevPage = () => {
         setPage(page - 1);
     };
-    const itemsPerPage = 10;
+    const itemsPerPage = 15;
     const startIdx = (page - 1) * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
     const currentItems = camping.slice(startIdx, endIdx);
 
     return (
-        <div style={{marginLeft: "100px"}}>
-                <div className="mb-3 search">
-                    <Button type="button" onClick={showAllList} style={{width: "160px", fontSize:"20px", marginBottom: "10px"}}>
-                        전체 캠핑장 조회
-                    </Button><br/>
-                    <Button type="button" onClick={showDistanceList} style={{width: "180px", fontSize:"20px", marginBottom: "10px", marginLeft: "30px"}}>
-                        거리별 캠핑장 조회
-                    </Button><br/>
-                    <div style={{display: "flex", marginLeft: "100px"}}>
-                        <table>
-                            <tbody>
-                            <td>
-                                <select className="form-control" style={{width: "140px", fontSize:"20px", marginBottom: "10px"}} onChange={handleSelectCity}>
-                                    <option value="강원도">강원도</option>
-                                    <option value="경기도">경기도</option>
-                                    <option value="경상북도">경상북도</option>
-                                    <option value="경상남도">경상남도</option>
-                                    <option value="광주광역시">광주광역시</option>
-                                    <option value="대구광역시">대구광역시</option>
-                                    <option value="대전광역시">대전광역시</option>
-                                    <option value="부산광역시">부산광역시</option>
-                                    <option value="서울특별시">서울특별시</option>
-                                    <option value="세종특별자치시">세종특별자치시</option>
-                                    <option value="울산광역시">울산광역시</option>
-                                    <option value="인천광역시">인천광역시</option>
-                                    <option value="전라북도">전라북도</option>
-                                    <option value="전라남도">전라남도</option>
-                                    <option value="제주특별자치도">제주특별자치도</option>
-                                    <option value="충청북도">충청북도</option>
-                                    <option value="충청남도">충청남도</option>
-                                </select>
-                            </td>
-                            </tbody>
-                        </table>
-                        <Button type="button" onClick={SelectCity} style={{width: "170px",fontSize:"20px", marginBottom: "10px",marginLeft: "20px"}}>
-                            시별로 조회
-                        </Button>
-                    </div>
-                </div>
-                <div className="mb-3 search">
-                    <input type="text" value={campingName} placeholder="캠핑장명" onChange={handleCampingName} minLength={2} maxLength={16} style={{width: "140px", padding: "6px 12px 6px 12px", marginLeft:"470px"}}/>
-                    <Button type="button" onClick={showByCampingName} style={{width: "170px",fontSize:"20px", marginLeft: "20px"}}>
-                        캠핑장명 검색
-                    </Button>
-                </div>
+        <div style={{marginLeft: "60px"}} className="searchdata_content">
+                <div className=" search">
+                        <Button type="button" onClick={showAllList} style={{width: "200px", fontSize:"20px", marginBottom: "10px"}}>
+                            전체 캠핑장 조회
+                        </Button><br/>
+                        <Button type="button" onClick={showDistanceList} style={{width: "220px", fontSize:"20px", marginLeft: "20px", marginBottom: "10px"}}>
+                            거리별 캠핑장 조회
+                        </Button><br/>
 
+                        <div style={{display: "flex", marginLeft: "130px"}}>
+                            <table>
+                                <tbody>
+                                <td>
+                                    <select className="form-control" style={{width: "140px", fontSize:"20px", marginBottom: "10px"}} onChange={handleSelectCity}>
+                                        <option value="강원도">강원도</option>
+                                        <option value="경기도">경기도</option>
+                                        <option value="경상북도">경상북도</option>
+                                        <option value="경상남도">경상남도</option>
+                                        <option value="광주광역시">광주광역시</option>
+                                        <option value="대구광역시">대구광역시</option>
+                                        <option value="대전광역시">대전광역시</option>
+                                        <option value="부산광역시">부산광역시</option>
+                                        <option value="서울특별시">서울특별시</option>
+                                        <option value="세종특별자치시">세종특별자치시</option>
+                                        <option value="울산광역시">울산광역시</option>
+                                        <option value="인천광역시">인천광역시</option>
+                                        <option value="전라북도">전라북도</option>
+                                        <option value="전라남도">전라남도</option>
+                                        <option value="제주특별자치도">제주특별자치도</option>
+                                        <option value="충청북도">충청북도</option>
+                                        <option value="충청남도">충청남도</option>
+                                    </select>
+                                </td>
+                                </tbody>
+                            </table>
+                            <Button type="button" onClick={SelectCity} style={{width: "170px",fontSize:"20px", marginBottom: "10px",marginLeft: "20px"}}>
+                                시별로 조회
+                            </Button>
+                        </div>
+                    </div>
             {isdistance ?
                 <div>
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered" style={{fontSize: "20px"}}>
                         <thead>
                         <tr>
                             <th>거리</th>
@@ -199,16 +193,22 @@ function SearchData() {
                         )}
                         </tbody>
                     </table>
-                    <button className="btn btn-outline-primary me-2" onClick={handlePrevPage} disabled={page === 1}>
+                    <button className="btn btn-outline-primary" onClick={handlePrevPage} disabled={page === 1}>
                         이전
                     </button>
-                    <button className="btn btn-outline-primary me-2" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
+                    <span style={{marginLeft: "250px"}}>
+                        <input type="text" value={campingName} placeholder="캠핑장명" onChange={handleCampingName} minLength={2} maxLength={16} style={{fontSize:"20px", width: "180px", padding: "6px 12px 6px 12px"}}/>
+                        <Button type="button" onClick={showByCampingName} style={{width: "80px",fontSize:"20px", marginLeft: "20px"}}>
+                            검색
+                        </Button>
+                    </span>
+                    <button className="btn btn-outline-primary" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
                         다음
                     </button>
                 </div>
                 :
                 <div>
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered" style={{fontSize: "20px"}}>
                         <thead>
                         <tr>
                             <th>주소</th>
@@ -225,10 +225,16 @@ function SearchData() {
                         )}
                         </tbody>
                     </table>
-                    <button className="btn btn-primary me-2" onClick={handlePrevPage} disabled={page === 1}>
+                    <button className="btn btn-outline-primary" onClick={handlePrevPage} disabled={page === 1}>
                         이전
                     </button>
-                    <button className="btn btn-primary me-2" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
+                    <span style={{marginLeft: "250px"}}>
+                        <input type="text" value={campingName} placeholder="캠핑장명" onChange={handleCampingName} minLength={2} maxLength={16} style={{fontSize:"20px", width: "180px", padding: "6px 12px 6px 12px"}}/>
+                        <Button type="button" onClick={showByCampingName} style={{width: "80px",fontSize:"20px", marginLeft: "20px"}}>
+                            검색
+                        </Button>
+                    </span>
+                    <button className="btn btn-outline-primary" style={{float: "right"}} onClick={handleNextPage} disabled={endIdx >= camping.length}>
                         다음
                     </button>
                 </div>}

@@ -61,7 +61,7 @@ function HeaderComponent() {
                     <li><button className="nav-link px-2 link-dark nav-custom" onClick={()=>navigate("/about")} >About</button></li>
                 </ul>
 
-                <div className="col-md-3 text-end" >
+                <div className="col-md-3 text-end" style={{width: "400px"}} >
                     {!token ?
                         <a href="/login" className="btn btn-outline-primary me-2">Login</a>
                     :   <>
