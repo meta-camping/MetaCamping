@@ -1,6 +1,16 @@
 package com.example.firstproject.controller;
 
-import java.util.List;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 import com.example.firstproject.config.auth.PrincipalDetails;
 import com.example.firstproject.dto.UpdateUserDTO;
@@ -52,14 +62,14 @@ public class MemberController {
     public String updatePassword(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByUsername(memberDTO.getUsername());
 
-        if (member==null) {
+        if (member == null) {
             return "잘못된 접근입니다";
         } else {
             if (bCryptPasswordEncoder.matches(memberDTO.getPassword(), member.getPassword())) {
                 member.setPassword(bCryptPasswordEncoder.encode(memberDTO.getUpadate_password()));
                 memberRepository.save(member);
                 return "비밀번호 수정 완료";
-            }else {
+            } else {
                 return "기존 비밀번호를 확인하세요";
             }
         }
@@ -69,10 +79,10 @@ public class MemberController {
     public String updateNickname(@RequestBody UpdateUserDTO memberDTO) {
         Member member = memberRepository.findByNickname(memberDTO.getNickname());
         Member member1 = memberRepository.findByNickname(memberDTO.getUpadate_nickname());
-        if (member==null) {
+        if (member == null) {
             return "잘못된 접근입니다";
         } else {
-            if (member1==null) {
+            if (member1 == null) {
                 member.setNickname(memberDTO.getUpadate_nickname());
                 memberRepository.save(member);
                 return "닉네임 수정 완료";
@@ -85,7 +95,6 @@ public class MemberController {
     @DeleteMapping("/user/delete")
     public String delete(@RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
-        System.out.println("삭제된 계정" + isMember);
         if (isMember == null) {
             return "잘못된 요청입니다.";
         } else {
@@ -96,9 +105,25 @@ public class MemberController {
 
     // 어드민이 접근 가능
     @GetMapping("/admin")
-    public String admin(Authentication authentication){
+    public String admin(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         return "<h1>admin</h1>";
+    }
+
+    @PostMapping("/loginProcess")
+    public String loginProcess(@RequestBody Member member) throws IOException {
+        // Create HTTP client
+        HttpClient client = HttpClientBuilder.create().build();
+        // Create POST request with member object as JSON string in request body
+        HttpPost request = new HttpPost("http://localhost:8080/login");
+        String json = "{\"username\":\"" + member.getUsername() + "\",\"password\":\"" + member.getPassword() + "\"}";
+        StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        request.setEntity(entity);
+
+        // Execute request and get response
+        HttpResponse response = client.execute(request);
+
+        return response.getFirstHeader("Authorization").getValue();
     }
 
     @PostMapping("/join")

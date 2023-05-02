@@ -4,7 +4,7 @@ import axios from 'axios';
 import Stomp from 'stompjs';
 import '../styles/ChatRoom.css';
 import { useParams, useNavigate, useLocation, useHref } from 'react-router-dom';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/user";
 import { locationState } from "../recoil/location";
@@ -22,9 +22,10 @@ function ChatRoom() {
   const { roomId } = useParams(); //채팅방 UUID
   const location = useLocation(); 
   const [userCheck,setUserCheck] = useState(`${location.state?.userCheck}`); //채팅방 입장 전, 회원의 채팅방 기참여여부
+
   if(userCheck === undefined) {
-    navigate('/login');
-    
+     const username = user?.nickname
+    navigate('/');    
   }
 
   // useEffect(() => {
@@ -69,10 +70,38 @@ function ChatRoom() {
   const messageEndRef = useRef(null);
 
 
-  useEffect(() => {
+// 채팅방 정보와 유저 리스트를 받아오는 코드
+useEffect(() => {
+  axios.get(`/api/chat/room/${roomId}`).then((res) => {
+    if (res.data) {
+      setRoomInfo(res.data);
 
-    //새로운 메세지가 발행되면 화면을 아래로 내려준다.
-    messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      axios.get(`/api/chat/room/${roomId}/user-list`).then((res) => {
+        if (res.data) {
+          setUserList(res.data);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
+  }).catch((error) => {
+    console.error(error);
+    alert("유효하지 않은 접근입니다.")
+    return navigate("/")
+  });
+
+}, [roomId]);
+
+
+
+// 채팅 메시지를 스크롤하여 최신 메시지를 보여주는 코드
+  useEffect(() => {
+    messageEndRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [messages]);
+
+
+  useEffect(() => {
 
     //roomInfo 받아오기
     axios.get(`/api/chat/room/${roomId}`)
@@ -85,24 +114,15 @@ function ChatRoom() {
         console.error(error);
       });
 
-    //user-List 받아오기
-    axios.get(`/api/chat/room/${roomId}/user-list`)
-    .then((res) =>{
-      if(res.data){
-        setUserList(res.data)
-      }
-    })
-
     /**
      * 채팅(웹소켓) 접속 설정
      */
-    const socket = new SockJS(`http://127.0.0.1:8080/ws-stomp`);
+    const socket = new SockJS(`/api/ws-stomp`);
     const stompClient = Stomp.over(socket);
-    stompClient.debug = null; // 디버그 정보 출력하지 않음
+    stompClient.debug = null; // 통신 내역 콘솔 출력 방지
 
     //회원 여부를 토큰으로 확인
     if (token) {
-
       /**
        * 웹소켓 연결 & 화면에 메세지 비동기적으로 출력
        */
@@ -125,17 +145,19 @@ function ChatRoom() {
             message: username+'님이 입장했습니다.',
             locationX: nowLocation.latitude,
             locationY: nowLocation.longitude,
-            createdTime: moment().format('YYYY-MM-DD HH:mm:ss')
+            createdTime:moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss')
           }), () => {
             // Enter type 메세지가 전송되면 해당 userList 유저 정보가 DB에 편입.
             // 따라서 변경된 userList에서 다시 한번 user-check를 수행해 상태를 업데이트.
             axios.get(`/api/chat/room/${roomInfo.roomId}/${username}/user-check`)
-              .then(res => {
+              .then((res) => {
                 //console.log(res.data);
                 setUserCheck(res.data);
+                // 새로운 유저를 userList에 추가
+                setUserList([...userList, username]);
                 //console.log("업데이트 된",userCheck);
               })
-              .catch(err => {
+              .catch((err) => {
                 //console.log(err);
               });
           });      
@@ -144,7 +166,7 @@ function ChatRoom() {
         //채팅방에 처음 들어왔던 시점부터 생성된 메세지를 전부 불러와 화면에 표시.
         if (userCheck === "구독 유저") {
           axios.get(`/api/chat/room/${roomId}/${username}/before-messages`)
-          .then(res => {
+          .then((res) => {
             //console.log(res.data)
             const previousMessages = res.data;
             setMessages([...previousMessages, ...messages]);
@@ -164,7 +186,7 @@ function ChatRoom() {
       setConnected(false);
       //console.log('Disconnected');
     };
-  }, [roomId, username, subscribeUrl, userCheck]);
+  }, [roomId, userState, userCheck]);
 
   //채팅방 나가기 버튼을 누르면 구독이 해제되고, 리스트로 돌아감.
   const exit = () => {
@@ -172,6 +194,8 @@ function ChatRoom() {
     stompClient.unsubscribe(subscribeUrl);
     setConnected(false);
     setStompClient(null);
+    // 유저 리스트에서 해당 유저를 제거
+  setUserList(userList.filter(user => user !== username));
     navigate('/chat/list');
   }
   
@@ -183,7 +207,7 @@ function ChatRoom() {
       roomId: roomId,
       type: 'TALK',
       sender: username,
-      createdTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      createdTime: moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss'),
       locationX:nowLocation.latitude,
       locationY:nowLocation.longitude,
       message: newMessage }));
@@ -205,7 +229,7 @@ return (
         <ul>
           <br />
         <h3>참여 유저</h3>
-          {userList.map((user, index) => (
+          {userList.map((user, index) => ( 
             <li key={index}>
               {user.memberId}
             </li>

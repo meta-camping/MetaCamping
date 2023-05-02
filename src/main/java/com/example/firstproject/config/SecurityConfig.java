@@ -6,12 +6,12 @@ import com.example.firstproject.config.jwt.JwtAuthorizationFilter;
 import com.example.firstproject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.web.cors.CorsUtils;
 
 // 로그인이 완료되면 순서가
 //1. code 받기(인증)
@@ -47,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //admin만 가능
                 .antMatchers("/api/admin")
                 .access("hasRole('ROLE_ADMIN')")
-                //위 3가지 주소가 아니면 누구나 가능
                 .anyRequest().permitAll();
     }
 }
