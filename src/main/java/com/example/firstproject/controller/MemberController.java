@@ -92,7 +92,7 @@ public class MemberController {
         }
     }
 
-    @DeleteMapping("/user/delete")
+    @PostMapping("/user/delete")
     public String delete(@RequestBody Member member) {
         Member isMember = memberRepository.findByUsername(member.getUsername());
         if (isMember == null) {
