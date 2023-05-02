@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 import static com.example.firstproject.dto.ChatMessageRequestDTO.MessageType.ENTER;
+import static com.example.firstproject.dto.ChatMessageRequestDTO.MessageType.LEAVE;
 
 @Controller
 @Log4j2
@@ -38,6 +39,9 @@ public class ChatController {
         chatService.saveChat(message,nearOrNot);
         if (message.getType() == ENTER) {
             chatRoomService.insertUserList(message);
+        }
+        else if (message.getType() == LEAVE) {
+            chatRoomService.DeleteUserList(roomId,message.getSender());
         }
         return new ChatMessageResponseDTO(message,nearOrNot);
     }
