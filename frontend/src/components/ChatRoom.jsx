@@ -70,20 +70,11 @@ function ChatRoom() {
   const messageEndRef = useRef(null);
 
 
-// 채팅방 정보와 유저 리스트를 받아오는 코드
+// 채팅방 정보 받아오는 코드
 useEffect(() => {
   axios.get(`/api/chat/room/${roomId}`).then((res) => {
     if (res.data) {
       setRoomInfo(res.data);
-
-      axios.get(`/api/chat/room/${roomId}/user-list`).then((res) => {
-        if (res.data) {
-          setUserList(res.data);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
     }
   }).catch((error) => {
     console.error(error);
@@ -91,8 +82,19 @@ useEffect(() => {
     return navigate("/")
   });
 
-}, [roomId, userList]);
+}, [roomId]);
 
+// 유저 리스트 받아오는 코드
+useEffect(()=>{
+  axios.get(`/api/chat/room/${roomId}/user-list`).then((res) => {
+    if (res.data) {
+      setUserList(res.data);
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}, []);
 
 
 // 채팅 메시지를 스크롤하여 최신 메시지를 보여주는 코드
